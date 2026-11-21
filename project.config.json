@@ -1,0 +1,50 @@
+{
+    "description": "家庭点菜小程序（模块一：点菜+买菜清单）",
+    "packOptions": {
+        "ignore": [
+            {
+                "value": ".workbuddy",
+                "type": "folder"
+            },
+            {
+                "value": "database-init",
+                "type": "folder"
+            }
+        ],
+        "include": []
+    },
+    "setting": {
+        "bundle": false,
+        "es6": true,
+        "minified": true,
+        "postcss": true,
+        "urlCheck": true,
+        "compileWorklet": false,
+        "uglifyFileName": false,
+        "uploadWithSourceMap": true,
+        "enhance": false,
+        "packNpmManually": false,
+        "packNpmRelationList": [],
+        "minifyWXSS": true,
+        "minifyWXML": true,
+        "localPlugins": false,
+        "disableUseStrict": false,
+        "useCompilerPlugins": false,
+        "condition": false,
+        "swc": false,
+        "disableSWC": true,
+        "babelSetting": {
+            "ignore": [],
+            "disablePlugins": [],
+            "outputPath": ""
+        }
+    },
+    "compileType": "miniprogram",
+    "appid": "wx728cff1955ae1059",
+    "projectname": "family-menu",
+    "miniprogramRoot": "./",
+    "cloudfunctionRoot": "cloudfunctions/",
+    "simulatorPluginLibVersion": {},
+    "editorSetting": {},
+    "cloudfunctionTemplateRoot": "cloudfunctionTemplate/"
+}

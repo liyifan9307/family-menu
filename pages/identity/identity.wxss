@@ -1,0 +1,59 @@
+.identity { padding-top: 80rpx; }
+
+.hero { margin-bottom: 40rpx; }
+
+.center-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+.spinner {
+  width: 64rpx;
+  height: 64rpx;
+  border: 6rpx solid var(--line);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  margin-bottom: 32rpx;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.entry-card {
+  display: flex;
+  align-items: center;
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: var(--radius);
+  padding: 32rpx;
+  min-height: 160rpx;
+  margin-bottom: 24rpx;
+}
+.entry-card:active { background: #f7faf8; }
+.entry-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #fff;
+  flex-shrink: 0;
+}
+.entry-icon.create { background: var(--brand); }
+.entry-icon.join { background: #6b90b8; }
+.entry-body { flex: 1; margin-left: 24rpx; }
+.entry-title { font-size: 36rpx; font-weight: 600; color: var(--ink); }
+.entry-desc { font-size: 26rpx; color: var(--ink2); line-height: 1.6; margin-top: 8rpx; }
+.entry-arrow { font-size: 48rpx; color: var(--ink2); margin-left: 16rpx; }
+
+.nav-line {
+  font-size: 30rpx;
+  color: var(--brand);
+  padding: 16rpx 0;
+  margin-bottom: 24rpx;
+}
+.code-input { letter-spacing: 8rpx; text-transform: uppercase; }

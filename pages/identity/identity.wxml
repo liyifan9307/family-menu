@@ -1,0 +1,66 @@
+<view class="page identity">
+  <!-- 身份识别中 -->
+  <view wx:if="{{checking}}" class="center-state">
+    <view class="spinner"></view>
+    <text class="h2">正在识别身份…</text>
+  </view>
+
+  <!-- 二选一入口 -->
+  <block wx:elif="{{mode === 'choose'}}">
+    <view class="hero">
+      <view class="h1">欢迎回家</view>
+      <view class="h2">先建一个家，或加入家人已建好的家</view>
+    </view>
+
+    <view class="entry-card" bindtap="showCreate">
+      <view class="entry-icon create">＋</view>
+      <view class="entry-body">
+        <view class="entry-title">创建家庭</view>
+        <view class="entry-desc">你是这个家的管理员，建好后把邀请码发给家人</view>
+      </view>
+      <view class="entry-arrow">›</view>
+    </view>
+
+    <view class="entry-card" bindtap="showJoin">
+      <view class="entry-icon join">↗</view>
+      <view class="entry-body">
+        <view class="entry-title">加入家庭</view>
+        <view class="entry-desc">输入家人给的 6 位邀请码，加入后即可看家里的日历与清单</view>
+      </view>
+      <view class="entry-arrow">›</view>
+    </view>
+
+    <view class="warn-box">
+      说明：用微信身份静默识别，此处不用填资料。进入家庭后可在「编辑我的资料」里主动填头像和昵称，不填也能用。新人可创建家庭或凭邀请码加入，邀请码只决定进哪个家。
+    </view>
+  </block>
+
+  <!-- 创建家庭表单 -->
+  <block wx:elif="{{mode === 'create'}}">
+    <view class="nav-line" bindtap="backToChoose">‹ 返回</view>
+    <view class="hero">
+      <view class="h1">创建家庭</view>
+      <view class="h2">起个名字，比如「我的小家」「爸妈家」</view>
+    </view>
+    <view class="card">
+      <label class="field-label">家庭名称</label>
+      <input class="field-input" value="{{familyName}}" bindinput="onFamilyNameInput" maxlength="20" placeholder="输入家庭名称" />
+    </view>
+    <view class="primary-btn" bindtap="doCreate">创建并成为管理员</view>
+  </block>
+
+  <!-- 加入家庭表单 -->
+  <block wx:else>
+    <view class="nav-line" bindtap="backToChoose">‹ 返回</view>
+    <view class="hero">
+      <view class="h1">加入家庭</view>
+      <view class="h2">输入家人给的 6 位邀请码</view>
+    </view>
+    <view class="card">
+      <label class="field-label">邀请码</label>
+      <input class="field-input code-input" value="{{inviteCode}}" bindinput="onInviteCodeInput" maxlength="6" placeholder="6 位邀请码" />
+    </view>
+    <view class="primary-btn" bindtap="doJoin">加入家庭</view>
+    <view class="warn-box">邀请码无效或已过期时不会写入任何数据；同一家庭不能重复加入，但可以加入多个不同的家庭。</view>
+  </block>
+</view>

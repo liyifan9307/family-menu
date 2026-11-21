@@ -1,0 +1,12 @@
+{"name":"番茄炒蛋","minutes":15,"emoji":"🍅","imageFileID":"","ingredients":[{"name":"番茄","qty":"3个"},{"name":"鸡蛋","qty":"6个"},{"name":"葱","qty":"2根"}],"enabled":true,"sort":1}
+{"name":"蒜蓉西兰花","minutes":15,"emoji":"🥦","imageFileID":"","ingredients":[{"name":"西兰花","qty":"1颗"},{"name":"蒜","qty":"1头"}],"enabled":true,"sort":2}
+{"name":"炒青菜","minutes":15,"emoji":"🥬","imageFileID":"","ingredients":[{"name":"青菜","qty":"1把"},{"name":"蒜","qty":"1头"}],"enabled":true,"sort":3}
+{"name":"鸡蛋羹","minutes":15,"emoji":"🥚","imageFileID":"","ingredients":[{"name":"鸡蛋","qty":"4个"},{"name":"葱","qty":"1根"}],"enabled":true,"sort":4}
+{"name":"青椒肉丝","minutes":30,"emoji":"🌶️","imageFileID":"","ingredients":[{"name":"青椒","qty":"2个"},{"name":"猪肉","qty":"200g"},{"name":"姜","qty":"1块"}],"enabled":true,"sort":5}
+{"name":"清蒸鲈鱼","minutes":30,"emoji":"🐟","imageFileID":"","ingredients":[{"name":"鲈鱼","qty":"1条"},{"name":"姜","qty":"1块"},{"name":"葱","qty":"2根"}],"enabled":true,"sort":6}
+{"name":"麻婆豆腐","minutes":30,"emoji":"🌶️","imageFileID":"","ingredients":[{"name":"豆腐","qty":"1盒"},{"name":"肉末","qty":"150g"},{"name":"葱","qty":"1根"}],"enabled":true,"sort":7}
+{"name":"可乐鸡翅","minutes":30,"emoji":"🍗","imageFileID":"","ingredients":[{"name":"鸡翅","qty":"8个"},{"name":"姜","qty":"1块"}],"enabled":true,"sort":8}
+{"name":"香菇滑鸡","minutes":30,"emoji":"🍄","imageFileID":"","ingredients":[{"name":"香菇","qty":"200g"},{"name":"鸡肉","qty":"300g"},{"name":"姜","qty":"1块"}],"enabled":true,"sort":9}
+{"name":"红烧肉","minutes":60,"emoji":"🥩","imageFileID":"","ingredients":[{"name":"五花肉","qty":"400g"},{"name":"姜","qty":"1块"},{"name":"冰糖","qty":"少许"}],"enabled":true,"sort":10}
+{"name":"番茄牛腩","minutes":60,"emoji":"🍲","imageFileID":"","ingredients":[{"name":"番茄","qty":"3个"},{"name":"牛腩","qty":"400g"},{"name":"姜","qty":"1块"}],"enabled":true,"sort":11}
+{"name":"土豆炖排骨","minutes":60,"emoji":"🥔","imageFileID":"","ingredients":[{"name":"土豆","qty":"2个"},{"name":"排骨","qty":"500g"},{"name":"姜","qty":"1块"}],"enabled":true,"sort":12}

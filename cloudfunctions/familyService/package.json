@@ -1,0 +1,9 @@
+{
+  "name": "familyService",
+  "version": "1.0.0",
+  "description": "家庭创建/加入/成员管理（地基核心）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

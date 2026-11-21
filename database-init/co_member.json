@@ -1,0 +1,1 @@
+{"_id":"（自动生成）","familyId":"（关联 co_family._id）","openid":"（微信 openid，运行时写入）","role":"admin 或 member","color":"#6b90b8","status":"active 或 removed","joinedAt":"（serverDate，自动）","avatarUrl":"（V3.8 真头像云存储 fileID，可空；未设置时前端 emoji 兜底）","nickName":"（V3.9 用户主动填写的昵称，可空；未设置时前端兜底“家人”；按 openid 跨家庭共用）"}
