@@ -6,6 +6,7 @@ const db=cloud.database({throwOnNotFound:false})
 const notifications=require('./notifications')(cloud,db)
 const hash=s=>crypto.createHash('sha256').update(s).digest('hex')
 const read=async(store,table,id)=>{const r=await store.collection(table).doc(id).get();return r.data||null}
+// 普通日程请求先校验家庭状态和有效成员关系，写事务内重新校验。
 async function context(familyId,openid,store=db) {
   if(!familyId||!openid)R.fail('BAD_PARAM','缺少家庭或身份')
   const family=await read(store,'co_family',familyId)
@@ -17,6 +18,7 @@ async function context(familyId,openid,store=db) {
   if(!member||member.status!=='active')R.fail('NOT_MEMBER','你已不属于这个家庭')
   return {family,member}
 }
+// 负责人离开后保留原日程，并提示家人重新安排。
 async function decorate(items) {
   return Promise.all(items.map(async item=>{
     const r=await db.collection('co_member').where({familyId:item.familyId,openid:item.ownerOpenid,status:'active'}).limit(1).get()
@@ -24,6 +26,7 @@ async function decorate(items) {
     return {...item,ownerName:m?(m.nickName||'家人'):'负责人已离开，请重新安排',ownerUnavailable:!m,ownerColor:m?m.color:'#657368'}
   }))
 }
+// 数据库只保存分享凭证的摘要。家庭分享版本递增后，旧凭证会一并失效。
 async function shared(token) {
   if(typeof token!=='string'||!/^[-_A-Za-z0-9]{32}$/.test(token))R.fail('SHARE_INVALID','链接已失效，请让家人重新分享')
   const r=await db.collection('co_schedule_share').where({tokenHash:hash(token)}).limit(1).get()
@@ -35,6 +38,7 @@ async function list(familyId,date,cursor,limit=20) {
   R.date(date)
   const size=Math.min(50,Math.max(1,Number(limit)||20))
   let where={familyId,date,deletedAt:null}
+  // 游标绑定家庭和日期，同一时间的日程再按文档 ID 排序，避免翻页漏项。
   if(cursor) {
     let c;try{c=JSON.parse(Buffer.from(cursor,'base64').toString())}catch(_){R.fail('BAD_PARAM','分页无效')}
     if(c.familyId!==familyId||c.date!==date||typeof c.id!=='string'||typeof c.time!=='string')R.fail('BAD_PARAM','分页无效')
@@ -52,6 +56,7 @@ async function mutate(e,openid) {
   let result
   try {
     const {family,member}=await context(e.familyId,openid,tx)
+    // 网络中断后可能已经提交。相同请求编号和内容直接复用原结果。
     const prior=await read(tx,'co_schedule_request',rid)
     if(prior){if(prior.payloadHash!==fingerprint)R.fail('IDEMPOTENCY_CONFLICT','请勿修改待确认请求');await tx.rollback();return prior.result}
     const now=Date.now()
@@ -63,6 +68,7 @@ async function mutate(e,openid) {
       if(!previous||previous.familyId!==e.familyId||previous.deletedAt)R.fail('NOT_FOUND','日程不存在')
       const p=R.permissions(member,previous)
       if(!(e.action==='setStatus'?p.status:p.edit))R.fail('NO_PERMISSION','无权执行此操作')
+      // 拒绝覆盖家人刚保存的新版本，客户端可保留草稿供核对。
       if(previous.version!==e.expectedVersion)R.fail('VERSION_CONFLICT','家人已更新这条安排，请查看最新内容')
       item={...previous,version:previous.version+1}
       if(e.action==='update')item={...item,...R.validate({...previous,...e.fields}),ownerOpenid:(e.fields||{}).ownerOpenid||previous.ownerOpenid}
@@ -78,6 +84,7 @@ async function mutate(e,openid) {
       if(!owner||owner.status!=='active')R.fail('BAD_PARAM','请选择有效负责人')
     }
     if(e.action==='create'||e.action==='update') {
+      // 新增和编辑必须通过微信内容检查。接口异常时中止写入，客户端保留草稿。
       let checked
       try { checked=await cloud.openapi.security.msgSecCheck({openid,scene:2,version:2,content:[item.title,item.place,item.childName,item.note].filter(Boolean).join('；')}) }
       catch(_) { R.fail('CONTENT_CHECK_UNAVAILABLE','内容检查暂不可用，内容已保留，请重试') }
@@ -89,8 +96,10 @@ async function mutate(e,openid) {
     const reason=typeof e.reason==='string'?e.reason.trim():''
     if(Array.from(reason).length>200)R.fail('BAD_PARAM','原因不超过200字')
     await tx.collection('co_schedule_event').add({data:{familyId:e.familyId,scheduleId:item._id,actorOpenid:openid,action:e.action,fromStatus:previous?previous.status:null,toStatus:item.status,changedFields:Object.keys(e.fields||{}),reason,createdAt:now,version:item.version}})
+    // 更换负责人时通知新旧负责人，去掉重复收件人和操作者本人。
     const recipients=[...new Set([item.ownerOpenid,...(e.action==='update'&&previous?[previous.ownerOpenid]:[])])].filter(id=>id!==openid)
     for(const recipientOpenid of recipients)await tx.collection('co_schedule_notify').add({data:{familyId:e.familyId,scheduleId:item._id,eventVersion:item.version,recipientOpenid,kind:e.action,status:'pending',attempts:0,nextAttemptAt:now,createdAt:now}})
+    // 与成员变更和解散操作更新同一家庭文档，让并发事务发生冲突。
     await tx.collection('co_family').doc(e.familyId).update({data:{mutationVersion:(family.mutationVersion||0)+1}})
     result={item,notificationStatus:recipients.length?'pending':'not_needed'}
     await tx.collection('co_schedule_request').doc(rid).set({data:{familyId:e.familyId,actorOpenid:openid,requestId:e.requestId,payloadHash:fingerprint,result,createdAt:now}})
@@ -101,7 +110,7 @@ async function mutate(e,openid) {
 exports.main=async(e={})=>{
   try {
     const openid=cloud.getWXContext().OPENID
-    // Timer invocation has no user OPENID. User-supplied action cannot enter maintenance.
+    // 定时维护由云端触发，普通用户调用带有 OPENID。
     if(!openid&&e.Type==='Timer'&&e.TriggerName==='scheduleMaintenance'){
       await notifications.pending()
       return {ok:true}
@@ -109,12 +118,14 @@ exports.main=async(e={})=>{
     if(e.action==='getSharedByToken'){
       const {share,family}=await shared(e.token)
       const result=await list(share.familyId,share.date,e.cursor,e.limit)
+      // 查询期间成员可能被移除，返回数据前再次验证分享凭证。
       await shared(e.token)
       return {...result,items:result.items.map(R.publicItem),familyName:family.name,date:share.date,expiresAt:share.expiresAt}
     }
     const {family,member}=await context(e.familyId,openid)
     if(e.action==='notificationConfig')return {templateId:process.env.SCHEDULE_TEMPLATE_ID||''}
     if(['create','update','setStatus','delete'].includes(e.action)){
+      // 先提交日程与通知任务。发送失败仅影响通知结果，不撤销日程。
       const result=await mutate(e,openid)
       try {
         await notifications.pending(e.familyId,result.item._id)
@@ -161,6 +172,7 @@ exports.main=async(e={})=>{
       }catch(err){try{await tx.rollback()}catch(_){}throw err}
       return {token,expiresAt,title:family.name+' '+e.date+'的接送安排',path:'/pages/schedule/readonly?token='+token}
     }
+    // 保留带码分享接口供后续使用。当前纯图片流程直接读取家庭日程。
     if(e.action==='generateShareCode') {
       const {share}=await shared(e.token)
       if(share.familyId!==e.familyId)R.fail('NO_PERMISSION','无权生成此分享码')

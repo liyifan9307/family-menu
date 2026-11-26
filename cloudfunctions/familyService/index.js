@@ -227,6 +227,7 @@ async function removeMember(openid, familyId, targetOpenid) {
     const actor = (await tx.collection(MEMBER).doc(me._id).get()).data
     if (!family || family.status === 'dissolving' || !actor || actor.status !== 'active' || actor.role !== 'admin') throw Object.assign(new Error('无权移除成员'), {code:'NO_PERMISSION'})
     await tx.collection(MEMBER).doc(target.data[0]._id).update({data:{status:'removed'}})
+    // 换掉家庭的分享版本，已发出的只读链接会统一失效。
     await tx.collection(FAMILY).doc(familyId).update({data:{shareEpoch:(family.shareEpoch||0)+1,mutationVersion:(family.mutationVersion||0)+1}})
     await tx.commit()
   } catch(e) { try { await tx.rollback() } catch(_) {} throw e }
@@ -330,6 +331,7 @@ async function dissolveFamily(openid, familyId) {
       const active = await db.collection(MEMBER).where({familyId,status:'active'}).limit(2).get()
       if (active.data.some(m=>m.openid!==openid)) throw Object.assign(new Error('请先移除其他成员'), {code:'OTHER_MEMBERS_EXIST'})
       if (!active.data.some(m=>m.openid===openid&&m.role==='admin')) throw Object.assign(new Error('无权解散家庭'), {code:'NO_PERMISSION'})
+      // 先关闭家庭访问，再分批清理数据，避免清理期间继续写入日程。
       await tx.collection(FAMILY).doc(familyId).update({data:{status:'dissolving',shareEpoch:(family.shareEpoch||0)+1,mutationVersion:(family.mutationVersion||0)+1}})
     }
     await tx.commit()

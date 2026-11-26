@@ -1,5 +1,6 @@
 const S=require('../../utils/schedule'),auth=require('../../utils/auth'),api=require('../../utils/api')
 Page({data:{loading:true,error:'',images:[],saving:false,date:'',height:1200},onLoad(o){this.familyId=auth.getCurrentFamilyId();this.setData({date:o.date||S.today()});this.build()},onShow(){if(this.familyId!==auth.getCurrentFamilyId()){this.invalid=true;this.setData({images:[],error:'家庭已切换，请返回重新进入'})}},
+ // 静态图片使用当前家庭的成员权限读取日程，无需创建访客链接或调用小程序码。
  async build(){let stage='读取家庭日程';this.setData({loading:true,error:'',images:[]});try{
   const familyId=this.familyId
   const [r, familyResult]=await Promise.all([
@@ -8,6 +9,7 @@ Page({data:{loading:true,error:'',images:[],saving:false,date:'',height:1200},on
   ])
   if(this.invalid||familyId!==auth.getCurrentFamilyId())return
   stage='绘制分享图片'
+  // 同一批图片使用相同生成时间，按日程数量分页方便发送和查看。
   const generatedAt=Date.now()
   const chunks=[];for(let i=0;i<r.items.length;i+=2)chunks.push(r.items.slice(i,i+2));if(!chunks.length)chunks.push([])
   const images=[]
@@ -18,6 +20,7 @@ Page({data:{loading:true,error:'',images:[],saving:false,date:'',height:1200},on
   const ctx=wx.createCanvasContext('poster',this), width=600
   let y=50
   ctx.setFillStyle('#ffffff');ctx.fillRect(0,0,width,1800)
+  // 按画布测量的宽度换行，保留完整的孩子姓名和接送地点。
   function lines(value,size){ctx.setFontSize(size);const result=[];let line='';for(const char of Array.from(String(value||''))){if(char==='\n'||ctx.measureText(line+char).width>512){result.push(line);line=char==='\n'?'':char}else line+=char}if(line)result.push(line);return result}
   function text(value,size,color='#263e32'){ctx.setFontSize(size);ctx.setFillStyle(color);for(const line of lines(value,size)){ctx.fillText(line,44,y);y+=size+12}}
   const heading=name+' · 接送安排'

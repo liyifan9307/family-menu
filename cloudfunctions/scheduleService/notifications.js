@@ -1,6 +1,7 @@
 // The template mapping is deployment configuration, never accepted from a caller.
 module.exports=function(cloud,db){
  const read=async(table,id)=>(await db.collection(table).doc(id).get()).data
+ // 事务内将任务标为发送中，避免保存后即时发送与定时任务重复领取。
  async function sendTask(id){
   const tx=await db.startTransaction();let task
   try{task=(await tx.collection('co_schedule_notify').doc(id).get()).data;if(!task||task.status!=='pending'||task.nextAttemptAt>Date.now()){await tx.rollback();return}
@@ -8,6 +9,7 @@ module.exports=function(cloud,db){
   }catch(e){try{await tx.rollback()}catch(_){}return}
   const update=data=>db.collection('co_schedule_notify').doc(id).update({data})
   try{
+   // 发送前重新检查家庭和收件人，避免继续通知已离开的成员。
    const family=await read('co_family',task.familyId),item=await read('co_schedule',task.scheduleId)
    const members=await db.collection('co_member').where({familyId:task.familyId,openid:task.recipientOpenid,status:'active'}).limit(1).get()
    if(!family||family.status==='dissolving'||!members.data.length||!item)return await update({status:'cancelled'})
@@ -25,6 +27,7 @@ module.exports=function(cloud,db){
   }
  }
  return {process:sendTask,async pending(familyId,scheduleId){
+  // 中断的发送可能已经到达微信，标为未知并保留记录，不自动重发。
   const stalled=await db.collection('co_schedule_notify').where({status:'sending',startedAt:db.command.lte(Date.now()-300000)}).limit(20).get()
   for(const task of stalled.data)await db.collection('co_schedule_notify').doc(task._id).update({data:{status:'unknown',lastError:'INTERRUPTED_SEND'}})
 const where={status:'pending',nextAttemptAt:db.command.lte(Date.now())};if(familyId)where.familyId=familyId;if(scheduleId)where.scheduleId=scheduleId;const r=await db.collection('co_schedule_notify').where(where).limit(20).get();for(const t of r.data)await sendTask(t._id)}}

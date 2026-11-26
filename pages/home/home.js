@@ -46,6 +46,7 @@ Page({
       const r = await schedule.all('listByDate', {familyId, date:schedule.today()})
       if(sequence !== this.sequence || familyId !== this.data.currentFamilyId) return
       const time = new Date(Date.now()+8*3600000).toISOString().slice(11,16)
+      // 优先显示还没到时间的待办，没有时再显示较早的未完成安排。
       const pending = r.items.filter(i=>i.status==='pending')
       const next = pending.find(i=>i.timeStart>=time)||pending[0]
       this.setData({nextSchedule:next||null,scheduleCount:r.items.length,scheduleSummary:next?next.timeStart+' '+next.title+' · '+next.ownerName:r.items.length?'今天的安排已结束':'今天还没有安排',scheduleLoading:false})
