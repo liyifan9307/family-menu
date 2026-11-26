@@ -9,6 +9,14 @@
             {
                 "value": "database-init",
                 "type": "folder"
+            },
+            {
+                "value": "tests",
+                "type": "folder"
+            },
+            {
+                "value": "docs",
+                "type": "folder"
             }
         ],
         "include": []

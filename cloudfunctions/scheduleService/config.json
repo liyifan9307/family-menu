@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "openapi": [
+      "subscribeMessage.send",
+      "wxacode.getUnlimited",
+      "security.msgSecCheck"
+    ]
+  },
+  "triggers": [
+    {
+      "name": "scheduleMaintenance",
+      "type": "timer",
+      "config": "0 */1 * * * * *"
+    }
+  ]
+}

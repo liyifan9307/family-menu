@@ -63,6 +63,9 @@ async function requireMember(openid, familyId) {
   if (!res.data || res.data.length === 0) {
     throw Object.assign(new Error('你不属于这个家庭'), { code: 'NOT_MEMBER' })
   }
+  const family = await db.collection(FAMILY).doc(familyId).get()
+  if (!family.data) throw Object.assign(new Error('家庭不存在'), {code:'FAMILY_NOT_FOUND'})
+  if (family.data.status === 'dissolving') throw Object.assign(new Error('家庭正在解散'), {code:'FAMILY_DISSOLVING'})
   return res.data[0]
 }
 
@@ -130,19 +133,23 @@ async function joinFamily(openid, inviteCode) {
   const removed = await db.collection(MEMBER).where({ openid, familyId, status: 'removed' }).get()
   const color = await pickColor(familyId)
   let memberId
-  if (removed.data && removed.data.length > 0) {
-    memberId = removed.data[0]._id
-    await db.collection(MEMBER).doc(memberId).update({
-      data: { status: 'active', role: 'member', color, joinedAt: db.serverDate() },
-    })
-  } else {
-    const addRes = await db.collection(MEMBER).add({
-      data: {
-        familyId, openid, role: 'member', color, status: 'active', joinedAt: db.serverDate(),
-      },
-    })
-    memberId = addRes._id
-  }
+  const transaction = await db.startTransaction()
+  try {
+    const f = (await transaction.collection(FAMILY).doc(familyId).get()).data
+    if (!f || f.status === 'dissolving') throw Object.assign(new Error('家庭已失效'), {code:'FAMILY_NOT_FOUND'})
+    if (removed.data && removed.data.length) {
+      memberId = removed.data[0]._id
+      const old = (await transaction.collection(MEMBER).doc(memberId).get()).data
+      if (old.status === 'active') throw Object.assign(new Error('已加入家庭'), {code:'ALREADY_JOINED'})
+      await transaction.collection(MEMBER).doc(memberId).update({data:{status:'active',role:'member',color,joinedAt:new Date()}})
+    } else {
+      const r = await transaction.collection(MEMBER).add({data:{familyId,openid,role:'member',color,status:'active',joinedAt:new Date()}})
+      memberId = r._id
+    }
+    await transaction.collection(FAMILY).doc(familyId).update({data:{mutationVersion:(f.mutationVersion||0)+1}})
+    await transaction.commit()
+  } catch(e) { try { await transaction.rollback() } catch(_) {} throw e }
+
   return {
     familyId,
     member: memberView({
@@ -159,7 +166,7 @@ async function getFamilies(openid) {
   const famRes = await db.collection(FAMILY).where({ _id: _.in(ids) }).get()
   const famMap = {}
   ;(famRes.data || []).forEach(f => { famMap[f._id] = f })
-  const families = members.filter(m => famMap[m.familyId]).map(m => ({
+  const families = members.filter(m => famMap[m.familyId] && famMap[m.familyId].status !== 'dissolving').map(m => ({
     familyId: m.familyId,
     name: famMap[m.familyId].name,
     role: m.role,
@@ -214,9 +221,16 @@ async function removeMember(openid, familyId, targetOpenid) {
   if (!target.data || target.data.length === 0) {
     throw Object.assign(new Error('该成员不在此家庭'), { code: 'TARGET_NOT_FOUND' })
   }
-  await db.collection(MEMBER).doc(target.data[0]._id).update({
-    data: { status: 'removed' },
-  })
+  const tx = await db.startTransaction()
+  try {
+    const family = (await tx.collection(FAMILY).doc(familyId).get()).data
+    const actor = (await tx.collection(MEMBER).doc(me._id).get()).data
+    if (!family || family.status === 'dissolving' || !actor || actor.status !== 'active' || actor.role !== 'admin') throw Object.assign(new Error('无权移除成员'), {code:'NO_PERMISSION'})
+    await tx.collection(MEMBER).doc(target.data[0]._id).update({data:{status:'removed'}})
+    await tx.collection(FAMILY).doc(familyId).update({data:{shareEpoch:(family.shareEpoch||0)+1,mutationVersion:(family.mutationVersion||0)+1}})
+    await tx.commit()
+  } catch(e) { try { await tx.rollback() } catch(_) {} throw e }
+
   return { ok: true }
 }
 
@@ -293,39 +307,44 @@ async function updateProfile(openid, nickName) {
 // V3.10：解散家庭 —— 仅 admin、且家庭内除自己外无其他 active 成员时才允许
 // 安全：requireMember 双参数归属校验 + role=admin；防一人解散牵连全家
 // 事务：微信云开发事务不支持 where 批量操作（官方文档），先查出全部 _id，再在事务内逐条 doc().remove()
+async function cleanupFamily(familyId) {
+  // Each pass is bounded. A timer resumes interrupted or large cleanups.
+  const tables = ['co_schedule','co_schedule_event','co_schedule_share','co_schedule_notify','co_schedule_request']
+  for (const table of tables) {
+    const rows = await db.collection(table).where({familyId}).limit(50).get()
+    for (const row of rows.data) await db.collection(table).doc(row._id).remove()
+    if (rows.data.length === 50) return {ok:false,processing:true,familyId}
+  }
+  const rows = await db.collection(MEMBER).where({familyId}).limit(50).get()
+  for (const row of rows.data) await db.collection(MEMBER).doc(row._id).remove()
+  if (rows.data.length === 50) return {ok:false,processing:true,familyId}
+  await db.collection(FAMILY).doc(familyId).remove()
+  return {ok:true,familyId}
+}
 async function dissolveFamily(openid, familyId) {
-  const me = await requireMember(openid, familyId)
-  if (me.role !== 'admin') {
-    throw Object.assign(new Error('只有管理员可以解散家庭'), { code: 'NO_PERMISSION' })
-  }
-  // 统计家庭内 active 成员：除自己外还有别人则拒绝，须先移除
-  const activeRes = await db.collection(MEMBER).where({ familyId, status: 'active' }).get()
-  const activeList = activeRes.data || []
-  const others = activeList.filter(m => m.openid !== openid)
-  if (others.length > 0) {
-    throw Object.assign(new Error('请先移除其他成员，再解散家庭'), { code: 'OTHER_MEMBERS_EXIST' })
-  }
-  // 找出该家庭全部成员记录（含 removed 历史），一并删除，避免残留孤儿
-  const allRes = await db.collection(MEMBER).where({ familyId }).get()
-  const allIds = (allRes.data || []).map(m => m._id)
-  // 事务原子删：家庭文档 + 全部成员记录。事务内只支持 doc() 单记录操作
-  const transaction = await db.startTransaction()
+  const tx = await db.startTransaction()
   try {
-    await transaction.collection(FAMILY).doc(familyId).remove()
-    for (const id of allIds) {
-      await transaction.collection(MEMBER).doc(id).remove()
+    const family = (await tx.collection(FAMILY).doc(familyId).get()).data
+    if (!family || family.ownerOpenid !== openid) throw Object.assign(new Error('无权解散家庭'), {code:'NO_PERMISSION'})
+    if (family.status !== 'dissolving') {
+      const active = await db.collection(MEMBER).where({familyId,status:'active'}).limit(2).get()
+      if (active.data.some(m=>m.openid!==openid)) throw Object.assign(new Error('请先移除其他成员'), {code:'OTHER_MEMBERS_EXIST'})
+      if (!active.data.some(m=>m.openid===openid&&m.role==='admin')) throw Object.assign(new Error('无权解散家庭'), {code:'NO_PERMISSION'})
+      await tx.collection(FAMILY).doc(familyId).update({data:{status:'dissolving',shareEpoch:(family.shareEpoch||0)+1,mutationVersion:(family.mutationVersion||0)+1}})
     }
-    await transaction.commit()
-  } catch (e) {
-    try { await transaction.rollback() } catch (_) { /* rollback 失败不掩盖原始错误 */ }
-    throw e
-  }
-  return { ok: true, familyId }
+    await tx.commit()
+  } catch(e) { try { await tx.rollback() } catch(_) {} throw e }
+  return cleanupFamily(familyId)
 }
 
 exports.main = async (event = {}) => {
   const { action } = event
   const openid = cloud.getWXContext().OPENID
+  if (!openid && event.Type === 'Timer' && event.TriggerName === 'familyCleanup') {
+    const rows = await db.collection(FAMILY).where({status:'dissolving'}).limit(5).get()
+    for (const row of rows.data) await cleanupFamily(row._id)
+    return {ok:true}
+  }
   if (!openid) return { error: { code: 'NO_OPENID', message: '无法识别身份' } }
   try {
     switch (action) {

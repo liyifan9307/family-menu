@@ -16,6 +16,11 @@ Page({
     status: LOGIN_STATUS.UNKNOWN,
   },
 
+  onLoad(options = {}) {
+    this.explicitEntry = options.mode === 'create' || options.mode === 'join'
+    if (this.explicitEntry) this.setData({ mode: options.mode })
+  },
+
   async onShow() {
     await this.checkIdentity()
   },
@@ -30,9 +35,9 @@ Page({
       app.globalData.loginStatus = result.status
       this.setData({ status: result.status })
 
-      if (result.status === LOGIN_STATUS.OK && (result.families || []).length > 0) {
+      if (!this.explicitEntry && result.status === LOGIN_STATUS.OK && (result.families || []).length > 0) {
         // 已归属 → 直接进家庭首页
-        wx.redirectTo({ url: '/pages/home/home' })
+        wx.switchTab({ url: '/pages/home/home' })
         return
       }
       // unknown / removed → 留本页（removed 给个提示）
@@ -86,7 +91,7 @@ Page({
       succeeded = true // 成功后保持 submitting 锁定，防止 600ms 跳转窗口内重复创建
       wx.hideLoading()
       wx.showToast({ title: '家庭创建成功', icon: 'success' })
-      setTimeout(() => wx.redirectTo({
+      setTimeout(() => wx.switchTab({
         url: '/pages/home/home',
         fail: () => this.setData({ submitting: false }), // 跳转失败则解锁，允许重试
       }), 600)
@@ -125,7 +130,7 @@ Page({
       succeeded = true // 成功后保持 submitting 锁定，防止 600ms 跳转窗口内重复加入
       wx.hideLoading()
       wx.showToast({ title: '加入成功', icon: 'success' })
-      setTimeout(() => wx.redirectTo({
+      setTimeout(() => wx.switchTab({
         url: '/pages/home/home',
         fail: () => this.setData({ submitting: false }), // 跳转失败则解锁，允许重试
       }), 600)

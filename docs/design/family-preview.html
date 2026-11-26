@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的家 · UI 设计稿（对齐当前代码 2026-11-25）</title>
+<style>
+  :root{
+    --brand:#46765a; --brand-dark:#3a715a; --ink:#263e32; --ink2:#657368;
+    --line:#e3e8e4; --bg:#f7f7f2; --card:#fff; --danger:#c0392b;
+    --radius:7px; --radius-lg:20px; --radius-xl:24px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:#202622; color:#e8ede9;
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1280px;margin:0 auto;padding:40px 28px 80px;}
+  header h1{font-size:26px;font-weight:600;margin:0 0 10px;color:#f4f7f5;}
+  header p{font-size:14px;line-height:1.8;color:#a9b6ae;margin:0;}
+  header .meta{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;}
+  header .tag{font-size:12px;padding:5px 11px;border:1px solid #3d4a42;border-radius:20px;color:#b9c8bf;}
+  .section-title{font-size:18px;font-weight:600;margin:52px 0 6px;color:#eef3f0;border-left:3px solid var(--brand);padding-left:12px;}
+  .section-note{font-size:13px;color:#8f9d94;margin:0 0 24px;padding-left:15px;line-height:1.7;}
+  .gallery{display:flex;flex-wrap:wrap;gap:32px 26px;}
+  .item{width:340px;}
+  .item-label{font-size:13px;color:#bcc9c1;margin:0 0 10px;display:flex;align-items:center;gap:8px;}
+  .item-label .dot{width:7px;height:7px;border-radius:50%;background:#5dcaa5;display:inline-block;}
+  .item-label .dot.upd{background:#efa027;}
+  .item-label .old{font-size:11px;color:#7f8d84;border:1px solid #3d4a42;border-radius:10px;padding:2px 7px;}
+
+  .phone{
+    width:340px;height:640px;background:var(--bg);border-radius:34px;
+    border:9px solid #111614;overflow:hidden;position:relative;
+    box-shadow:0 14px 40px rgba(0,0,0,.35);
+  }
+  .statusbar{
+    height:28px;display:flex;align-items:center;justify-content:space-between;
+    padding:0 18px;font-size:11px;color:var(--ink);background:var(--bg);
+  }
+  .statusbar .icons{letter-spacing:2px;}
+  .navbar{
+    height:40px;display:flex;align-items:center;justify-content:center;
+    font-size:15px;color:var(--ink);background:var(--bg);position:relative;
+  }
+  .navbar .back{position:absolute;left:16px;font-size:18px;color:var(--brand);}
+  .screen{
+    position:absolute;top:68px;bottom:0;left:0;right:0;overflow:hidden;
+    padding:0 20px 20px;
+  }
+  .tabbar{
+    position:absolute;bottom:0;left:0;right:0;height:56px;background:#fff;
+    border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-around;
+  }
+  .tabbar .tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#5f6368;}
+  .tabbar .tab.on{color:var(--brand);}
+  .tabbar .ic{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+
+  .h1{font-size:21px;font-weight:600;color:var(--ink);line-height:1.4;}
+  .h2{font-size:15px;color:var(--ink2);line-height:1.6;margin-top:6px;}
+  .sec-t{font-size:14px;color:var(--ink2);margin:16px 0 8px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;}
+  .primary-btn{min-height:48px;line-height:48px;text-align:center;background:var(--brand);color:#fff;font-size:17px;font-weight:600;border-radius:var(--radius);margin-top:12px;}
+  .ghost-btn{min-height:48px;line-height:46px;text-align:center;background:#fff;color:var(--brand);font-size:17px;font-weight:600;border:1px solid var(--brand);border-radius:var(--radius);margin-top:10px;}
+  .warn-box{background:#fdf6ec;border:1px solid #f0d9b5;color:#8a6d3b;font-size:13px;line-height:1.6;padding:10px 12px;border-radius:var(--radius);margin-top:10px;}
+  .field-label{font-size:14px;color:var(--ink2);margin-bottom:6px;display:block;}
+  .field-input{min-height:48px;padding:0 12px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);font-size:17px;color:var(--ink);display:flex;align-items:center;}
+  .field-input.ph{color:#a3aca6;}
+
+  /* identity */
+  .identity{padding-top:40px;}
+  .hero{margin-bottom:20px;}
+  .entry-card{display:flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;min-height:80px;margin-bottom:12px;}
+  .entry-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;color:#fff;flex-shrink:0;}
+  .entry-icon.create{background:var(--brand);}
+  .entry-icon.join{background:#6b90b8;}
+  .entry-body{flex:1;margin-left:12px;}
+  .entry-title{font-size:18px;font-weight:600;color:var(--ink);}
+  .entry-desc{font-size:13px;color:var(--ink2);line-height:1.6;margin-top:4px;}
+  .entry-arrow{font-size:24px;color:var(--ink2);margin-left:8px;}
+  .nav-line{font-size:15px;color:var(--brand);padding:8px 0;margin-bottom:12px;}
+  .code-input{letter-spacing:4px;}
+
+  /* home */
+  .home-page{padding:22px 24px;}
+  .family-title{width:100%;justify-content:flex-start;display:flex;align-items:center;gap:9px;background:transparent;padding:0;margin:0;color:var(--ink);font-size:21px;line-height:1.4;font-weight:500;min-height:44px;}
+  .family-title.readonly{cursor:default;}
+  .chevron{flex-shrink:0;font-size:18px;color:var(--brand);}
+  .greeting{color:var(--ink2);font-size:14px;margin-top:4px;}
+  .section-label{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;margin:32px 0 14px;font-size:16px;font-weight:500;}
+  .section-caption{font-size:12px;color:var(--ink2);font-weight:400;}
+  .feature{width:100%;background:#eaf0e6;border-radius:12px;padding:22px;margin:0;text-align:left;color:var(--ink);line-height:1.5;font-weight:400;}
+  .feature-tag{display:inline-block;border:1px solid var(--brand);border-radius:16px;color:var(--brand);font-size:11px;padding:2px 9px;}
+  .feature-title{font-size:22px;font-weight:500;margin:14px 0 5px;}
+  .feature-description{font-size:13px;color:var(--ink2);}
+  .food{display:block;margin:14px 0 0 auto;}
+  .feature-bottom{display:flex;justify-content:space-between;gap:6px;font-size:12px;color:var(--brand);margin-top:12px;}
+  .family-peek{background:var(--card);border-radius:12px;padding:18px 20px;margin-top:20px;}
+  .fp-head{display:flex;justify-content:space-between;align-items:center;}
+  .fp-title{font-size:16px;font-weight:500;color:var(--ink);}
+  .fp-link{font-size:12px;color:var(--brand);}
+  .fp-body{display:flex;align-items:center;gap:5px;margin-top:14px;flex-wrap:wrap;}
+  .fp-count{font-size:12px;color:var(--ink2);margin-left:4px;}
+  .more{text-align:center;font-size:12px;color:var(--ink2);margin-top:22px;}
+
+  /* my */
+  .my-page{padding:24px 24px;}
+  .profile-header{display:flex;align-items:center;gap:16px;margin:4px 0 28px;}
+  .profile-avatar{width:64px;height:64px;border-radius:22px;flex-shrink:0;background:#eaf0e6;display:flex;align-items:center;justify-content:center;font-size:32px;}
+  .profile-name{font-size:21px;font-weight:500;color:var(--ink);}
+  .profile-edit{font-size:13px;color:var(--ink2);margin-top:4px;}
+  .family-summary{padding:20px;background:var(--card);border-radius:12px;}
+  .eyebrow,.summary-role{font-size:13px;color:var(--ink2);}
+  .family-title.my{font-size:19px;margin:6px 0 4px;min-height:38px;}
+  .family-people{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:18px;}
+  .small-avatar{width:30px;height:30px;border-radius:50%;flex-shrink:0;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  .people-count{color:var(--ink2);font-size:12px;margin-left:3px;}
+  .menu-list{margin-top:20px;border-radius:12px;background:var(--card);padding:0 18px;}
+  .menu-row{display:flex;align-items:center;gap:12px;padding:18px 0;margin:0;font-size:15px;color:var(--ink);}
+  .menu-row+.menu-row{border-top:1px solid #f0f2eb;}
+  .menu-icon{width:22px;height:22px;flex-shrink:0;}
+  .menu-end{margin-left:auto;color:var(--ink2);font-size:13px;}
+
+  /* 遮罩 / 弹层 */
+  .mask{position:absolute;inset:0;background:rgba(16,38,27,.34);z-index:20;display:flex;align-items:flex-end;}
+  .sheet{width:100%;box-sizing:border-box;padding:12px 24px 24px;background:#fff;border-radius:24px 24px 0 0;color:var(--ink);}
+  .handle{width:32px;height:4px;background:#eaf0e6;border-radius:4px;margin:0 auto 18px;}
+  .sheet-heading{display:flex;align-items:center;justify-content:space-between;font-size:19px;font-weight:500;margin-bottom:12px;}
+  .sheet-close{width:40px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--brand);background:#eaf0e6;font-size:22px;}
+  .sheet-sub{font-size:13px;color:var(--ink2);margin:4px 0 16px;}
+  .choices{max-height:260px;overflow:auto;}
+  .choice{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;background:#f7f7f2;color:var(--ink);padding:14px 16px;border-radius:14px;margin-bottom:10px;}
+  .choice.selected{background:#eaf0e6;color:var(--brand);}
+  .name{font-size:16px;}
+  .role{font-size:12px;color:var(--ink2);margin-top:4px;}
+  .sw-dot{width:10px;height:10px;border-radius:50%;margin-right:8px;display:inline-block;}
+  .sheet-actions{display:flex;gap:10px;margin-top:16px;}
+  .sheet-actions button{flex:1;padding:12px 4px;font-size:14px;color:var(--brand);background:#eaf0e6;border-radius:12px;text-align:center;}
+  .sheet-actions button.primary{color:#fff;background:var(--brand);}
+
+  .code-box{flex:1;min-height:48px;line-height:48px;text-align:center;background:#f4f8f6;border:1px dashed var(--brand);border-radius:var(--radius);font-size:22px;font-weight:600;letter-spacing:5px;color:var(--brand);}
+  .code-box.masked{color:var(--ink2);letter-spacing:3px;}
+  .code-row{display:flex;align-items:center;gap:8px;}
+  .code-eye{min-width:48px;text-align:center;font-size:14px;color:var(--brand);}
+  .code-actions{display:flex;gap:10px;margin-top:12px;}
+  .mini-btn{flex:1;min-height:44px;line-height:44px;text-align:center;background:var(--brand);color:#fff;font-size:15px;font-weight:600;border-radius:10px;}
+  .mini-btn.ghost{background:#fff;color:var(--brand);border:1px solid var(--brand);}
+  .member-row{display:flex;align-items:center;min-height:56px;border-bottom:1px solid var(--line);}
+  .member-row:last-child{border-bottom:none;}
+  .m-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .m-info{margin-left:10px;flex:1;min-width:0;}
+  .m-name{font-size:16px;color:var(--ink);}
+  .m-role{font-size:12px;color:var(--ink2);margin-top:3px;}
+  .m-remove{min-width:48px;min-height:36px;line-height:36px;text-align:center;color:var(--danger);font-size:13px;border:1px solid var(--danger);border-radius:10px;}
+  .m-tip{font-size:11px;color:var(--ink2);padding:8px 0 0;}
+  .panel-hint{font-size:13px;color:var(--ink2);line-height:1.6;padding:8px 0 12px;}
+  .settings-name{font-size:17px;}
+  .settings-members{width:100%;margin-top:10px;background:#eaf0e6;color:var(--brand);border-radius:12px;font-size:15px;padding:12px;text-align:center;}
+  .danger-zone{margin-top:20px;padding:14px;background:#fcf5f2;border-radius:12px;}
+  .dz-title{font-size:14px;font-weight:600;color:var(--danger);margin-bottom:6px;}
+  .dz-desc{font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:12px;}
+  .dz-btn{min-height:44px;line-height:44px;text-align:center;border:1px solid var(--danger);color:var(--danger);background:#fff;font-size:15px;font-weight:600;border-radius:12px;}
+  .dz-btn.disabled{border-color:var(--line);color:#9aa39d;background:#f6f7f9;font-weight:400;}
+
+  .pf-row{margin-top:16px;}
+  .pf-label{font-size:15px;font-weight:500;margin-bottom:8px;}
+  .pf-avatar-ph{width:56px;height:56px;border-radius:50%;background:#eef5f1;color:var(--brand);font-size:28px;display:flex;align-items:center;justify-content:center;}
+  .pf-hint{font-size:11px;color:var(--ink2);margin-top:6px;}
+  .pf-input{min-height:48px;background:#f4f8f6;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;color:var(--ink);display:flex;align-items:center;}
+  .pf-input.ph{color:#9aa39d;font-size:13px;}
+  .pf-actions{display:flex;gap:12px;margin-top:24px;}
+  .pf-btn{flex:1;min-height:46px;line-height:46px;text-align:center;background:var(--brand);color:#fff;font-size:16px;font-weight:600;border-radius:12px;}
+  .pf-btn.ghost{background:#fff;color:var(--ink2);border:1px solid var(--line);}
+
+  .changelog{max-width:760px;}
+  .chg{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #2c342f;}
+  .chg-k{width:96px;flex-shrink:0;font-size:12px;color:#7f8d84;padding-top:2px;}
+  .chg-v{font-size:13px;color:#c3cec6;line-height:1.7;}
+  .chg-v b{color:#e7efe9;font-weight:600;}
+  .flag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:8px;margin-left:6px;}
+  .flag.new{background:#173e2e;color:#8fe0b8;}
+  .flag.upd{background:#3d2f14;color:#f0c073;}
+  /* 图标方案对比 */
+  .icon-compare{background:#2a322c;border:1px solid #3d4a42;border-radius:12px;padding:20px 22px;margin-bottom:48px;}
+  .cmp-head{display:flex;gap:16px;font-size:12px;color:#8f9d94;padding:0 0 12px 132px;border-bottom:1px solid #3d4a42;}
+  .cmp-head span{flex:1;}
+  .cmp-row{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid #333e37;}
+  .cmp-row:last-child{border-bottom:none;}
+  .cmp-label{width:116px;flex-shrink:0;font-size:13px;color:#c3d0c7;}
+  .cmp-cell{flex:1;display:flex;align-items:center;gap:12px;background:#232a25;border-radius:8px;padding:10px 14px;}
+  .cmp-cell img{width:36px;height:36px;object-fit:contain;}
+  .cmp-cell .nm{font-size:12px;color:#8f9d94;}
+  .cmp-tag{font-size:11px;color:#efa027;border:1px solid #6b5326;border-radius:4px;padding:2px 7px;margin-left:auto;}
+  .cmp-note{font-size:12px;color:#9fb0a5;line-height:1.8;margin:16px 0 0;padding:12px 14px;background:#232a25;border-radius:8px;}
+  .cmp-note b{color:#d9e4dc;}
+  .gallery-img{display:block;width:100%;max-width:520px;margin:18px auto 0;border-radius:8px;}
+  .rec-box{margin-top:16px;padding:14px 16px;background:#233029;border:1px solid #3a5c47;border-radius:8px;font-size:12px;color:#c3d6c8;line-height:1.9;}
+  .rec-box b{color:#7fe0ac;}
+  .rec-pick{display:inline-block;background:#2f4a39;color:#a9e8c4;border-radius:4px;padding:1px 8px;margin:0 2px;font-weight:600;}
+  footer{margin-top:60px;font-size:12px;color:#69766d;line-height:1.9;}
+  .chg-k{width:88px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>我的家 · UI 设计稿（优化稿 · 待评审）</h1>
+    <p>按当前代码逐屏还原后，应用六项优化：图标回归真实资源、家庭切换按钮顺序修正、邀请码默认折叠、圆角与字号统一、主页补「我的家人」模块、家庭切换收敛到「我的」页。本稿仅供评审，代码尚未改动；评审通过后再同步到 wxss 与 wxml。</p>
+    <div class="meta">
+      <span class="tag">基准：需求 V3.10 / 技术设计 v2.1</span>
+      <span class="tag">UI 稿：V3.5 / V3.6</span>
+      <span class="tag">适配：375 × 667 逻辑视口</span>
+      <span class="tag">生成：2026-11-25</span>
+    </div>
+  </header>
+
+  <h2 class="section-title">一、身份引导（启动与入口）</h2>
+  <p class="section-note">identity 页：三态识别后的创建 / 加入二选一及两个表单。</p>
+  <div class="gallery">
+    <div class="item">
+      <p class="item-label"><span class="dot"></span>identity · 二选一入口</p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="identity">
+            <div class="hero"><div class="h1">欢迎回家</div><div class="h2">先建一个家，或加入家人已建好的家</div></div>
+            <div class="entry-card"><div class="entry-icon create">＋</div><div class="entry-body"><div class="entry-title">创建家庭</div><div class="entry-desc">你是这个家的管理员，建好后把邀请码发给家人</div></div><div class="entry-arrow">›</div></div>
+            <div class="entry-card"><div class="entry-icon join">↗</div><div class="entry-body"><div class="entry-title">加入家庭</div><div class="entry-desc">输入家人给的 6 位邀请码，一起开启家庭生活</div></div><div class="entry-arrow">›</div></div>
+            <div class="warn-box">与家人分享生活，从一个家开始。头像和昵称可在加入后随时设置。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="item">
+      <p class="item-label"><span class="dot"></span>identity · 创建家庭</p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="identity">
+            <div class="nav-line">‹ 返回</div>
+            <div class="hero"><div class="h1">创建家庭</div><div class="h2">起个名字，比如「我的小家」「爸妈家」</div></div>
+            <div class="card"><span class="field-label">家庭名称</span><div class="field-input">输入家庭名称</div></div>
+            <div class="primary-btn">创建并成为管理员</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="item">
+      <p class="item-label"><span class="dot"></span>identity · 加入家庭</p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="identity">
+            <div class="nav-line">‹ 返回</div>
+            <div class="hero"><div class="h1">加入家庭</div><div class="h2">输入家人给的 6 位邀请码</div></div>
+            <div class="card"><span class="field-label">邀请码</span><div class="field-input code-input">6 位邀请码</div></div>
+            <div class="primary-btn">加入家庭</div>
+            <div class="warn-box">邀请码无效或已过期时不会写入任何数据；同一家庭不能重复加入，但可以加入多个不同的家庭。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">二、主页 home</h2>
+  <p class="section-note">家庭应用入口；点菜卡片当前为占位（点击提示「即将开放」）。</p>
+  <div class="gallery">
+    <div class="item">
+      <p class="item-label"><span class="dot"></span>home · 家庭应用</p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">主页</div>
+        <div class="screen">
+          <div class="home-page">
+            <div class="family-title readonly">我的家</div>
+            <div class="greeting">一家人的日常，都在这里。</div>
+            <div class="section-label"><span>家庭应用</span><span class="section-caption">慢慢把生活安排好</span></div>
+            <div class="feature">
+              <div class="feature-tag">一起好好吃饭</div>
+              <div class="feature-title">今天，吃点什么？</div>
+              <div class="feature-description">点喜欢的菜，一起准备一桌家常。</div>
+              <svg class="food" width="66" height="54" viewBox="0 0 66 54" fill="none" aria-hidden="true">
+                <path d="M10 30h46M14 30a19 19 0 0 0 38 0" stroke="#46765a" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M24 12c-3 3-3 6 0 9M33 9c-3 3-3 6 0 9M42 12c-3 3-3 6 0 9" stroke="#9bb9a8" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M8 48h50" stroke="#46765a" stroke-width="2.4" stroke-linecap="round"/>
+              </svg>
+              <div class="feature-bottom"><span>家庭点菜 · 即将开放</span><span>↗</span></div>
+            </div>
+            <div class="family-peek">
+              <div class="fp-head"><span class="fp-title">我的家人</span><span class="fp-link">邀请家人 ›</span></div>
+              <div class="fp-body">
+                <div class="small-avatar" style="background:#6b90b8">🧑</div>
+                <div class="small-avatar" style="background:#c48494">👩</div>
+                <div class="small-avatar" style="background:#d0a15e">👨</div>
+                <span class="fp-count">3 位家人</span>
+              </div>
+            </div>
+            <div class="more">更多家庭小工具，正在准备中</div>
+          </div>
+        </div>
+        <div class="tabbar"><div class="tab on"><div class="ic">⌂</div>主页</div><div class="tab"><div class="ic">☺</div>我的</div></div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">三、我的 my</h2>
+  <p class="section-note">个人资料 + 家庭摘要 + 三项管理入口（成员 / 邀请 / 设置以弹层承载）。</p>
+  <div class="gallery">
+    <div class="item">
+      <p class="item-label"><span class="dot upd"></span>my · 主页 <span class="old">本次重做</span></p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="my-page">
+            <div class="profile-header">
+              <div class="profile-avatar">🌿</div>
+              <div><div class="profile-name">家人</div><div class="profile-edit">编辑个人资料 ›</div></div>
+            </div>
+            <div class="family-summary">
+              <div class="eyebrow">当前家庭</div>
+              <div class="family-title my"><span>我的家</span><span class="chevron">⌄</span></div>
+              <div class="summary-role">管理员</div>
+              <div class="family-people">
+                <div class="small-avatar" style="background:#6b90b8">🧑</div>
+                <div class="small-avatar" style="background:#c48494">👩</div>
+                <div class="small-avatar" style="background:#d0a15e">👨</div>
+                <span class="people-count">3 位家人，一起生活</span>
+              </div>
+            </div>
+            <div class="menu-list">
+              <div class="menu-row"><img class="menu-icon" src="members.png" alt="" />家庭成员<span class="menu-end">3 人 ›</span></div>
+              <div class="menu-row"><img class="menu-icon" src="invite.png" alt="" />邀请家人<span class="menu-end">›</span></div>
+              <div class="menu-row"><img class="menu-icon" src="settings.png" alt="" />家庭设置<span class="menu-end">›</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar"><div class="tab"><div class="ic">⌂</div>主页</div><div class="tab on"><div class="ic">☺</div>我的</div></div>
+      </div>
+    </div>
+    <div class="item">
+      <p class="item-label"><span class="dot upd"></span>my · 家庭成员弹层 <span class="old">本次重做</span></p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="mask">
+            <div class="sheet">
+              <div class="handle"></div>
+              <div class="sheet-heading"><span>家庭成员</span><span class="sheet-close">×</span></div>
+              <div class="sec-t">家庭成员（3）</div>
+              <div class="card" style="padding:4px 16px;">
+                <div class="member-row"><div class="m-avatar" style="background:#6b90b8">🧑</div><div class="m-info"><div class="m-name">我（管理员）</div><div class="m-role">管理员</div></div></div>
+                <div class="member-row"><div class="m-avatar" style="background:#c48494">👩</div><div class="m-info"><div class="m-name">家人乙</div><div class="m-role">成员</div></div><div class="m-remove">移除</div></div>
+                <div class="member-row"><div class="m-avatar" style="background:#d0a15e">👨</div><div class="m-info"><div class="m-name">家人丙</div><div class="m-role">成员</div></div><div class="m-remove">移除</div></div>
+              </div>
+              <div class="m-tip">头像和昵称由本人主动填写，只在本小程序内给家人看</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="item">
+      <p class="item-label"><span class="dot upd"></span>my · 邀请家人弹层 <span class="old">本次重做</span></p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="mask">
+            <div class="sheet">
+              <div class="handle"></div>
+              <div class="sheet-heading"><span>邀请家人</span><span class="sheet-close">×</span></div>
+              <div class="card">
+                <div style="font-size:17px;font-weight:600;">家庭邀请码</div>
+                <div style="font-size:13px;color:var(--ink2);margin:4px 0 12px;">发给家人，凭码加入这个家</div>
+                <div class="code-row"><div class="code-box masked">••••••</div><div class="code-eye">显示</div></div>
+                <div class="code-actions"><div class="mini-btn">复制邀请码</div><div class="mini-btn ghost">刷新（旧码失效）</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="item">
+      <p class="item-label"><span class="dot upd"></span>my · 家庭设置弹层 <span class="old">含 V3.10 解散</span></p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="mask">
+            <div class="sheet">
+              <div class="handle"></div>
+              <div class="sheet-heading"><span>家庭设置</span><span class="sheet-close">×</span></div>
+              <div class="settings-name">我的家</div>
+              <div class="panel-hint">管理这个家，让家人安心相聚。</div>
+              <div class="settings-members">管理家庭成员 ›</div>
+              <div class="danger-zone">
+                <div class="dz-title">危险操作</div>
+                <div class="dz-desc">解散后家庭、邀请码和成员关系将被永久删除，无法恢复。</div>
+                <div class="dz-btn">解散家庭</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="item">
+      <p class="item-label"><span class="dot upd"></span>my · 编辑我的资料 <span class="old">V3.8 / V3.9</span></p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="mask">
+            <div class="sheet">
+              <div class="pf-title" style="font-size:18px;font-weight:600;margin-top:8px;">编辑我的资料</div>
+              <div class="sheet-sub">头像和昵称由你主动填写，家人才能一眼认出你</div>
+              <div class="pf-row"><div class="pf-label">头像</div><div class="pf-avatar-ph">＋</div><div class="pf-hint">点头像选微信头像或相册图</div></div>
+              <div class="pf-row"><div class="pf-label">昵称</div><div class="pf-input ph">点这里可一键用微信昵称，也能自己改</div><div class="pf-hint">不填则家人那边显示「家人」</div></div>
+              <div class="pf-actions"><div class="pf-btn ghost">取消</div><div class="pf-btn">保存</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="item">
+      <p class="item-label"><span class="dot upd"></span>my · 家庭切换弹层 <span class="old">统一入口</span></p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="my-page">
+            <div class="profile-header">
+              <div class="profile-avatar">🌿</div>
+              <div><div class="profile-name">家人</div><div class="profile-edit">编辑个人资料 ›</div></div>
+            </div>
+            <div class="family-summary">
+              <div class="eyebrow">当前家庭</div>
+              <div class="family-title my"><span>我的家</span><span class="chevron">⌄</span></div>
+              <div class="summary-role">管理员</div>
+              <div class="family-people"><div class="small-avatar" style="background:#6b90b8">🧑</div><div class="small-avatar" style="background:#c48494">👩</div><span class="people-count">3 位家人，一起生活</span></div>
+            </div>
+          </div>
+          <div class="mask">
+            <div class="sheet">
+              <div class="handle"></div>
+              <div class="sheet-heading"><span>切换家庭</span><span class="sheet-close">×</span></div>
+              <div class="choices">
+                <div class="choice selected"><div><div class="name"><span class="sw-dot" style="background:#6b90b8"></span>我的家</div><div class="role">管理员</div></div><span>✓</span></div>
+                <div class="choice"><div><div class="name"><span class="sw-dot" style="background:#c48494"></span>爸妈家</div><div class="role">成员</div></div><span></span></div>
+              </div>
+              <div class="sheet-actions"><button class="primary">＋ 创建家庭</button><button>加入家庭</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">四、本次优化点（评审重点）</h2>
+  <p class="section-note">较还原版改动了以下六项，请逐条确认是否采纳；通过后才会落到代码。</p>
+  <div class="changelog" style="margin-bottom:48px;">
+    <div class="chg"><div class="chg-k">① 还原偏差</div><div class="chg-v"><b>图标回归真实资源</b>：我的页三项入口由 emoji 换回 <b>assets/ui</b> 下的 members / invite / settings 三张 png（已复制到本目录，预览可见）。</div></div>
+    <div class="chg"><div class="chg-k">② 还原偏差</div><div class="chg-v"><b>家庭切换按钮顺序</b>：改为「＋ 创建家庭」primary 在前、「加入家庭」在后，与组件 wxml 一致。</div></div>
+    <div class="chg"><div class="chg-k">③ 还原偏差</div><div class="chg-v"><b>邀请码默认折叠</b>：显示 ••••••，点「显示」才展开，与 my.js 的 inviteVisible 初值一致。</div></div>
+    <div class="chg"><div class="chg-k">④ 视觉统一</div><div class="chg-v"><b>圆角 24rpx、一级字号 42–44rpx</b>：卡片/摘要收回 24rpx（底部弹层保留 48rpx）；大标题与点菜标题收小 2rpx；<b>🍲 大图换成线条碗</b>，去掉系统 emoji 渲染差异。</div></div>
+    <div class="chg"><div class="chg-k">⑤ 新增模块</div><div class="chg-v"><b>主页「我的家人」卡片</b>：复用现有家庭成员数据（头像 + 人数 + 邀请入口），撑起首屏，无新增虚构业务。<b>需确认：这条要不要一起做</b>——代码里 home.js 目前没拉成员数据，采纳的话要加一次 getFamily 调用。</div></div>
+    <div class="chg"><div class="chg-k">⑥ 入口收敛</div><div class="chg-v"><b>家庭切换统一到「我的」</b>：主页家庭名保留显示但改为只读（去掉下拉箭头、不可点），切换弹层只从我的页家庭摘要进入。<b>代码影响</b>：home.wxml / home.js 删掉 family-switcher 引用与 toggleSwitcher / closeSwitcher / switchFamily 方法；我的页逻辑不变，family-switcher 组件本身不动。</div></div>
+  </div>
+
+  <h2 class="section-title">五、菜单图标造型选型（新增评审项 Ⓐ）</h2>
+  <p class="section-note">诉求是「借鉴 iconfont 里的图标造型」——对，就该这么干：挑选造型，导出成 PNG 直接用，不引入它的字体/CSS 机制。现用三张本就是扁平线性风；下面给出 iconfont 上常见的 12 个同风格造型供挑选。仅设计稿新增候选，代码资源未动。</p>
+  <div class="icon-compare">
+    <img class="gallery-img" src="icons/icon-candidates.png" alt="iconfont 常见造型候选：家庭成员/邀请家人/家庭设置 各4款"/>
+
+    <div class="rec-box">
+      <b>我的推荐组合（语义最贴合 + 三枚成套统一）：</b><br>
+      家庭成员 → <span class="rec-pick">C 家庭群组</span>（两人一前一后，比单人更能表达「一家人」）<br>
+      邀请家人 → <span class="rec-pick">A 人＋</span>（最直观，「加个人」= 邀请，与现用一致）<br>
+      家庭设置 → <span class="rec-pick">A 齿轮</span>（iconfont 上设置最通用的造型，辨识度高于滑块）<br>
+      三款统一规格：线性圆头、2px 描边、松绿 <code>#46765a</code>、72×72 PNG。
+    </div>
+
+    <p class="cmp-note">
+      <b>现用 vs 候选：</b>现有 members / invite / settings 三张（双人 / 人＋ / 双滑块）本身就是扁平线性风，和 iconfont 同源。候选图标体积更小（1.4–2.4KB），造型选择更多。<br>
+      <b>落地方式：</b>你从上面挑定每组的字母 → 我把对应造型导出成松绿 72×72 PNG，沿用 members/invite/settings 文件名替换 assets/ui 下三张即可，<b>wxml 的 image 引用一行都不用改</b>。不涉及字体、base64、CSS，零兼容风险。<br>
+      <b>诚实说明：</b>iconfont 网站需登录且动态渲染，我这边抓不到你账号里的具体收藏；上面 12 款是 iconfont 上最常见的同类造型（开源线性图标，同源），已按项目主色重绘。你若看上 iconfont 里某个具体图标，把链接或截图发我，我照着画成同规格 PNG。
+    </p>
+  </div>
+
+  <h2 class="section-title">六、原 UI 改动对照</h2>
+  <p class="section-note">相对今天改动前的版本，设计稿同步的点（存档用）。</p>
+  <div class="changelog">
+    <div class="chg"><div class="chg-k">导航结构</div><div class="chg-v"><b>改为两个原生 Tab</b><span class="flag upd">变更</span>：主页 / 我的；identity 作为冷启动引导页独立存在，不再放进 tabBar。</div></div>
+    <div class="chg"><div class="chg-k">共享组件</div><div class="chg-v"><b>新增 family-switcher</b><span class="flag new">新增</span>：当前代码里首页与我的共用同一套家庭切换弹层，选中后写缓存并全量重拉数据，避免残留上一个家庭的管理数据。<b>（本次优化⑥建议收敛为仅「我的」一个入口，见上一节）</b></div></div>
+    <div class="chg"><div class="chg-k">我的页</div><div class="chg-v"><b>重做为「资料 + 家庭摘要 + 三项入口」</b><span class="flag upd">重做</span>：成员、邀请、设置由平铺改为底部弹层承载；弹层打开时隐藏 tabBar，关闭恢复。</div></div>
+    <div class="chg"><div class="chg-k">邀请码</div><div class="chg-v"><b>默认折叠</b><span class="flag upd">变更</span>：显示 / 隐藏切换，复制与刷新（旧码失效）两个操作并列；刷新仅管理员可见。</div></div>
+    <div class="chg"><div class="chg-k">成员管理</div><div class="chg-v"><b>真头像 + 真昵称</b><span class="flag upd">V3.8/3.9</span>：本人主动填写；非管理员不展示「移除」，管理员不可移除自己。</div></div>
+    <div class="chg"><div class="chg-k">危险操作</div><div class="chg-v"><b>解散家庭</b><span class="flag new">V3.10</span>：仅管理员且无其他成员时可用，否则置灰并提示先移除成员。</div></div>
+    <div class="chg"><div class="chg-k">配色 / 适老</div><div class="chg-v">松绿主色 <b>#46765a</b>，暖白底 <b>#f7f7f2</b>；正文 16px、次要 12–13px，命中区 ≥ 44px，圆角卡片，高对比文字。</div></div>
+    <div class="chg"><div class="chg-k">点菜模块</div><div class="chg-v">主页保留单张功能卡片作为占位，<b>点菜尚未开放</b><span class="flag new">待建</span>；等待第 2 步重建接入。</div></div>
+  </div>
+
+  <footer>
+    数据来源：app.wxss、pages/{identity,home,my}/*.wxml + *.wxss、components/family-switcher/*.wxss。<br>
+    字号与间距按 750rpx = 375px 折算；示例姓名、头像、邀请码均为占位，不代表真实数据。<br>
+    状态：优化稿，待评审；代码未改动。评审通过后按第四节逐条落到 wxss / wxml。<br>
+    本文件位于 docs/，已包含在 project.config.json 的 packOptions.ignore 中，不进入小程序打包。
+  </footer>
+</div>
+</body>
+</html>

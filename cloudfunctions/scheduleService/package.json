@@ -1,0 +1,9 @@
+{
+  "name": "schedule-service",
+  "version": "1.0.0",
+  "description": "家庭日程、只读分享与变更通知",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

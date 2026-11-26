@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的家 · 家庭日程视觉稿（对齐 PRD v0.2）</title>
+<style>
+  :root{
+    --brand:#46765a; --brand-dark:#3a715a; --ink:#263e32; --ink2:#657368;
+    --line:#e3e8e4; --bg:#f7f7f2; --card:#fff; --danger:#c0392b;
+    --radius:7px; --radius-lg:20px; --radius-xl:24px;
+    --panel:#232b26; --panel-line:#3d4a42; --muted:#8f9d94;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#202622;color:#e8ede9;
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1280px;margin:0 auto;padding:40px 28px 80px;}
+  header h1{font-size:26px;font-weight:600;margin:0 0 10px;color:#f4f7f5;}
+  header p{font-size:14px;line-height:1.8;color:#a9b6ae;margin:0;}
+  header .meta{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;}
+  header .tag{font-size:12px;padding:5px 11px;border:1px solid var(--panel-line);border-radius:20px;color:#b9c8bf;}
+  header .tag.hot{border-color:#6b5c34;color:#e5bd74;}
+  .section-title{font-size:18px;font-weight:600;margin:52px 0 6px;color:#eef3f0;border-left:3px solid var(--brand);padding-left:12px;}
+  .section-note{font-size:13px;color:var(--muted);margin:0 0 24px;padding-left:15px;line-height:1.7;}
+  .gallery{display:flex;flex-wrap:wrap;gap:32px 26px;}
+  .item{width:340px;}
+  .item-label{font-size:13px;color:#bcc9c1;margin:0 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .item-label .dot{width:7px;height:7px;border-radius:50%;background:#5dcaa5;display:inline-block;}
+  .item-label .dot.new{background:#efa027;}
+  .item-label .ears{font-size:11px;color:#9fb0a5;border:1px solid var(--panel-line);border-radius:10px;padding:2px 7px;}
+
+  .phone{
+    width:340px;height:640px;background:var(--bg);border-radius:34px;
+    border:9px solid #111614;overflow:hidden;position:relative;
+    box-shadow:0 14px 40px rgba(0,0,0,.35);
+  }
+  .statusbar{height:28px;display:flex;align-items:center;justify-content:space-between;
+    padding:0 18px;font-size:11px;color:var(--ink);background:var(--bg);}
+  .navbar{height:40px;display:flex;align-items:center;justify-content:center;
+    font-size:15px;color:var(--ink);background:var(--bg);position:relative;}
+  .navbar .back{position:absolute;left:16px;font-size:18px;color:var(--brand);}
+  .screen{position:absolute;top:68px;bottom:0;left:0;right:0;overflow:hidden;padding:0 20px 20px;}
+  .screen.no-tab{bottom:0;}
+  .tabbar{position:absolute;bottom:0;left:0;right:0;height:56px;background:#fff;
+    border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-around;}
+  .tabbar .tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#5f6368;}
+  .tabbar .tab.on{color:var(--brand);}
+  .tabbar .ic{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+
+  .page{padding:18px 22px;}
+  .family-title{font-size:21px;font-weight:500;color:var(--ink);line-height:1.4;min-height:40px;display:flex;align-items:center;}
+  .greeting{font-size:14px;color:var(--ink2);margin-top:2px;}
+  .sec-label{font-size:16px;font-weight:500;color:var(--ink);margin:26px 0 12px;display:flex;justify-content:space-between;align-items:baseline;}
+  .sec-label small{font-size:12px;color:var(--ink2);font-weight:400;}
+
+  /* 主页日程卡片 */
+  .sched-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-xl);padding:18px 20px;box-shadow:0 3px 12px rgba(38,62,50,.05);}
+  .sc-top{display:flex;justify-content:space-between;align-items:center;}
+  .sc-tag{font-size:11px;color:var(--brand);border:1px solid var(--brand);border-radius:16px;padding:2px 9px;}
+  .sc-count{font-size:12px;color:var(--ink2);}
+  .sc-next{display:flex;align-items:baseline;gap:8px;margin-top:12px;}
+  .sc-time{font-size:24px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .sc-title{font-size:15px;color:var(--ink);}
+  .sc-place{font-size:12px;color:var(--ink2);margin-top:6px;}
+  .sc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;color:var(--brand);}
+  .feature{width:100%;background:#eaf0e6;border-radius:var(--radius);padding:16px;margin-top:14px;color:var(--ink);}
+  .feature-t{font-size:18px;font-weight:500;}
+  .feature-d{font-size:12px;color:var(--ink2);margin-top:4px;}
+  .more{text-align:center;font-size:12px;color:var(--ink2);margin-top:16px;}
+
+  /* 日程列表 */
+  .date-switch{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px;margin-bottom:14px;font-size:14px;color:var(--ink);}
+  .date-switch .arrow{color:var(--brand);font-size:18px;width:24px;text-align:center;}
+  .day-list{display:flex;flex-direction:column;gap:10px;}
+  .day-item{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:13px 14px;display:flex;gap:11px;align-items:flex-start;}
+  .day-item.done{opacity:.55;}
+  .time-col{width:52px;flex-shrink:0;text-align:center;}
+  .time-h{font-size:17px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.25;}
+  .time-m{font-size:11px;color:var(--ink2);margin-top:2px;}
+  .item-main{flex:1;min-width:0;}
+  .item-t{font-size:16px;font-weight:500;color:var(--ink);display:flex;align-items:center;gap:7px;}
+  .who-dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0;}
+  .item-p{font-size:12px;color:var(--ink2);margin-top:5px;line-height:1.5;}
+  .item-child{font-size:11px;color:var(--ink2);margin-top:3px;}
+  .st{font-size:11px;padding:1px 6px;border-radius:8px;background:#eaf0e6;color:var(--brand);}
+  .st.done{background:#eef0ee;color:#6d7a70;}
+  .bottom-bar{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
+    padding:10px 20px 14px;display:flex;gap:10px;align-items:center;}
+  .btn{flex:1;min-height:44px;line-height:44px;text-align:center;border-radius:var(--radius);font-size:14px;font-weight:500;}
+  .btn.primary{background:var(--brand);color:#fff;}
+  .btn.ghost{border:1px solid var(--brand);color:var(--brand);background:#fff;}
+  .fab{width:46px;height:46px;border-radius:50%;background:var(--brand);color:#fff;font-size:26px;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(70,118,90,.3);}
+
+  /* 表单 */
+  .form{margin-top:8px;}
+  .fld{margin-bottom:14px;}
+  .fld label{display:block;font-size:13px;color:var(--ink2);margin-bottom:6px;}
+  .inp{min-height:44px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:15px;color:var(--ink);}
+  .inp.ph{color:#a3aca6;}
+  .inp .val{font-variant-numeric:tabular-nums;}
+  .inp .chev{color:var(--ink2);font-size:14px;}
+  .row2{display:flex;gap:10px;}
+  .row2 .fld{flex:1;}
+  .people{display:flex;gap:8px;}
+  .person{display:flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:16px;padding:5px 10px;font-size:12px;color:var(--ink);background:var(--card);}
+  .person.on{border-color:var(--brand);background:#eaf0e6;color:var(--brand);font-weight:500;}
+  .switch-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0 12px;font-size:14px;color:var(--ink);}
+  .switch{width:42px;height:24px;border-radius:14px;background:#d5dbd6;position:relative;}
+  .switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;}
+  .form-foot{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 20px 16px;}
+  .form-foot .btn{width:100%;min-height:46px;line-height:46px;}
+
+  /* 只读页 */
+  .readonly-top{background:#eaf0e6;border-radius:var(--radius);padding:10px 12px;font-size:12px;color:var(--brand-dark);line-height:1.6;margin-bottom:16px;}
+  .ro-head{font-size:21px;font-weight:600;color:var(--ink);}
+  .ro-sub{font-size:13px;color:var(--ink2);margin:4px 0 16px;}
+  .ro-item{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 15px;margin-bottom:10px;}
+  .ro-time{font-size:19px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .ro-name{font-size:19px;font-weight:600;color:var(--ink);margin-top:3px;}
+  .ro-place{font-size:18px;color:var(--ink);margin-top:7px;line-height:1.5;}
+  .ro-meta{font-size:13px;color:var(--ink2);margin-top:6px;}
+  .ro-foot{text-align:center;font-size:12px;color:var(--ink2);margin-top:18px;line-height:1.7;}
+  .ro-warn{font-size:11px;color:#8a6d3b;background:#fdf6ec;border-radius:6px;padding:7px 10px;margin-top:12px;line-height:1.5;}
+
+  /* 分享图预览 */
+  .share-preview{background:#e9ece7;border-radius:var(--radius);padding:14px;display:flex;justify-content:center;}
+  .share-img{width:240px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.12);}
+  .si-head{background:var(--brand);color:#fff;padding:14px 16px;}
+  .si-title{font-size:17px;font-weight:600;}
+  .si-date{font-size:11px;opacity:.85;margin-top:3px;}
+  .si-body{padding:12px 14px;}
+  .si-row{border-bottom:1px dashed var(--line);padding:8px 0;}
+  .si-row:last-child{border-bottom:none;}
+  .si-t{font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .si-n{font-size:13px;color:var(--ink);margin-top:2px;}
+  .si-p{font-size:12px;color:var(--ink2);margin-top:2px;line-height:1.4;}
+  .si-foot{padding:10px 14px 14px;text-align:center;border-top:1px solid var(--line);}
+  .qr{width:54px;height:54px;margin:0 auto 6px;border:5px solid #fff;outline:1px solid var(--line);
+    background:repeating-linear-gradient(45deg,#263e32 0 3px,#fff 3px 6px);}
+  .si-note{font-size:10px;color:var(--ink2);line-height:1.5;}
+
+  /* 说明区 */
+  .notes{background:var(--panel);border:1px solid var(--panel-line);border-radius:12px;padding:20px 24px;margin-top:20px;}
+  .notes h3{font-size:15px;color:#eef3f0;margin:0 0 12px;}
+  .notes table{width:100%;border-collapse:collapse;font-size:13px;color:#c9d5cd;}
+  .notes th{text-align:left;color:#9fb0a5;font-weight:500;border-bottom:1px solid var(--panel-line);padding:8px 10px;}
+  .notes td{padding:9px 10px;border-bottom:1px solid #2d352f;line-height:1.7;vertical-align:top;}
+  .notes tr:last-child td{border-bottom:none;}
+  .notes code{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#e5bd74;}
+  .callout{border-left:3px solid #efa027;background:#2c2a20;padding:10px 14px;border-radius:0 8px 8px 0;
+    font-size:12.5px;color:#d8c9a6;line-height:1.7;margin-top:14px;}
+  footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--panel-line);font-size:12px;color:#7f8d84;line-height:1.9;}
+
+  @media(max-width:760px){.wrap{padding:26px 16px 60px;}header h1{font-size:22px;}.gallery{justify-content:center;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p>当前开发基准已更新：<a href="../prd/family-schedule-prd-v0.3.md" style="color:#e5bd74">PRD v0.3</a> · <a href="schedule-design-addendum.md" style="color:#e5bd74">设计补充说明</a>。本页保留 v0.2 五屏参考，异常状态与首版范围按补充说明执行。</p>
+  <h1>我的家 · 家庭日程视觉稿</h1>
+  <p>按 <code style="font-size:12px;color:#e5bd74">PRD v0.2 · 家庭日程（含接送提醒）</code> 绘制。5 张图覆盖主页入口 → 日程列表 → 新增表单 → 只读分享页 → 分享图片完整链路。所有字号、圆角、配色沿用现有 UI 设计稿体系；每张图标注对应 EARS 需求编号，供逐条评审。</p>
+  <div class="meta">
+    <span class="tag">2026-11-25</span>
+    <span class="tag">对齐 PRD v0.2</span>
+    <span class="tag">评审稿 · 代码未动</span>
+    <span class="tag hot">Q-1～Q-6 已固化</span>
+  </div>
+</header>
+
+<!-- ① 主页日程卡片 -->
+<h2 class="section-title">一、主页 · 日程卡片入口（Q-1）</h2>
+<p class="section-note">不新增 Tab，tabBar 仍为两项。卡片直接露今日条数与首条时间，点整卡进入日程列表。对应 EARS：E-02 / schedule_card_click。</p>
+<div class="gallery">
+  <div class="item">
+    <p class="item-label"><span class="dot new"></span>主页 · 日程卡片<span class="ears">E-02</span></p>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+      <div class="navbar">主页</div>
+      <div class="screen">
+        <div class="page">
+          <div class="family-title"><span>我的家</span></div>
+          <div class="greeting">一家人的日常，都在这里。</div>
+
+          <div class="sec-label"><span>今日接送</span><small>11月25日 周三</small></div>
+          <div class="sched-card">
+            <div class="sc-top"><span class="sc-tag">家庭日程</span><span class="sc-count">今天 3 条</span></div>
+            <div class="sc-next"><span class="sc-time">08:40</span><span class="sc-title">语言干预</span></div>
+            <div class="sc-place">滨江中心 · 爸爸接送</div>
+            <div class="sc-foot"><span>查看今日全部安排</span><span>›</span></div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-t">今天吃点什么？</div>
+            <div class="feature-d">家庭点菜 · 即将开放</div>
+          </div>
+          <div class="more">更多家庭小工具，正在准备中</div>
+        </div>
+      </div>
+      <div class="tabbar"><div class="tab on"><div class="ic">⌂</div>主页</div><div class="tab"><div class="ic">☺</div>我的</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ② 日程列表 -->
+<h2 class="section-title">二、日程列表 · 当日视图</h2>
+<p class="section-note">二级页面，无 Tab。日期可前后切换；按时间升序，状态用颜色 + 文案双重标识（S-02）。底部固定分享与新增入口（E-06 / E-08 / U-04）。</p>
+<div class="gallery">
+  <div class="item">
+    <p class="item-label"><span class="dot new"></span>日程列表<span class="ears">U-03 / S-02 / U-04</span></p>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+      <div class="navbar"><span class="back">‹</span>今日接送</div>
+      <div class="screen no-tab">
+        <div class="page" style="padding-bottom:80px;">
+          <div class="date-switch"><span class="arrow">‹</span><span>11月25日 周三</span><span class="arrow">›</span></div>
+          <div class="day-list">
+            <div class="day-item">
+              <div class="time-col"><div class="time-h">08:40</div><div class="time-m">09:20</div></div>
+              <div class="item-main">
+                <div class="item-t"><span class="who-dot" style="background:#6b90b8"></span>语言干预<span class="st">待办</span></div>
+                <div class="item-p">滨江中心</div>
+                <div class="item-child">茂茂 · 爸爸</div>
+              </div>
+            </div>
+            <div class="day-item done">
+              <div class="time-col"><div class="time-h">15:10</div><div class="time-m">16:10</div></div>
+              <div class="item-main">
+                <div class="item-t"><span class="who-dot" style="background:#c48494"></span>轮滑课<span class="st done">已完成</span></div>
+                <div class="item-p">星光城 TT MALL 3 楼</div>
+                <div class="item-child">茂茂 · 妈妈</div>
+              </div>
+            </div>
+            <div class="day-item">
+              <div class="time-col"><div class="time-h">18:00</div><div class="time-m">19:30</div></div>
+              <div class="item-main">
+                <div class="item-t"><span class="who-dot" style="background:#d0a15e"></span>篮球<span class="st">待办</span></div>
+                <div class="item-p">育才体育馆 B 馆</div>
+                <div class="item-child">茂茂 · 爷爷</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-bar">
+          <div class="btn ghost">分享给家人</div>
+          <div class="btn ghost">转发图片</div>
+          <div class="fab">＋</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 新增表单 -->
+<h2 class="section-title">三、新增日程 · 一屏表单</h2>
+<p class="section-note">所有 active 成员可新增（U-04）。不跳页、默认值预填：日期今天、时间整点、负责人自己；地点可从历史带出。必填为空时字段下方提示（X-02），断网失败保留内容（X-03）。</p>
+<div class="gallery">
+  <div class="item">
+    <p class="item-label"><span class="dot new"></span>新增 / 编辑表单<span class="ears">U-04 / X-02 / X-03</span></p>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+      <div class="navbar"><span class="back">‹</span>新增日程</div>
+      <div class="screen no-tab">
+        <div class="page" style="padding-bottom:80px;">
+          <div class="form">
+            <div class="row2">
+              <div class="fld"><label>日期</label><div class="inp"><span class="val">11-25</span><span class="chev">›</span></div></div>
+              <div class="fld"><label>开始时间</label><div class="inp"><span class="val">18:00</span><span class="chev">›</span></div></div>
+            </div>
+            <div class="fld"><label>事项 *</label><div class="inp"><span class="val">篮球</span></div></div>
+            <div class="fld"><label>地点（详细门牌）</label><div class="inp"><span class="val">育才体育馆 B 馆</span></div></div>
+            <div class="fld"><label>孩子</label><div class="inp"><span class="val">茂茂</span><span class="chev">›</span></div></div>
+            <div class="fld">
+              <label>负责人</label>
+              <div class="people">
+                <span class="person on"><span class="who-dot" style="background:#6b90b8"></span>爸爸</span>
+                <span class="person"><span class="who-dot" style="background:#c48494"></span>妈妈</span>
+                <span class="person"><span class="who-dot" style="background:#d0a15e"></span>爷爷</span>
+              </div>
+            </div>
+            <div class="switch-row"><span>每周重复（4 周）</span><span class="switch"></span></div>
+          </div>
+        </div>
+        <div class="form-foot"><div class="btn primary">保存</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ④ 只读分享页 -->
+<h2 class="section-title">四、只读分享页（Q-3）</h2>
+<p class="section-note">老人点开分享链接直接进入，无需注册。只展示当日日程，字号 ≥ 18px；不露任何新增 / 编辑 / 完成 / 切换家庭入口（S-04：前端隐藏 + 云端强制）。token 失效时展示失效提示（X-07）。</p>
+<div class="gallery">
+  <div class="item">
+    <p class="item-label"><span class="dot new"></span>只读分享页<span class="ears">E-09 / X-07 / U-05</span></p>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+      <div class="navbar">今天的接送安排</div>
+      <div class="screen no-tab">
+        <div class="page">
+          <div class="readonly-top">家人分享的接送安排 · 链接 7 天内有效</div>
+          <div class="ro-head">我的家 · 11月25日</div>
+          <div class="ro-sub">共 3 条安排</div>
+
+          <div class="ro-item">
+            <div class="ro-time">08:40 - 09:20</div>
+            <div class="ro-name">语言干预</div>
+            <div class="ro-place">滨江中心</div>
+            <div class="ro-meta">茂茂 · 爸爸接送</div>
+          </div>
+          <div class="ro-item">
+            <div class="ro-time">15:10 - 16:10</div>
+            <div class="ro-name">轮滑课</div>
+            <div class="ro-place">星光城 TT MALL 3 楼</div>
+            <div class="ro-meta">茂茂 · 妈妈接送</div>
+          </div>
+          <div class="ro-item">
+            <div class="ro-time">18:00 - 19:30</div>
+            <div class="ro-name">篮球</div>
+            <div class="ro-place">育才体育馆 B 馆</div>
+            <div class="ro-meta">茂茂 · 爷爷接送</div>
+          </div>
+
+          <div class="ro-warn">本页仅可查看，链接到期后自动失效。</div>
+          <div class="ro-foot">由「我的家」生成</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑤ 分享图片 -->
+<h2 class="section-title">五、转发图片（Q-5）</h2>
+<p class="section-note">竖版图片，保存到相册后发微信，作为只读链接之外的兜底路径。按 Q-5 包含孩子姓名与详细门牌（U-05），底部带小程序码与有效期提示。</p>
+<div class="gallery">
+  <div class="item">
+    <p class="item-label"><span class="dot new"></span>分享图片预览<span class="ears">E-06 / U-05</span></p>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+      <div class="navbar"><span class="back">‹</span>图片预览</div>
+      <div class="screen no-tab">
+        <div class="page">
+          <div style="font-size:13px;color:var(--ink2);margin-bottom:10px;">保存到相册后，发送到微信家人群</div>
+          <div class="share-preview">
+            <div class="share-img">
+              <div class="si-head"><div class="si-title">我的家 · 今日接送</div><div class="si-date">11月25日 周三 · 茂茂</div></div>
+              <div class="si-body">
+                <div class="si-row"><div class="si-t">08:40 - 09:20</div><div class="si-n">语言干预</div><div class="si-p">滨江中心 · 爸爸</div></div>
+                <div class="si-row"><div class="si-t">15:10 - 16:10</div><div class="si-n">轮滑课</div><div class="si-p">星光城 TT MALL 3 楼 · 妈妈</div></div>
+                <div class="si-row"><div class="si-t">18:00 - 19:30</div><div class="si-n">篮球</div><div class="si-p">育才体育馆 B 馆 · 爷爷</div></div>
+              </div>
+              <div class="si-foot"><div class="qr"></div><div class="si-note">扫码打开「我的家」· 链接 7 天内有效<br>请仅转发给家人</div></div>
+            </div>
+          </div>
+          <div class="btn primary" style="margin-top:16px;">保存到相册</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="notes">
+  <h3>评审对照 · 决策与视觉落点</h3>
+  <table>
+    <thead><tr><th style="width:8%">决策</th><th style="width:20%">确认内容</th><th>视觉稿落点</th></tr></thead>
+    <tbody>
+      <tr><td>Q-1</td><td>入口放主页卡片</td><td>图①：卡片露条数 + 首条时间；tabBar 保持两项，日程为二级页面（图②③④均无 Tab）</td></tr>
+      <tr><td>Q-2</td><td>全员可新增</td><td>图②右下角 <code>＋</code> 对所有 active 成员可见；图③表单无角色门槛</td></tr>
+      <tr><td>Q-3</td><td>只读页 + 分享链路</td><td>图②「分享给家人」→ 图④；图④全页无任何写入口，底部只有说明</td></tr>
+      <tr><td>Q-4</td><td>只做变更即时通知</td><td>视觉稿不出现定时提醒设置项；通知只在保存后触发</td></tr>
+      <tr><td>Q-5</td><td>包含姓名 + 门牌</td><td>图④「茂茂 + 详细地点」、图⑤同样完整展示；两处均加"仅转发家人 / 7 天有效"提示</td></tr>
+      <tr><td>Q-6</td><td>统一 co_member</td><td>图②成员色点沿用 <code>MEMBER_COLORS</code> 五色板，与「我的」页家庭成员视觉一致</td></tr>
+    </tbody>
+  </table>
+  <div class="callout">⚠️ <b>Q-5 提醒</b>：图④⑤把孩子姓名、详细门牌、时间三项放在同一屏，信息敏感度高。评审时可确认是否保留"仅转发给家人"的文案；技术侧已用 7 天过期 token 兜底，但转发范围靠人自觉，这一点要跟实际使用者讲清楚。</div>
+</div>
+
+<footer>
+  依据：docs/prd/family-schedule-prd-v0.2.md（27 条 EARS、12 条验收）· docs/design/design-tokens.html（色彩与字号基线）· docs/design/family-preview.html（既有视觉语言）。<br>
+  字号按 750rpx = 375px 折算；姓名、地点、邀请关系均为示例数据。<br>
+  本文件位于 docs/，已在 project.config.json 的 packOptions.ignore 覆盖范围内，不进入小程序打包。代码未改动，评审通过后再落到 wxml/wxss。
+</footer>
+
+</div>
+</body>
+</html>

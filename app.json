@@ -1,18 +1,43 @@
 {
   "pages": [
     "pages/identity/identity",
-    "pages/home/home"
+    "pages/home/home",
+    "pages/my/my",
+    "pages/schedule/schedule",
+    "pages/schedule/edit",
+    "pages/schedule/readonly",
+    "pages/schedule/share"
   ],
   "window": {
     "navigationBarTitleText": "我的家",
-    "navigationBarBackgroundColor": "#4a8b6f",
-    "navigationBarTextStyle": "white",
-    "backgroundColor": "#f6f7f9",
+    "navigationBarBackgroundColor": "#f7f7f2",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f7f7f2",
     "backgroundTextStyle": "dark",
     "enablePullDownRefresh": false
   },
   "usingComponents": {},
   "style": "v2",
   "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents"
+  "lazyCodeLoading": "requiredComponents",
+  "tabBar": {
+    "color": "#5f6368",
+    "selectedColor": "#46765a",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "主页",
+        "iconPath": "assets/tabbar/home.png",
+        "selectedIconPath": "assets/tabbar/home-selected.png"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "assets/tabbar/my.png",
+        "selectedIconPath": "assets/tabbar/my-selected.png"
+      }
+    ]
+  }
 }

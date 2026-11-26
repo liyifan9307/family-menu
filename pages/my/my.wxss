@@ -1,0 +1,289 @@
+.home { padding-top: 24rpx; }
+
+.center-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+}
+.spinner {
+  width: 64rpx;
+  height: 64rpx;
+  border: 6rpx solid var(--line);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  margin-bottom: 32rpx;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.fam-bar {
+  display: flex;
+  align-items: center;
+  min-height: 96rpx;
+  padding: 0 28rpx;
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: var(--radius);
+  margin-bottom: 20rpx;
+}
+.fam-dot { width: 24rpx; height: 24rpx; border-radius: 50%; margin-right: 16rpx; }
+.fam-name { font-size: 36rpx; font-weight: 600; color: var(--ink); }
+.fam-role {
+  font-size: 24rpx; color: var(--brand); background: #eef5f1;
+  padding: 6rpx 16rpx; border-radius: 20rpx; margin-left: 16rpx;
+}
+.fam-arrow { margin-left: auto; font-size: 28rpx; color: var(--ink2); }
+
+.switcher {
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: var(--radius);
+  padding: 12rpx;
+  margin-bottom: 24rpx;
+}
+.switch-item {
+  display: flex;
+  align-items: center;
+  min-height: 88rpx;
+  padding: 0 20rpx;
+  border-radius: 10rpx;
+}
+.switch-item.active { background: #eef5f1; }
+.sw-dot { width: 20rpx; height: 20rpx; border-radius: 50%; margin-right: 16rpx; }
+.sw-name { font-size: 32rpx; color: var(--ink); }
+.sw-role { font-size: 24rpx; color: var(--ink2); margin-left: 16rpx; }
+.sw-check { margin-left: auto; color: var(--brand); font-size: 32rpx; }
+.switch-tip { font-size: 24rpx; color: var(--ink2); padding: 16rpx 20rpx 8rpx; }
+
+.invite-card { padding: 32rpx; }
+.card-h { margin-bottom: 24rpx; }
+.card-t { font-size: 34rpx; font-weight: 600; color: var(--ink); }
+.card-sub { font-size: 26rpx; color: var(--ink2); margin-top: 8rpx; }
+.code-row { display: flex; align-items: center; }
+.code-box {
+  flex: 1;
+  min-height: 96rpx;
+  line-height: 96rpx;
+  text-align: center;
+  background: #f4f8f6;
+  border: 2rpx dashed var(--brand);
+  border-radius: var(--radius);
+  font-size: 44rpx;
+  font-weight: 600;
+  letter-spacing: 10rpx;
+  color: var(--brand);
+}
+.code-box.masked { color: var(--ink2); letter-spacing: 6rpx; }
+.code-eye {
+  min-width: 96rpx;
+  min-height: 96rpx;
+  line-height: 96rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: var(--brand);
+}
+.code-actions { display: flex; gap: 20rpx; margin-top: 24rpx; }
+.mini-btn {
+  flex: 1;
+  min-height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: var(--brand);
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  border-radius: 10rpx;
+}
+.mini-btn.ghost { background: #fff; color: var(--brand); border: 2rpx solid var(--brand); }
+
+.member-card { padding: 8rpx 32rpx; }
+.member-row {
+  display: flex;
+  align-items: center;
+  min-height: 112rpx;
+  border-bottom: 1rpx solid var(--line);
+}
+.member-row:last-child { border-bottom: none; }
+.m-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  flex-shrink: 0;
+}
+/* V3.8 真头像 + V3.9 编辑资料：圆形裁剪 + 头像容器 */
+.m-avatar-wrap {
+  position: relative;
+  width: 72rpx;
+  height: 72rpx;
+  flex-shrink: 0;
+}
+.m-avatar-img {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #eef1f4;
+}
+.m-cam {
+  position: absolute;
+  right: -4rpx;
+  bottom: -4rpx;
+  width: 30rpx;
+  height: 30rpx;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-size: 20rpx;
+  line-height: 30rpx;
+  text-align: center;
+  border: 2rpx solid #fff;
+}
+.member-me { background: #f7faf8; }
+.m-member-tip { font-size: 22rpx; color: var(--ink2); padding: 12rpx 8rpx 0; }
+.m-info { margin-left: 20rpx; flex: 1; }
+.m-name { font-size: 32rpx; color: var(--ink); font-weight: 500; }
+.m-role { font-size: 24rpx; color: var(--ink2); margin-top: 6rpx; }
+.m-remove {
+  min-width: 96rpx;
+  min-height: 72rpx;
+  line-height: 72rpx;
+  text-align: center;
+  color: var(--danger);
+  font-size: 26rpx;
+  border: 2rpx solid var(--danger);
+  border-radius: 10rpx;
+}
+
+.placeholder {
+  margin-top: 32rpx;
+  background: var(--card);
+  border: 2rpx dashed var(--line);
+  border-radius: var(--radius);
+  padding: 48rpx 32rpx;
+  text-align: center;
+}
+.ph-icon { font-size: 64rpx; }
+.ph-title { font-size: 34rpx; font-weight: 600; color: var(--ink2); margin-top: 16rpx; }
+.ph-desc { font-size: 26rpx; color: var(--ink2); margin-top: 8rpx; }
+
+.foot-note { margin-top: 32rpx; }
+
+/* ——— V3.9 编辑我的资料浮层 ——— */
+.pf-mask {
+  position: fixed;
+  left: 0; right: 0; top: 0; bottom: 0;
+  background: rgba(20, 28, 24, 0.45);
+  display: flex;
+  align-items: flex-end;
+  z-index: 100;
+}
+.pf-sheet {
+  width: 100%;
+  background: var(--card);
+  border-radius: 24rpx 24rpx 0 0;
+  padding: 40rpx 40rpx calc(40rpx + env(safe-area-inset-bottom));
+}
+.pf-title { font-size: 36rpx; font-weight: 600; color: var(--ink); }
+.pf-sub { font-size: 24rpx; color: var(--ink2); margin-top: 8rpx; }
+.pf-row { margin-top: 32rpx; }
+.pf-label { font-size: 30rpx; font-weight: 500; color: var(--ink); margin-bottom: 16rpx; }
+.my-page button.pf-avatar-btn {
+  position: relative;
+  width: 112rpx;
+  height: 112rpx;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  line-height: normal;
+}
+.pf-avatar-btn::after { border: none; }
+.pf-avatar-img { width: 112rpx; height: 112rpx; border-radius: 50%; background: #eef1f4; }
+.pf-avatar-ph {
+  width: 112rpx; height: 112rpx; border-radius: 50%;
+  background: #eef5f1; color: var(--brand);
+  font-size: 56rpx; line-height: 112rpx; text-align: center;
+}
+.pf-cam {
+  position: absolute; right: -2rpx; bottom: -2rpx;
+  width: 36rpx; height: 36rpx; border-radius: 50%;
+  background: var(--brand); color: #fff;
+  font-size: 22rpx; line-height: 36rpx; text-align: center;
+  border: 2rpx solid #fff;
+}
+.pf-hint { font-size: 22rpx; color: var(--ink2); margin-top: 12rpx; }
+.pf-input {
+  width: 100%;
+  min-height: 88rpx;
+  box-sizing: border-box;
+  background: #f4f8f6;
+  border: 2rpx solid var(--line);
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 32rpx;
+  color: var(--ink);
+}
+.pf-pholder { color: #9aa39d; font-size: 26rpx; }
+.pf-actions { display: flex; gap: 24rpx; margin-top: 48rpx; }
+.pf-btn {
+  flex: 1; min-height: 92rpx; line-height: 92rpx; text-align: center;
+  background: var(--brand); color: #fff; font-size: 32rpx; font-weight: 600;
+  border-radius: 12rpx;
+}
+.pf-btn.ghost { background: #fff; color: var(--ink2); border: 2rpx solid var(--line); }
+
+/* V3.10 解散家庭：危险操作区（仅 admin 可见） */
+.danger-zone {
+  margin-top: 40rpx;
+  padding: 28rpx;
+  background: #fff;
+  border: 2rpx solid #f0d9d5;
+  border-radius: var(--radius);
+}
+.dz-title { font-size: 28rpx; font-weight: 600; color: var(--danger); margin-bottom: 12rpx; }
+.dz-desc { font-size: 24rpx; color: var(--ink2); line-height: 1.6; margin-bottom: 24rpx; }
+.dz-btn {
+  min-height: 88rpx; line-height: 88rpx; text-align: center;
+  border: 2rpx solid var(--danger); color: var(--danger);
+  background: #fff; font-size: 30rpx; font-weight: 600;
+  border-radius: 12rpx;
+}
+.dz-btn.disabled {
+  border-color: var(--line); color: #9aa39d; background: #f6f7f9; font-weight: 400;
+}
+
+/* 已确认的家庭工具界面：个人资料、家庭摘要和三项管理入口。 */
+.my-page { padding:48rpx; }
+button::after { border:0; }
+.my-page button.profile-header { width:100%; justify-content:flex-start; font-weight:400; display:flex; align-items:center; gap:32rpx; padding:0; margin:8rpx 0 56rpx; background:transparent; text-align:left; line-height:1.5; color:var(--ink); }
+.profile-avatar { width:128rpx; height:128rpx; border-radius:44rpx; flex-shrink:0; background:#eaf0e6; }
+.fallback { display:flex; align-items:center; justify-content:center; font-size:64rpx; }
+.profile-text { min-width:0; }.profile-name { font-size:42rpx; font-weight:500; overflow-wrap:break-word; }.profile-edit { font-size:26rpx; color:var(--ink2); margin-top:8rpx; }
+.family-summary { padding:40rpx; background:var(--card); border-radius:24rpx; }
+.eyebrow,.summary-role { font-size:26rpx; color:var(--ink2); }
+.my-page button.family-title { width:100%; justify-content:flex-start; display:flex; align-items:center; gap:20rpx; background:transparent; padding:0; margin:12rpx 0 8rpx; color:var(--ink); text-align:left; line-height:1.4; min-height:76rpx; font-size:38rpx; font-weight:500; }
+.family-title text:first-child { min-width:0; overflow-wrap:break-word; }.chevron { flex-shrink:0; color:var(--brand); }
+.family-people { display:flex; align-items:center; gap:10rpx; flex-wrap:wrap; margin-top:36rpx; }
+.small-avatar { width:60rpx; height:60rpx; border-radius:50%; flex-shrink:0; font-size:30rpx; }
+.people-count { color:var(--ink2); font-size:24rpx; margin-left:6rpx; }
+.menu-list { margin-top:40rpx; border-radius:24rpx; background:var(--card); padding:0 36rpx; }
+.my-page button.menu-row { width:100%; border-radius:0; display:flex; align-items:center; gap:24rpx; padding:36rpx 0; margin:0; background:transparent; font-size:30rpx; line-height:1.5; color:var(--ink); text-align:left; font-weight:400; }
+.my-page button.menu-row + button.menu-row { border-top:1rpx solid #f0f2eb; }.menu-icon { width:44rpx; height:44rpx; flex-shrink:0; }.menu-end { margin-left:auto; color:var(--ink2); font-size:26rpx; }
+.pf-mask { z-index:150; background:rgba(16,38,27,.34); }
+.pf-sheet { border-radius:48rpx 48rpx 0 0; padding:24rpx 40rpx calc(40rpx + env(safe-area-inset-bottom)); max-height:90vh; overflow-y:auto; }
+.sheet-handle { width:64rpx; height:8rpx; border-radius:8rpx; background:#eaf0e6; margin:0 auto 24rpx; }
+.sheet-heading { display:flex; align-items:center; justify-content:space-between; font-size:38rpx; font-weight:500; margin-bottom:24rpx; }
+.my-page button.sheet-close { display:flex; align-items:center; justify-content:center; width:80rpx; height:80rpx; padding:0; margin:0; border-radius:50%; background:#eaf0e6; color:var(--brand); line-height:1; }
+.panel-scroll { max-height:64vh; }.panel-hint { color:var(--ink2); font-size:26rpx; line-height:1.6; padding:16rpx 0 24rpx; }
+.settings-name { font-size:34rpx; overflow-wrap:break-word; }.my-page button.settings-members { width:100%; margin-left:0; margin-right:0; font-weight:400; background:#eaf0e6; color:var(--brand); border-radius:24rpx; font-size:30rpx; }
+.invite-card,.member-card { border:0; padding-left:0; padding-right:0; }.danger-zone { border:0; background:#fcf5f2; border-radius:24rpx; margin-top:32rpx; }.m-info { min-width:0; }.m-name { overflow-wrap:break-word; }.m-remove { flex-shrink:0; margin-left:12rpx; }
+.pf-title { margin-top:16rpx; }.pf-input { min-height:96rpx; }.load-error { padding-top:80rpx; color:var(--ink2); text-align:center; }
+
+/* style:v2 的 button:not([size=mini]) 自带 184px 宽度和 auto 外边距。
+   自定义按钮用页面作用域 + 元素 + 类名覆盖，避免卡片/列表被压窄。 */

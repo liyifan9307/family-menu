@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>家庭类小程序 / App 功能使用率调研 · 我的家</title>
+<style>
+  :root{
+    --brand:#46765a; --brand-d:#2f5741; --brand-l:#eaf0e6;
+    --ink:#24302a; --ink2:#5c6b62; --ink3:#8b9a90;
+    --bg:#f7f7f2; --card:#ffffff; --line:#e1e8e1;
+    --warn:#b26b2c; --warn-bg:#fdf4e8;
+    --red:#a94442;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:940px;margin:0 auto;padding:48px 24px 80px}
+
+  /* header */
+  header{border-bottom:2px solid var(--brand);padding-bottom:24px;margin-bottom:32px}
+  .kicker{display:inline-block;font-size:12px;letter-spacing:.14em;color:var(--brand);
+    font-weight:600;background:var(--brand-l);padding:5px 11px;border-radius:20px}
+  h1{font-size:30px;line-height:1.35;margin:14px 0 8px;letter-spacing:-.02em}
+  .sub{color:var(--ink2);font-size:15px;margin:0 0 14px}
+  .meta{color:var(--ink3);font-size:12.5px;display:flex;gap:20px;flex-wrap:wrap}
+  .meta b{color:var(--ink2);font-weight:500}
+
+  /* verdict */
+  .verdict{background:var(--brand-d);color:#fff;border-radius:14px;padding:26px 28px;margin-bottom:38px;
+    box-shadow:0 10px 30px rgba(47,87,65,.16)}
+  .verdict .tag{font-size:12px;letter-spacing:.1em;opacity:.75;font-weight:600}
+  .verdict h2{font-size:22px;margin:8px 0 10px;line-height:1.5}
+  .verdict p{margin:0;font-size:14.5px;color:#dce8df;line-height:1.8}
+  .verdict p b{color:#fff}
+
+  /* section */
+  section{margin:0 0 42px}
+  h2.sec{font-size:20px;margin:0 0 6px;padding-left:13px;border-left:4px solid var(--brand);line-height:1.4}
+  .sec-note{color:var(--ink2);font-size:13.5px;margin:8px 0 18px}
+
+  /* card + table */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin-bottom:16px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{background:var(--brand-l);color:var(--brand-d);font-weight:600;text-align:left;
+    padding:11px 13px;border-bottom:1px solid #d4e0d4;font-size:13px}
+  td{padding:12px 13px;border-bottom:1px solid #eef1ec;vertical-align:top;line-height:1.7}
+  tr:last-child td{border-bottom:none}
+  .tbl-wrap{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .num{font-variant-numeric:tabular-nums;font-weight:600;color:var(--brand-d)}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--ink2)}
+
+  /* badges */
+  .b{display:inline-block;font-size:11.5px;line-height:1.5;padding:2px 8px;border-radius:5px;
+    font-weight:600;white-space:nowrap}
+  .b-hi{background:#e4f0e6;color:#2f6b3f}
+  .b-mid{background:#fdf1dd;color:#9a6422}
+  .b-low{background:#eef0ee;color:#6d7a70}
+  .b-own{background:#e8eef7;color:#35577f}
+  sup a{color:var(--brand);text-decoration:none;font-size:11px;font-weight:600;padding:0 1px}
+  sup a:hover{text-decoration:underline}
+
+  /* case study */
+  .case{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:16px 15px;text-align:center}
+  .stat .v{display:block;font-size:23px;font-weight:700;color:var(--brand-d);line-height:1.2}
+  .stat .l{display:block;font-size:12px;color:var(--ink2);margin-top:6px;line-height:1.5}
+  .quote{border-left:3px solid var(--brand);background:#f0f5ef;padding:13px 17px;margin:14px 0;
+    border-radius:0 8px 8px 0;color:#33483b;font-size:14px}
+  .quote cite{display:block;font-style:normal;font-size:12px;color:var(--ink2);margin-top:7px}
+
+  /* callout */
+  .note{background:var(--warn-bg);border:1px solid #f0ddbf;border-radius:10px;
+    padding:14px 18px;color:#6f4d27;font-size:13.5px;margin:16px 0}
+  .note b{color:#8c5419}
+  .rule{display:flex;gap:14px;background:var(--card);border:1px solid var(--line);
+    border-radius:11px;padding:16px 18px;margin-bottom:10px}
+  .rule .no{flex:0 0 30px;height:30px;border-radius:50%;background:var(--brand-l);
+    color:var(--brand-d);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+  .rule h3{margin:2px 0 5px;font-size:15px}
+  .rule p{margin:0;font-size:13.5px;color:var(--ink2)}
+
+  /* priority list */
+  .pitem{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid #eef1ec}
+  .pitem:last-child{border-bottom:none}
+  .prank{flex:0 0 42px;height:42px;border-radius:10px;background:var(--brand-l);color:var(--brand-d);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+  .pitem h3{margin:1px 0 5px;font-size:15.5px}
+  .pitem p{margin:0;font-size:13.5px;color:var(--ink2)}
+
+  /* sources */
+  ol.sources{margin:0;padding-left:22px;color:var(--ink2);font-size:13px}
+  ol.sources li{padding:5px 0;line-height:1.7}
+  ol.sources a{color:var(--brand-d);word-break:break-all;text-decoration:none;border-bottom:1px solid #c6d6c9}
+  ol.sources a:hover{border-bottom-color:var(--brand)}
+  footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--line);color:var(--ink3);font-size:12px;line-height:1.9}
+
+  @media(max-width:720px){
+    .wrap{padding:28px 16px 60px} h1{font-size:24px}
+    .case{grid-template-columns:repeat(2,1fr)}
+    .tbl-wrap{overflow-x:auto} table{min-width:640px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="kicker">调研 · 家庭类小程序 / App</span>
+  <h1>哪个功能真正实用、使用率高？</h1>
+  <p class="sub">为「我的家」小程序的功能排期提供依据 —— 只看被市场和用户验证过的部分</p>
+  <div class="meta">
+    <span><b>调研日期</b> 2026-11-25</span>
+    <span><b>样本</b> 国内小程序 1 例 + 海外家庭 App 4 类 + 多份横评</span>
+    <span><b>用途</b> 功能优先级评审</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <div class="tag">核心结论</div>
+  <h2>共享日程（尤其是"谁去接"）是唯一被反复验证的高频刚需</h2>
+  <p>海外两款头部产品用户量均在千万级以上 <sup><a href="#s5">[5]</a><a href="#s6">[6]</a></sup>，国内「卷了么」小程序对一个多月的使用给出了最直接的证据：<b>用户每天进去看 2–3 次</b>，理由不是功能多，而是"接送不用再交接、老人看一眼就行" <sup><a href="#s3">[3]</a></sup>。购物清单紧随其后，但通常依附于日历存在，单独撑不起产品。</p>
+</div>
+
+<section>
+  <h2 class="sec">01　市场验证数据</h2>
+  <p class="sec-note">用户量与核心功能来自官方页面与 2025–2026 年第三方横评；多个来源口径不一致的已如实标注区间。</p>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th style="width:20%">产品</th><th style="width:18%">体量</th><th>被验证的核心功能</th><th style="width:23%">关键事实</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>Cozi</b><br><span class="mono">海外 · 老牌</span></td>
+        <td><span class="num">2000 万+</span> 用户<br>App Store 4.8 分 / 39.9 万评分 <sup><a href="#s4">[4]</a><a href="#s5">[5]</a></sup></td>
+        <td>彩色共享日历、<b>共享购物清单</b>、待办、菜谱与膳食计划、每周邮件摘要</td>
+        <td>官方将"减少错过接送"和"在店里的人看到最新清单"列为核心卖点 <sup><a href="#s4">[4]</a></sup></td>
+      </tr>
+      <tr>
+        <td><b>TimeTree</b><br><span class="mono">海外 · 共享日历</span></td>
+        <td><span class="num">5500 万–7500 万+</span><br><span class="mono">各来源口径不同 [6][7]</span></td>
+        <td>多共享日历、<b>事件内聊天</b>、跨平台</td>
+        <td>纯日历路线，<b>没有清单和菜谱</b>——说明日历单功能本身足以支撑大用户量 <sup><a href="#s7">[7]</a></sup></td>
+      </tr>
+      <tr>
+        <td><b>卷了么</b><br><span class="mono">国内 · 微信小程序</span></td>
+        <td>上线一个多月 <span class="num">五六百</span> 位家长 <sup><a href="#s1">[1]</a><a href="#s3">[3]</a></sup></td>
+        <td>孩子兴趣班日程、接送时间地点、<b>一键转发大图给老人</b>、家人共享课表、课时/费用统计</td>
+        <td><b>深度用户每天看 2–3 次</b>；用户原话"老公接送不用再交接" <sup><a href="#s3">[3]</a></sup></td>
+      </tr>
+      <tr>
+        <td><b>OurHome / Tody / Homsy</b><br><span class="mono">家务分工类</span></td>
+        <td>—</td>
+        <td>家务积分、轮值表、清洁计划</td>
+        <td>场景偏窄：要么靠小孩积分激励，要么面向室友/宿舍，纯家庭使用偏弱 <sup><a href="#s8">[8]</a><a href="#s9">[9]</a></sup></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2 class="sec">02　国内案例深挖：「卷了么」</h2>
+  <p class="sec-note">这个案例与「我的家」的目标场景高度重合：4 岁孩子、父母上班、老人参与接送、信息靠口头交接。它的出现原因、功能和用户反馈几乎可以直接照搬判断。</p>
+
+  <div class="case">
+    <div class="stat"><span class="v">3 周</span><span class="l">开发者利用业余时间做出原型</span></div>
+    <div class="stat"><span class="v">4 岁</span><span class="l">开发者孩子，5 门兴趣班 / 每周 8 节</span></div>
+    <div class="stat"><span class="v">2–3 次</span><span class="l">深度用户每天的打开次数</span></div>
+    <div class="stat"><span class="v">500–600</span><span class="l">上线一个多月的家长用户量</span></div>
+  </div>
+
+  <p>起点是一个极具体的痛：妈妈临时不能接娃，爸爸不知道在哪上课、几点放，反复问导致吵架，最后被一句"亏你还是个程序员"激出这个项目 <sup><a href="#s2">[2]</a></sup>。它解决的本质不是"排课程表"，而是<b>家庭成员之间的信息交接</b>。</p>
+
+  <div class="quote">
+    "之前我老婆给了我一份手绘的课程表……这段时间我离职了，都是我负责接送闺女上兴趣班，周三下午轮滑课，我和老婆都记成了下午 6 点 10 分上课，下午 3 点多看了一眼'卷了么'，才发现其实是下午 4 点多，不然那天就错过了，我现在是这个小程序的深度用户，每天都要进去看两三次。"
+    <cite>—— 用户甄女士的丈夫，<a href="#s3" style="color:var(--brand-d)">杭州网报道 [3]</a></cite>
+  </div>
+
+  <p>三个设计细节对「我的家」特别有参考价值：</p>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th style="width:28%">做法</th><th>为什么有效</th></tr></thead>
+    <tbody>
+      <tr><td><b>一键转发大图给老人</b></td><td>不要求老人注册或学会复杂 App——这是它能覆盖"老人接送"场景的关键。对应到「我的家」，给父母的入口应该是卡片/图片，而不是让他们进小程序层层点。</td></tr>
+      <tr><td><b>添加家人后课表共享</b></td><td>用户评价"老公接送不需要再交接" <sup><a href="#s3">[3]</a></sup>。共享本身就是价值，不需要额外的协作流程设计。</td></tr>
+      <tr><td><b>课时 / 费用统计顺带做出</b></td><td>用户主动提到"上了多少还剩多少一目了然，还能看到总花销和月均花销"。这是主功能之外的低成本衍生价值。</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note"><b>注意：</b>该案例后续又接入了 AI 语音录入和学校选餐 <sup><a href="#s1">[1]</a><a href="#s3">[3]</a></sup>，但那是用户量起势之后的扩张，不是冷启动要素。「我的家」现阶段只需复制"日程 + 接送共享 + 免安装查看"这三件事。</div>
+</section>
+
+<section>
+  <h2 class="sec">03　功能使用率排序</h2>
+  <p class="sec-note">按"市场验证强度 × 家庭场景契合度 × 开发成本"综合排序。</p>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th style="width:15%">档位</th><th style="width:24%">功能</th><th>判断依据</th></tr></thead>
+    <tbody>
+      <tr><td><span class="b b-hi">高频验证</span></td><td><b>共享日程 / 谁去接</b></td><td>Cozi、TimeTree 核心功能；卷了么用户每天看 2–3 次。与"父母接送 + 老人带娃 + 上班族"的家庭结构完全契合。</td></tr>
+      <tr><td><span class="b b-hi">高频验证</span></td><td><b>共享购物 / 买菜清单</b></td><td>Cozi 官方主打功能，多份横评认为它"确实省时间" <sup><a href="#s4">[4]</a><a href="#s6">[6]</a></sup>；但 Cross-app 数据表明它通常和日历捆绑使用，单独撑不起产品。项目里已对应 <span class="mono">dish_buy_progress</span> 等表。</td></tr>
+      <tr><td><span class="b b-mid">中频</span></td><td><b>家庭留言 / 动态</b></td><td>FamilyWall 的 family feed、TimeTree 的事件内聊天都验证了"围绕具体事项留言"有价值 <sup><a href="#s8">[8]</a></sup>。成本极低，适合作为串起其他功能的胶水。</td></tr>
+      <tr><td><span class="b b-mid">中频 · 慎做</span></td><td><b>家务分工 / 轮值</b></td><td>OurHome、Tody 等有用户，但多依赖小孩积分激励或室友场景；有评测直指"共享日历不会分摊精神负担，只是显示得更好看" <sup><a href="#s6">[6]</a></sup>。有老人的家庭尤其容易变成矛盾源。</td></tr>
+      <tr><td><span class="b b-low">低频·不建议</span></td><td><b>成长记录 / 相册 / 门禁</b></td><td>微信相册、备忘录、门禁 App 已做得更好，重做只是把小程序变臃肿。</td></tr>
+      <tr><td><span class="b b-low">高风险</span></td><td><b>家庭账本 / AA 分摊</b></td><td>钱最容易伤感情。真要做也只做"记一笔"，绝不做谁欠谁。</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2 class="sec">04　别人踩坑提炼的三条设计原则</h2>
+  <div class="rule"><div class="no">1</div><div><h3>录入必须快</h3><p>多份横评反复提到：录入负担过重是家庭 App 被放弃的主要原因 <sup><a href="#s7">[7]</a><a href="#s8">[8]</a></sup>。「卷了么」后来接入语音输入也是同一动机。对应到开发：日程添加要做成一屏、少字段、默认值预填。</p></div></div>
+  <div class="rule"><div class="no">2</div><div><h3>通知 + 免安装查看是关键</h3><p>最典型的失败模式是"一人维护，其他人不用，App 变成私人日记"。给父母/老人看的路径必须最简单——转发卡片或图片优先，不要求注册 <sup><a href="#s1">[1]</a><a href="#s8">[8]</a></sup>。</p></div></div>
+  <div class="rule"><div class="no">3</div><div><h3>别解决"谁做家务"这种情绪问题</h3><p>家务积分制在有老人的家里容易变成矛盾。工具应该降低沟通成本，而不是制造考核感 <sup><a href="#s6">[6]</a><a href="#s9">[9]</a></sup>。</p></div></div>
+</section>
+
+<section>
+  <h2 class="sec">05　对「我的家」的落地建议</h2>
+  <div class="card">
+    <div class="pitem"><div class="prank">1</div><div><h3>家庭日程（含接送提醒）<span class="b b-own" style="margin-left:8px">建议优先立项</span></h3><p>市场验证最强、家庭契合度最高。数据结构简单（日期 / 事项 / 负责人 / 状态），可直接复用现有 <span class="mono">co_member</span> 成员体系。重点做"一键添加 + 家人共享 + 转发卡片给老人"。</p></div></div>
+    <div class="pitem"><div class="prank">2</div><div><h3>点菜 / 买菜清单<span class="b b-own" style="margin-left:8px">地基已备好</span></h3><p>项目已建好 8 张 <span class="mono">dish_*</span> 表，是已验证的中高频场景、也是差异化点。排在日程之后是因为冷启动阶段"信息交接"比"吃什么"更痛。</p></div></div>
+    <div class="pitem"><div class="prank">3</div><div><h3>家庭留言板<span class="b b-own" style="margin-left:8px">低成本胶水</span></h3><p>一屏时间线 + 带时间的事项，开发成本极低，可作为日程与点菜的变更留痕入口。</p></div></div>
+  </div>
+  <div class="note"><b>战略判断：</b>不要做成"大而全的家庭 OS"。当前地基的优势是稳和简单，聪明路线是<b>日程 → 点菜 → 留言三个高频场景做深，其余不碰</b>。一个家人每周打开五次的小程序，胜过二十个没人用的功能。</div>
+  <p style="font-size:13.5px;color:var(--ink2);margin-top:18px">落地前仍需拍板：<b>谁来"定菜单"</b>（管理员拍板 vs 许愿投票，现有 <span class="mono">dish_menu.confirmedBy</span> 偏单人确认）；<b>菜谱库归属</b>（<span class="mono">dish_dishes</span> 现为全局共享、无 familyId）。这两条建议另建待确认事项，拉研发一起定。</p>
+</section>
+
+<section>
+  <h2 class="sec">06　来源清单</h2>
+  <ol class="sources">
+    <li id="s1">都市快报 / 橙柿互动：《杭州宝爸做了个"卷了么"小程序……》原文　<a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM4NjI2OQ==&amp;mid=2249380680&amp;idx=1&amp;sn=1f40a252fb511867b6f815400420015f" target="_blank" rel="noopener noreferrer">mp.weixin.qq.com/s?__biz=MzkyMjM4NjI2OQ... ↗</a></li>
+    <li id="s2">腾讯新闻转载（同题报道）　<a href="https://new.qq.com/rain/a/20260718A0ACY800" target="_blank" rel="noopener noreferrer">https://new.qq.com/rain/a/20260718A0ACY800 ↗</a></li>
+    <li id="s3">杭州网：报道续篇，含"每天看两三次""老公接送不用再交接"等用户原话　<a href="https://hznews.hangzhou.com.cn/kejiao/content/2026-07/23/content_9262184_2.htm" target="_blank" rel="noopener noreferrer">hznews.hangzhou.com.cn/kejiao/content/2026-07/23/content_9262184_2.htm ↗</a></li>
+    <li id="s4">Cozi 官网功能总览（共享日历 / 购物清单 / 家务 / 菜谱）　<a href="https://www.cozi.com/feature-overview/" target="_blank" rel="noopener noreferrer">https://www.cozi.com/feature-overview/ ↗</a></li>
+    <li id="s5">Calendara：Family Calendar App Comparison 2026（Cozi 20M+、TimeTree 70M+）　<a href="https://www.usecalendara.com/blog/family-calendar-app-comparison-2026" target="_blank" rel="noopener noreferrer">https://www.usecalendara.com/blog/family-calendar-app-comparison-2026 ↗</a></li>
+    <li id="s6">RemindHer：Cozi vs TimeTree 2026（Cozi 20M+ / TimeTree 55M+，含"共享日历不分摊精神负担"观点）　<a href="https://remindher.app/cozi-vs-timetree/" target="_blank" rel="noopener noreferrer">https://remindher.app/cozi-vs-timetree/ ↗</a></li>
+    <li id="s7">Calendara：Cozi vs TimeTree 2026（功能边界、TimeTree 70M+）　<a href="https://www.usecalendara.com/blog/cozi-vs-timetree" target="_blank" rel="noopener noreferrer">https://www.usecalendara.com/blog/cozi-vs-timetree ↗</a></li>
+    <li id="s8">TextConcierge：7 Best Family Calendar Apps Compared (2025)　<a href="https://textconcierge.ai/blog/articles/best-family-shared-calendars-2025" target="_blank" rel="noopener noreferrer">https://textconcierge.ai/blog/articles/best-family-shared-calendars-2025 ↗</a></li>
+    <li id="s9">Homsy：家庭管理 App 对比（中文，家务分工类现状）　<a href="https://gethomsy.com/zh/blog/comparisons" target="_blank" rel="noopener noreferrer">https://gethomsy.com/zh/blog/comparisons ↗</a></li>
+  </ol>
+</section>
+
+<footer>
+  调研方法：Web 检索 + 原文核对，2026-11-25。所有数字均标注来源编号，可点击跳转核验。<br>
+  用户量口径在不同来源间存在差异（TimeTree 5500 万 / 7000 万 / 7500 万+），已按区间标注，未做取舍。<br>
+  本文件位于 docs/research/，已在 project.config.json 的 packOptions.ignore 覆盖范围内，不进入小程序打包。
+</footer>
+
+</div>
+</body>
+</html>

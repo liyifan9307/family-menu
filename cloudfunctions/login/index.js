@@ -43,12 +43,12 @@ exports.main = async (event = {}) => {
       const families = []
       members.forEach(m => {
         const f = famMap[m.familyId]
-        if (f) families.push({ familyId: m.familyId, name: f.name, role: m.role, color: m.color })
+        if (f && f.status !== 'dissolving') families.push({ familyId: m.familyId, name: f.name, role: m.role, color: m.color })
       })
       // 孤儿数据兜底：有 active 成员记录但对应家庭全被删 → 清理孤儿记录，避免卡在"ok 但无家庭"
       if (families.length === 0) {
-        const orphanIds = members.map(m => m.familyId)
-        await db.collection('co_member').where({ openid, familyId: _.in(orphanIds) })
+        const orphanIds = members.filter(m => !famMap[m.familyId]).map(m => m.familyId)
+        if (orphanIds.length) await db.collection('co_member').where({ openid, familyId: _.in(orphanIds) })
           .update({ data: { status: 'removed' } })
         return {
           member: { openid, name: '家人', nickName: null, avatarEmoji: EMOJIS[0], avatarUrl: null, role: 'member', color: COLORS[0] },

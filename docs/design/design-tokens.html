@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的家 · 设计规范 Design Tokens</title>
+<style>
+  :root{
+    --brand:#46765a; --brand-dark:#3a715a; --ink:#263e32; --ink2:#657368;
+    --line:#e3e8e4; --bg:#f7f7f2; --card:#ffffff; --danger:#c0392b;
+    --mint:#eaf0e6; --mint2:#eef5f1; --field:#f4f8f6; --mock:#9aa39d;
+    --mono:'SF Mono',Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.6;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px 100px;}
+
+  /* header */
+  header{padding:56px 0 30px;border-bottom:2px solid var(--brand);}
+  .kicker{font-size:13px;letter-spacing:2px;color:var(--brand);font-weight:600;}
+  h1{font-size:38px;margin:10px 0 8px;font-weight:700;letter-spacing:-.5px;}
+  .sub{font-size:15px;color:var(--ink2);max-width:760px;}
+  .badge{display:inline-block;background:#fff8e8;color:#a9741a;border:1px solid #f0d9b5;
+    font-size:12px;padding:4px 12px;border-radius:20px;margin-left:10px;vertical-align:middle;font-weight:600;}
+  .meta{margin-top:20px;display:flex;flex-wrap:wrap;gap:8px;}
+  .meta span{background:#fff;border:1px solid var(--line);border-radius:6px;
+    font-size:12px;color:var(--ink2);padding:5px 11px;font-family:var(--mono);}
+  .legend{margin-top:22px;display:flex;gap:22px;flex-wrap:wrap;font-size:13px;color:var(--ink2);}
+  .legend b{color:var(--ink);}
+  .tag{display:inline-block;font-size:11px;font-weight:600;padding:1px 8px;border-radius:4px;vertical-align:middle;}
+  .tag.now{background:#eef1f4;color:#5c6b78;}
+  .tag.pro{background:#fff2d9;color:#a9741a;}
+  .tag.keep{background:#e6f2ea;color:#3a715a;}
+
+  /* toc */
+  nav{position:sticky;top:0;z-index:20;background:rgba(247,247,242,.94);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+    display:flex;gap:4px;flex-wrap:wrap;padding:12px 0;margin-bottom:8px;}
+  nav a{font-size:13px;color:var(--ink2);text-decoration:none;padding:6px 12px;border-radius:6px;}
+  nav a:hover{background:var(--mint);color:var(--brand);}
+
+  section{padding-top:52px;}
+  .sec-h{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;}
+  .sec-n{font-family:var(--mono);font-size:14px;color:var(--brand);font-weight:700;}
+  h2{font-size:26px;margin:0;font-weight:700;}
+  .sec-d{font-size:14px;color:var(--ink2);margin:0 0 24px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:16px;}
+  .card-t{font-size:15px;font-weight:700;margin:0 0 16px;color:var(--ink);}
+  .hintline{font-size:13px;color:var(--ink2);margin:14px 0 0;line-height:1.7;}
+  .hintline code{font-family:var(--mono);background:#f2f4f1;padding:1px 5px;border-radius:4px;font-size:12px;}
+
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  th{font-size:12px;color:var(--ink2);font-weight:600;background:#fafbf9;}
+  tr:last-child td{border-bottom:none;}
+  td.mono,th.mono{font-family:var(--mono);font-size:12.5px;}
+  .arr{color:var(--mock);padding:0 4px;}
+
+  /* color */
+  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;}
+  .sw{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .sw .chip{height:72px;}
+  .sw .info{padding:11px 13px;}
+  .sw .nm{font-size:13px;font-weight:700;}
+  .sw .hx{font-family:var(--mono);font-size:11.5px;color:var(--ink2);margin-top:3px;}
+  .sw .use{font-size:11.5px;color:var(--mock);margin-top:6px;line-height:1.5;}
+  .member-row{display:flex;gap:14px;align-items:center;}
+  .mdot{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:24px;flex-direction:column;}
+  .mdot small{font-family:var(--mono);font-size:8px;margin-top:2px;}
+
+  /* type scale */
+  .type-row{display:flex;align-items:baseline;gap:18px;padding:14px 6px;border-bottom:1px solid var(--line);}
+  .type-row:last-child{border-bottom:none;}
+  .type-meta{width:210px;flex-shrink:0;}
+  .type-name{font-size:13px;font-weight:700;}
+  .type-spec{font-family:var(--mono);font-size:11.5px;color:var(--ink2);margin-top:4px;}
+  .type-sample{flex:1;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .type-use{width:230px;flex-shrink:0;font-size:12px;color:var(--mock);}
+  .fontfam{font-size:20px;padding:6px 0;}
+
+  /* buttons — rendered at real px size */
+  .btn-stage{display:flex;flex-direction:column;gap:20px;align-items:flex-start;}
+  .btn-line{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+  .btn-label{width:150px;flex-shrink:0;font-size:13px;}
+  .btn-label small{display:block;color:var(--ink2);font-family:var(--mono);font-size:11px;margin-top:3px;}
+  .demo-btn{display:inline-flex;align-items:center;justify-content:center;
+    font-family:inherit;border:none;cursor:default;}
+  .btn-primary{height:48px;min-width:200px;background:var(--brand);color:#fff;
+    font-size:17px;font-weight:600;border-radius:7px;padding:0 22px;}
+  .btn-primary.pressed{background:var(--brand-dark);}
+  .btn-ghost{height:48px;min-width:200px;background:#fff;color:var(--brand);
+    font-size:17px;font-weight:600;border:1px solid var(--brand);border-radius:7px;}
+  .btn-mini{height:44px;min-width:150px;background:var(--brand);color:#fff;
+    font-size:15px;font-weight:600;border-radius:5px;}
+  .btn-mini.ghost{background:#fff;color:var(--brand);border:1px solid var(--brand);}
+  .btn-danger{height:44px;min-width:150px;background:#fff;color:var(--danger);
+    font-size:15px;font-weight:600;border:1px solid var(--danger);border-radius:6px;}
+  .btn-close{width:40px;height:40px;border-radius:50%;background:var(--mint);
+    color:var(--brand);font-size:20px;}
+  .btn-sheet{height:44px;min-width:130px;background:var(--brand);color:#fff;
+    font-size:15px;border-radius:12px;}
+  .btn-sheet.sec{background:var(--mint);color:var(--brand);}
+  .code-demo{display:flex;gap:8px;align-items:center;}
+  .code-box{width:150px;height:48px;background:var(--field);border:1px dashed var(--brand);
+    border-radius:7px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:22px;font-weight:600;letter-spacing:5px;color:var(--brand);}
+  .code-box.masked{color:var(--ink2);letter-spacing:3px;}
+  .code-eye{width:48px;height:48px;display:flex;align-items:center;justify-content:center;
+    color:var(--brand);font-size:14px;}
+
+  /* radius */
+  .radius-grid{display:flex;gap:22px;flex-wrap:wrap;}
+  .rad-item{text-align:center;}
+  .rad-box{width:96px;height:72px;background:var(--mint);border:2px solid var(--brand);margin-bottom:8px;}
+  .rad-cap{font-family:var(--mono);font-size:12px;color:var(--ink2);}
+  .rad-use{font-size:11px;color:var(--mock);margin-top:2px;}
+
+  /* spacing */
+  .sp-row{display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+  .sp-key{width:130px;flex-shrink:0;font-family:var(--mono);font-size:12px;}
+  .sp-bar{height:16px;background:var(--brand);border-radius:3px;}
+  .sp-val{font-family:var(--mono);font-size:11px;color:var(--ink2);}
+
+  /* component */
+  .comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
+  .comp-demo{background:var(--bg);border-radius:8px;padding:18px;margin-top:12px;}
+  .demo-card{background:#fff;border:1px solid var(--line);border-radius:7px;padding:16px;}
+  .demo-card .t{font-size:17px;font-weight:600;margin-bottom:6px;}
+  .demo-card .d{font-size:13px;color:var(--ink2);}
+  .demo-input{height:48px;background:#fff;border:1px solid var(--line);border-radius:7px;
+    padding:0 12px;display:flex;align-items:center;color:var(--mock);font-size:17px;}
+  .demo-field{height:48px;background:var(--field);border:1px solid var(--line);border-radius:6px;
+    padding:0 12px;display:flex;align-items:center;color:var(--ink);font-size:16px;}
+  .demo-tag{display:inline-block;border:1px solid var(--brand);color:var(--brand);
+    border-radius:16px;font-size:11px;padding:2px 10px;}
+  .demo-role{display:inline-block;background:var(--mint2);color:var(--brand);
+    border-radius:10px;font-size:12px;padding:3px 9px;}
+  .demo-avatars{display:flex;gap:10px;align-items:center;}
+  .av{background:var(--mint);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:600;}
+  .av-lg{width:64px;height:64px;border-radius:22px;font-size:32px;background:#6b90b8;color:#fff;}
+  .av-md{width:36px;height:36px;border-radius:50%;font-size:18px;background:#c48494;color:#fff;}
+  .av-sm{width:30px;height:30px;border-radius:50%;font-size:15px;background:#d0a15e;color:#fff;}
+
+  /* change table */
+  .chg-yes{color:#3a715a;font-weight:600;}
+  .chg-no{color:var(--mock);}
+  footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--mock);line-height:1.9;}
+  @media(max-width:720px){
+    .type-meta,.type-use{width:auto;}
+    .type-row{flex-direction:column;gap:6px;}
+    h1{font-size:30px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">DESIGN SYSTEM / V0.1</div>
+  <h1>我的家 · 设计规范<span class="badge">优化稿 · 待评审</span></h1>
+  <p class="sub">从当前代码真实样式提炼的设计令牌（Design Tokens），作为 UI 评审与后续改动的统一标尺。所有数值均来自 <code style="font-family:var(--mono)">app.wxss</code>、各页面 <code style="font-family:var(--mono)">*.wxss</code> 与 <code style="font-family:var(--mono)">utils/constants.js</code>，rpx 按 750rpx = 375px 折算为 px。</p>
+  <div class="meta">
+    <span>source: app.wxss</span><span>pages/{home,my,identity}.wxss</span>
+    <span>components/family-switcher.wxss</span><span>utils/constants.js</span>
+    <span>基准: UI 稿 V3.5–3.6 / 需求 V3.10</span>
+  </div>
+  <div class="legend">
+    <span><b>标注说明：</b></span>
+    <span><span class="tag now">代码现值</span> 当前 wxss 里的实际值</span>
+    <span><span class="tag pro">优化稿</span> 本轮建议改成的值（待评审）</span>
+    <span><span class="tag keep">保留</span> 不改动</span>
+  </div>
+</header>
+
+<nav>
+  <a href="#color">01 色彩</a><a href="#type">02 字体</a><a href="#button">03 按钮</a>
+  <a href="#radius">04 圆角</a><a href="#spacing">05 间距</a><a href="#component">06 组件</a>
+  <a href="#changes">07 变更清单</a>
+</nav>
+
+<!-- ============ 01 COLOR ============ -->
+<section id="color">
+  <div class="sec-h"><span class="sec-n">01</span><h2>色彩系统</h2></div>
+  <p class="sec-d">扁平化配色，松绿为唯一主色。主文字对比度 &gt; 7:1，次要文字约 6:1。括号内为 CSS 变量名。</p>
+
+  <div class="card">
+    <p class="card-t">品牌与中性色 · core</p>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#46765a"></div><div class="info">
+        <div class="nm">松绿 · 主色</div><div class="hx">#46765a · --brand</div>
+        <div class="use">主按钮 / 强调文字 / 图标底 / 选中态</div></div></div>
+      <div class="sw"><div class="chip" style="background:#3a715a"></div><div class="info">
+        <div class="nm">深松绿 · 按下</div><div class="hx">#3a715a · --brand-dark</div>
+        <div class="use">主按钮 active 态</div></div></div>
+      <div class="sw"><div class="chip" style="background:#263e32"></div><div class="info">
+        <div class="nm">墨绿 · 主文字</div><div class="hx">#263e32 · --ink</div>
+        <div class="use">标题、正文，对比度 &gt; 7:1</div></div></div>
+      <div class="sw"><div class="chip" style="background:#657368"></div><div class="info">
+        <div class="nm">灰绿 · 次要文字</div><div class="hx">#657368 · --ink2</div>
+        <div class="use">副标题、说明、辅助信息</div></div></div>
+      <div class="sw"><div class="chip" style="background:#e3e8e4"></div><div class="info">
+        <div class="nm">浅灰绿 · 描边</div><div class="hx">#e3e8e4 · --line</div>
+        <div class="use">卡片描边、分割线、输入框边框</div></div></div>
+      <div class="sw"><div class="chip" style="background:#f7f7f2;border-bottom:1px solid var(--line)"></div><div class="info">
+        <div class="nm">暖白 · 页面底</div><div class="hx">#f7f7f2 · --bg</div>
+        <div class="use">全局背景</div></div></div>
+      <div class="sw"><div class="chip" style="background:#ffffff;border-bottom:1px solid var(--line)"></div><div class="info">
+        <div class="nm">纯白 · 卡片</div><div class="hx">#ffffff · --card</div>
+        <div class="use">卡片、弹层、输入框</div></div></div>
+      <div class="sw"><div class="chip" style="background:#c0392b"></div><div class="info">
+        <div class="nm">砖红 · 危险</div><div class="hx">#c0392b · --danger</div>
+        <div class="use">移除成员、解散家庭</div></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-t">衍生背景色 · surfaces（散落在各页，建议收编为令牌）</p>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#eaf0e6"></div><div class="info">
+        <div class="nm">浅绿底 A</div><div class="hx">#eaf0e6</div>
+        <div class="use">feature 卡、选中项、关闭按钮底</div></div></div>
+      <div class="sw"><div class="chip" style="background:#eef5f1"></div><div class="info">
+        <div class="nm">浅绿底 B</div><div class="hx">#eef5f1</div>
+        <div class="use">角色标签、列表选中态</div></div></div>
+      <div class="sw"><div class="chip" style="background:#f4f8f6"></div><div class="info">
+        <div class="nm">输入底</div><div class="hx">#f4f8f6</div>
+        <div class="use">邀请码框、资料输入框</div></div></div>
+      <div class="sw"><div class="chip" style="background:#f7faf8"></div><div class="info">
+        <div class="nm">极浅绿</div><div class="hx">#f7faf8</div>
+        <div class="use">按压反馈、当前用户行</div></div></div>
+      <div class="sw"><div class="chip" style="background:#fcf5f2"></div><div class="info">
+        <div class="nm">危险区底</div><div class="hx">#fcf5f2</div>
+        <div class="use">解散家庭危险区（V3.10）</div></div></div>
+      <div class="sw"><div class="chip" style="background:#fdf6ec"></div><div class="info">
+        <div class="nm">警告底</div><div class="hx">#fdf6ec · 字 #8a6d3b</div>
+        <div class="use">通用提示框 warn-box</div></div></div>
+      <div class="sw"><div class="chip" style="background:#9aa39d"></div><div class="info">
+        <div class="nm">占位灰</div><div class="hx">#9aa39d</div>
+        <div class="use">输入框 placeholder、禁用态</div></div></div>
+      <div class="sw"><div class="chip" style="background:rgba(16,38,27,.34)"></div><div class="info">
+        <div class="nm">遮罩</div><div class="hx">rgba(16,38,27,.34)</div>
+        <div class="use">弹层蒙层</div></div></div>
+    </div>
+    <p class="hintline">评审点：这 8 个色值目前硬编码在各页 wxss，建议提升为 <code>--mint / --mint-2 / --field / --surface-danger</code> 等全局令牌，避免同色多处写死。</p>
+  </div>
+
+  <div class="card">
+    <p class="card-t">成员雾感五色板 · 唯一色源 = co_member.color</p>
+    <div class="member-row">
+      <div class="mdot" style="background:#6b90b8">🧑<small>#6b90b8</small></div>
+      <div class="mdot" style="background:#c48494">👩<small>#c48494</small></div>
+      <div class="mdot" style="background:#d0a15e">👨<small>#d0a15e</small></div>
+      <div class="mdot" style="background:#7a9e7e">🧒<small>#7a9e7e</small></div>
+      <div class="mdot" style="background:#9a86a8">👵<small>#9a86a8</small></div>
+    </div>
+    <p class="hintline">按加入顺序分配，服务端字段 <code>co_member.color</code> 是唯一色源，前端不自行计算。对应 emoji：🧑 👩 👨 🧒 👵。</p>
+  </div>
+</section>
+
+<!-- ============ 02 TYPE ============ -->
+<section id="type">
+  <div class="sec-h"><span class="sec-n">02</span><h2>字体系统</h2></div>
+  <p class="sec-d">字号偏大、字重克制（仅 400/500/600 三档）。下表的示例文字按真实 px 渲染，可直接对比大小。</p>
+
+  <div class="card">
+    <p class="card-t">字体族</p>
+    <div class="fontfam" style="font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif">
+      一家人的日常，都在这里。Aa 123
+    </div>
+    <p class="hintline"><code>-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif</code> · 系统字体栈，不引入外部字体。</p>
+  </div>
+
+  <div class="card">
+    <p class="card-t">字号阶梯 · type scale（示例即实际渲染大小）</p>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-name">页面主标题</div><div class="type-spec">46rpx / 23px · 500</div></div>
+      <div class="type-sample" style="font-size:23px;font-weight:500">我的家</div>
+      <div class="type-use">家庭名、我的昵称 <span class="tag pro">优化稿 42rpx/21px</span></div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-name">卡片大标题</div><div class="type-spec">48rpx / 24px · 500</div></div>
+      <div class="type-sample" style="font-size:24px;font-weight:500">今天吃点什么？</div>
+      <div class="type-use">feature 主标题 <span class="tag pro">优化稿 44rpx/22px</span></div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-name">页面次级标题</div><div class="type-spec">38rpx / 19px · 500</div></div>
+      <div class="type-sample" style="font-size:19px;font-weight:500">切换家庭</div>
+      <div class="type-use">弹层标题、家庭摘要标题 <span class="tag keep">保留</span></div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-name">家庭成员名</div><div class="type-spec">36rpx / 18px · 600</div></div>
+      <div class="type-sample" style="font-size:18px;font-weight:600">家庭成员</div>
+      <div class="type-use">入口标题、fam-name <span class="tag keep">保留</span></div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-name">卡片标题</div><div class="type-spec">34rpx / 17px · 600</div></div>
+      <div class="type-sample" style="font-size:17px;font-weight:600">邀请家人</div>
+      <div class="type-use">卡片标题、主按钮文字 <span class="tag keep">保留</span></div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-name">正文（基准）</div><div class="type-spec">32rpx / 16px · 400</div></div>
+      <div class="type-sample" style="font-size:16px">一家人的日常，都在这里。</div>
+      <div class="type-use">全局基准、成员名、区块标题 <span class="tag keep">保留</span></div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-name">按钮/菜单文字</div><div class="type-spec">30rpx / 15px · 400–600</div></div>
+      <div class="type-sample" style="font-size:15px">家庭设置 · 复制邀请码</div>
+      <div class="type-use">小按钮、菜单行 <span class="tag keep">保留</span></div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-name">副标题</div><div class="type-spec">28rpx / 14px · 400</div></div>
+      <div class="type-sample" style="font-size:14px;color:var(--ink2)">慢慢把生活安排好</div>
+      <div class="type-use">greeting、字段标签、危险区标题 <span class="tag keep">保留</span></div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-name">说明文字</div><div class="type-spec">26rpx / 13px · 400</div></div>
+      <div class="type-sample" style="font-size:13px;color:var(--ink2)">输入家人的昵称，方便在餐桌上辨认</div>
+      <div class="type-use">功能描述、提示 <span class="tag keep">保留</span></div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-name">辅助小字</div><div class="type-spec">24rpx / 12px · 400</div></div>
+      <div class="type-sample" style="font-size:12px;color:var(--ink2)">管理员 · 3 人 · 即将开放</div>
+      <div class="type-use">角色、人数、脚注、说明 <span class="tag keep">保留</span></div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta"><div class="type-name">标签极小字</div><div class="type-spec">22rpx / 11px · 400</div></div>
+      <div class="type-sample" style="font-size:11px;color:var(--ink2)">家庭点菜 · 相机角标</div>
+      <div class="type-use">feature-tag、提示角标 <span class="tag keep">保留</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-t">字重与行高</p>
+    <table>
+      <tr><th>字重</th><th class="mono">值</th><th>使用场景</th></tr>
+      <tr><td>常规</td><td class="mono">400</td><td>正文、说明、按钮次级</td></tr>
+      <tr><td>中等</td><td class="mono">500</td><td>页面主标题、家庭名、昵称</td></tr>
+      <tr><td>半粗</td><td class="mono">600</td><td>卡片标题、按钮、强调</td></tr>
+    </table>
+    <p class="hintline" style="margin-top:16px">行高三档：<code>1.4</code> 标题 · <code>1.5</code> 正文/按钮 · <code>1.6</code> 长说明。</p>
+  </div>
+</section>
+
+<!-- ============ 03 BUTTON ============ -->
+<section id="button">
+  <div class="sec-h"><span class="sec-n">03</span><h2>按钮系统</h2></div>
+  <p class="sec-d">下方按钮按真实 px 尺寸渲染（rpx ÷ 2），可直接量取。命中区高度 44–48px。</p>
+
+  <div class="card">
+    <p class="card-t">按钮类型 · components</p>
+    <div class="btn-stage">
+      <div class="btn-line">
+        <div class="btn-label">主按钮<small>96rpx / 48px · 34rpx/17px · 600</small></div>
+        <div class="demo-btn btn-primary">创建家庭</div>
+        <div class="demo-btn btn-primary pressed">按下态</div>
+      </div>
+      <div class="btn-line">
+        <div class="btn-label">次按钮 ghost<small>96rpx / 48px · 描边 2rpx</small></div>
+        <div class="demo-btn btn-ghost">加入家庭</div>
+      </div>
+      <div class="btn-line">
+        <div class="btn-label">小按钮 mini<small>88rpx / 44px · 30rpx/15px · 600</small></div>
+        <div class="demo-btn btn-mini">复制</div>
+        <div class="demo-btn btn-mini ghost">取消</div>
+      </div>
+      <div class="btn-line">
+        <div class="btn-label">危险按钮<small>88rpx / 44px · #c0392b</small></div>
+        <div class="demo-btn btn-danger">移除成员</div>
+      </div>
+      <div class="btn-line">
+        <div class="btn-label">弹层按钮<small>88rpx / 44px · 圆角 12rpx</small></div>
+        <div class="demo-btn btn-sheet">＋ 创建家庭</div>
+        <div class="demo-btn btn-sheet sec">加入家庭</div>
+      </div>
+      <div class="btn-line">
+        <div class="btn-label">图标关闭按钮<small>80rpx / 40px · 圆形</small></div>
+        <div class="demo-btn btn-close">×</div>
+      </div>
+      <div class="btn-line">
+        <div class="btn-label">邀请码框<small>96rpx / 48px · 44rpx/22px · 600</small></div>
+        <div class="code-demo">
+          <div class="code-box masked">••••••</div>
+          <div class="code-eye">显示</div>
+        </div>
+        <div class="code-demo">
+          <div class="code-box">ABC234</div>
+          <div class="code-eye">隐藏</div>
+        </div>
+      </div>
+    </div>
+    <p class="hintline">邀请码默认折叠（<span class="tag pro">优化稿</span>，代码现值直接展开 6 位码）。按钮圆角统一用 <code>--radius 14rpx</code>，mini/危险/弹层按钮另有 10–12rpx 的局部值。</p>
+  </div>
+
+  <div class="card">
+    <p class="card-t">命中区规格一览</p>
+    <table>
+      <tr><th>按钮</th><th class="mono">代码 min-height</th><th class="mono">px</th><th>字号</th></tr>
+      <tr><td>主按钮 / 次按钮</td><td class="mono">96rpx</td><td class="mono">48px</td><td>34rpx / 17px</td></tr>
+      <tr><td>输入框 / 邀请码框</td><td class="mono">96rpx</td><td class="mono">48px</td><td>34rpx / 17px</td></tr>
+      <tr><td>资料页保存按钮</td><td class="mono">92rpx / 96rpx</td><td class="mono">46–48px</td><td>32rpx / 16px</td></tr>
+      <tr><td>mini 按钮 / 危险按钮</td><td class="mono">88rpx</td><td class="mono">44px</td><td>30rpx / 15px</td></tr>
+      <tr><td>弹层切换按钮</td><td class="mono">88rpx</td><td class="mono">44px</td><td>30rpx / 15px</td></tr>
+      <tr><td>图标关闭按钮</td><td class="mono">80×80rpx</td><td class="mono">40×40px</td><td>20rpx</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 04 RADIUS ============ -->
+<section id="radius">
+  <div class="sec-h"><span class="sec-n">04</span><h2>圆角系统</h2></div>
+  <p class="sec-d">当前代码圆角偏大且不统一（40/44rpx 与 14rpx 并存）。优化稿建议：卡片收紧到 24rpx，仅底部弹层保留 48rpx。</p>
+  <div class="card">
+    <p class="card-t">圆角阶梯</p>
+    <div class="radius-grid">
+      <div class="rad-item"><div class="rad-box" style="border-radius:5px"></div><div class="rad-cap">10rpx / 5px</div><div class="rad-use">mini/标签按钮</div></div>
+      <div class="rad-item"><div class="rad-box" style="border-radius:6px"></div><div class="rad-cap">12rpx / 6px</div><div class="rad-use">输入框·资料页</div></div>
+      <div class="rad-item"><div class="rad-box" style="border-radius:7px"></div><div class="rad-cap">14rpx / 7px</div><div class="rad-use">全局 --radius</div></div>
+      <div class="rad-item"><div class="rad-box" style="border-radius:12px;border-color:#a9741a;background:#fff8e8"></div><div class="rad-cap" style="color:#a9741a">24rpx / 12px</div><div class="rad-use">优化稿·卡片</div></div>
+      <div class="rad-item"><div class="rad-box" style="border-radius:20px;opacity:.45"></div><div class="rad-cap">40–44rpx / 20–22px</div><div class="rad-use">代码现值·偏大</div></div>
+      <div class="rad-item"><div class="rad-box" style="border-radius:24px 24px 0 0;border-color:var(--brand)"></div><div class="rad-cap">48rpx / 24px</div><div class="rad-use">底部弹层（保留）</div></div>
+      <div class="rad-item"><div class="rad-box" style="border-radius:50%;width:72px"></div><div class="rad-cap">50%</div><div class="rad-use">头像·关闭按钮</div></div>
+    </div>
+    <p class="hintline">另：胶囊标签 32rpx/16px，角色标签 20rpx/10px。优化稿仅动卡片类圆角（40/44 → 24rpx），输入框与弹层维持现值。</p>
+  </div>
+</section>
+
+<!-- ============ 05 SPACING ============ -->
+<section id="spacing">
+  <div class="sec-h"><span class="sec-n">05</span><h2>间距系统</h2></div>
+  <p class="sec-d">页面左右留白 44–48rpx，卡片内边距 32–40rpx，模块间距 24–40rpx。建议收敛为 4 的倍数阶梯。</p>
+  <div class="card">
+    <p class="card-t">间距阶梯 · spacing scale</p>
+    <div class="sp-row"><div class="sp-key">8rpx / 4px</div><div class="sp-bar" style="width:8px"></div><div class="sp-val">标签内</div></div>
+    <div class="sp-row"><div class="sp-key">12rpx / 6px</div><div class="sp-bar" style="width:12px"></div><div class="sp-val">细间隙</div></div>
+    <div class="sp-row"><div class="sp-key">16rpx / 8px</div><div class="sp-bar" style="width:16px"></div><div class="sp-val">紧凑</div></div>
+    <div class="sp-row"><div class="sp-key">20rpx / 10px</div><div class="sp-bar" style="width:20px"></div><div class="sp-val">图标间距</div></div>
+    <div class="sp-row"><div class="sp-key">24rpx / 12px</div><div class="sp-bar" style="width:24px"></div><div class="sp-val">卡片间距</div></div>
+    <div class="sp-row"><div class="sp-key">32rpx / 16px</div><div class="sp-bar" style="width:32px"></div><div class="sp-val">标准内边距</div></div>
+    <div class="sp-row"><div class="sp-key">40rpx / 20px</div><div class="sp-bar" style="width:40px"></div><div class="sp-val">大卡内边距</div></div>
+    <div class="sp-row"><div class="sp-key">48rpx / 24px</div><div class="sp-bar" style="width:48px"></div><div class="sp-val">页面左右留白</div></div>
+    <div class="sp-row"><div class="sp-key">64rpx / 32px</div><div class="sp-bar" style="width:64px"></div><div class="sp-val">模块分隔</div></div>
+    <p class="hintline">代码中还出现 28/36/44/56rpx 等非阶梯值，属局部微调；建议新增组件时优先取上述 9 档。</p>
+  </div>
+</section>
+
+<!-- ============ 06 COMPONENT ============ -->
+<section id="component">
+  <div class="sec-h"><span class="sec-n">06</span><h2>组件规范</h2></div>
+  <p class="sec-d">常用组件的视觉基线，均为当前代码的真实效果。</p>
+  <div class="comp-grid">
+    <div class="card" style="margin:0">
+      <p class="card-t">卡片 Card</p>
+      <div class="comp-demo"><div class="demo-card">
+        <div class="t">家庭点菜</div><div class="d">一家人的日常，都在这里。</div>
+      </div></div>
+      <p class="hintline">白底 · 1rpx --line 描边 · 圆角 14rpx（优化稿 24rpx）· 内边距 32–40rpx</p>
+    </div>
+    <div class="card" style="margin:0">
+      <p class="card-t">输入框 Input</p>
+      <div class="comp-demo">
+        <div class="demo-input" style="margin-bottom:10px">昵称</div>
+        <div class="demo-field">ABC234</div>
+      </div>
+      <p class="hintline">默认白底描边 / 邀请码浅绿底虚线 · 高 96rpx · 字号 32–34rpx</p>
+    </div>
+    <div class="card" style="margin:0">
+      <p class="card-t">标签 Tag</p>
+      <div class="comp-demo">
+        <span class="demo-tag">即将开放</span> <span class="demo-role">管理员</span>
+      </div>
+      <p class="hintline">描边胶囊 32rpx 圆角 / 浅绿实底 20rpx 圆角 · 字号 22–24rpx</p>
+    </div>
+    <div class="card" style="margin:0">
+      <p class="card-t">头像 Avatar</p>
+      <div class="comp-demo"><div class="demo-avatars">
+        <div class="av av-lg">李</div><div class="av av-md">👩</div><div class="av av-sm">👨</div>
+      </div></div>
+      <p class="hintline">大 128rpx（圆角 44rpx）· 成员 72rpx · 小 60rpx，成员头像为正圆</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 CHANGES ============ -->
+<section id="changes">
+  <div class="sec-h"><span class="sec-n">07</span><h2>优化稿变更清单</h2></div>
+  <p class="sec-d">本轮设计稿相对代码现值共 6 项建议，逐条评审。通过后才会落到 wxss / wxml，代码目前未改动。</p>
+  <div class="card">
+    <table>
+      <tr><th>#</th><th>项目</th><th>代码现值</th><th>优化稿建议</th><th>状态</th></tr>
+      <tr><td class="mono">①</td><td>菜单图标</td><td>emoji 👥✉️⚙️</td><td>assets/ui 三张 png</td><td class="chg-yes">待评审</td></tr>
+      <tr><td class="mono">②</td><td>家庭切换按钮</td><td>顺序按组件现状</td><td>「＋创建家庭」primary 在前</td><td class="chg-yes">待评审</td></tr>
+      <tr><td class="mono">③</td><td>邀请码显示</td><td class="chg-no">默认展开 ABC234</td><td>默认折叠 ••••••</td><td class="chg-yes">待评审</td></tr>
+      <tr><td class="mono">④</td><td>圆角 / 字号</td><td class="chg-no">卡片 40–44rpx；标题 46–48rpx</td><td>卡片 24rpx；标题 42–44rpx</td><td class="chg-yes">待评审</td></tr>
+      <tr><td class="mono">⑤</td><td>主页加「我的家人」</td><td class="chg-no">无此模块</td><td>头像 + 人数 + 邀请入口</td><td class="chg-yes">待评审</td></tr>
+      <tr><td class="mono">⑥</td><td>家庭切换入口</td><td class="chg-no">主页 + 我的 两处</td><td>收进「我的」；主页家庭名只读</td><td class="chg-yes">待评审</td></tr>
+      <tr><td class="mono">Ⓐ</td><td>菜单图标造型</td><td class="chg-no">assets/ui 三张（已是扁平线性，2.3–3.6KB）</td><td>借鉴 iconfont 常见造型，12 款候选中挑；导出松绿 72×72 PNG，不改 wxml</td><td class="chg-yes">待评审</td></tr>
+    </table>
+    <p class="hintline" style="margin-top:14px"><b>关于 Ⓐ：</b>做法是<b>借鉴 iconfont 的图标造型</b>（不引入它的字体/CSS 机制）——从 iconfont 常见造型里挑定 → 导出成松绿 <code>#46765a</code> / 72×72 PNG → 沿用 members/invite/settings 文件名替换，wxml 的 image 引用零改动，无兼容风险。推荐组合：家庭成员＝家庭群组、邀请＝人＋、设置＝齿轮；12 款候选画廊见 family-preview.html 第五节。</p>
+    <p class="hintline">评审结论建议：①–④ 为纯样式/还原修正，成本极低；⑤ 需 home.js 增加一次 getFamily 调用；⑥ 需删 home 页的 family-switcher 引用与相关状态。逐条给「采纳 / 打回」即可。</p>
+  </div>
+</section>
+
+<footer>
+  我的家小程序 · 设计规范 V0.1（优化稿 · 待评审）<br>
+  数据来源：app.wxss、pages/{home,my,identity}.wxss、components/family-switcher/family-switcher.wxss、utils/constants.js。<br>
+  rpx 按 750rpx = 375px 折算；色值、字号、尺寸均为代码真实值，标注「优化稿」者为待评审建议。<br>
+  本文件位于 docs/，已包含在 project.config.json 的 packOptions.ignore 中，不进入小程序打包。
+</footer>
+
+</div>
+</body>
+</html>

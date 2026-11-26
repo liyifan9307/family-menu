@@ -25,13 +25,13 @@
       <view class="entry-icon join">↗</view>
       <view class="entry-body">
         <view class="entry-title">加入家庭</view>
-        <view class="entry-desc">输入家人给的 6 位邀请码，加入后即可看家里的日历与清单</view>
+        <view class="entry-desc">输入家人给的 6 位邀请码，一起开启家庭生活</view>
       </view>
       <view class="entry-arrow">›</view>
     </view>
 
     <view class="warn-box">
-      说明：用微信身份静默识别，此处不用填资料。进入家庭后可在「编辑我的资料」里主动填头像和昵称，不填也能用。新人可创建家庭或凭邀请码加入，邀请码只决定进哪个家。
+      与家人分享生活，从一个家开始。头像和昵称可在加入后随时设置。
     </view>
   </block>
 

@@ -1,0 +1,11 @@
+<view class="schedule-page share-page">
+  <view wx:if="{{loading}}" class="state">正在生成完整安排…</view>
+  <view wx:elif="{{error}}" class="state">{{error}}<button bindtap="build">重新生成</button></view>
+  <block wx:else>
+    <view class="hint">保存到相册后，发送到微信家人群</view>
+    <view class="share-gallery"><block wx:for="{{images}}" wx:key="*this"><image class="poster-image" src="{{item}}" mode="widthFix" data-src="{{item}}" bindtap="preview"/><view wx:if="{{images.length > 1}}" class="poster-number">第 {{index + 1}} / {{images.length}} 张</view></block></view>
+    <button class="primary" bindtap="save" loading="{{saving}}" disabled="{{saving}}">{{saving ? '正在保存…' : '保存到相册'}}</button>
+    <view class="hint" style="margin-top:24rpx">图片为生成时的安排。有变动时请重新生成并发送，请仅转发给家人。</view>
+  </block>
+  <canvas canvas-id="poster" style="position:fixed;left:-2000px;top:0;width:600px;height:1800px"/>
+</view>

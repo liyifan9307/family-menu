@@ -1,0 +1,133 @@
+<view class="page my-page">
+  <view wx:if="{{loading}}" class="center-state"><view class="spinner"></view><text class="h2">加载中…</text></view>
+  <view wx:elif="{{error}}" class="load-error"><text>{{error}}</text><button class="primary-btn" bindtap="reload">重新加载</button></view>
+  <block wx:else>
+    <button class="profile-header" bindtap="openProfile">
+      <image wx:if="{{me.avatarUrl}}" class="profile-avatar" src="{{me.avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="profile-avatar fallback">{{me.avatarEmoji || '🌿'}}</view>
+      <view class="profile-text"><view class="profile-name">{{me.name || '家人'}}</view><view class="profile-edit">编辑个人资料 ›</view></view>
+    </button>
+    <view class="family-summary">
+      <view class="eyebrow">当前家庭</view>
+      <button class="family-title" bindtap="toggleSwitcher"><text>{{family.name}}</text><text class="chevron">⌄</text></button>
+      <view class="summary-role">{{isAdmin ? '管理员' : '成员'}}</view>
+      <view class="family-people">
+        <block wx:for="{{previewMembers}}" wx:key="_id">
+          <image wx:if="{{item.avatarUrl}}" class="small-avatar" src="{{item.avatarUrl}}" mode="aspectFill" />
+          <view wx:else class="small-avatar fallback" style="background:{{item.color}}">{{item.avatarEmoji}}</view>
+        </block>
+        <text class="people-count">{{members.length}} 位家人，一起生活</text>
+      </view>
+    </view>
+    <view class="menu-list">
+      <button class="menu-row" data-panel="members" bindtap="openPanel"><image class="menu-icon" src="/assets/ui/members.png" /><text>家庭成员</text><text class="menu-end">{{members.length}} 人 ›</text></button>
+      <button class="menu-row" data-panel="invite" bindtap="openPanel"><image class="menu-icon" src="/assets/ui/invite.png" /><text>邀请家人</text><text class="menu-end">›</text></button>
+      <button class="menu-row" data-panel="settings" bindtap="openPanel"><image class="menu-icon" src="/assets/ui/settings.png" /><text>家庭设置</text><text class="menu-end">›</text></button>
+    </view>
+  </block>
+  <family-switcher visible="{{showSwitcher}}" families="{{families}}" current="{{currentFamilyId}}" bind:close="closeSwitcher" bind:select="switchFamily" />
+  <view wx:if="{{panel}}" class="pf-mask" bindtap="closePanel" catchtouchmove="noop">
+    <view class="pf-sheet" catchtap="noop">
+      <view class="sheet-handle"></view>
+      <view class="sheet-heading"><text>{{panel === 'members' ? '家庭成员' : panel === 'invite' ? '邀请家人' : '家庭设置'}}</text><button class="sheet-close" bindtap="closePanel" aria-label="关闭">×</button></view>
+      <scroll-view scroll-y class="panel-scroll" style="height:{{panel === 'members' ? '60vh' : panel === 'invite' ? '540rpx' : '640rpx'}}">
+        <view wx:if="{{loading}}" class="panel-hint">加载中…</view>
+        <view wx:elif="{{error}}" class="panel-hint">{{error}}<button bindtap="reload">重新加载</button></view>
+        <block wx:else>
+          <view wx:if="{{panel === 'invite'}}">    <view class="card invite-card">
+      <view class="card-h">
+        <view class="card-t">家庭邀请码</view>
+        <view class="card-sub">发给家人，凭码加入这个家</view>
+      </view>
+      <view class="code-row">
+        <view class="code-box {{inviteVisible ? '' : 'masked'}}">
+          {{inviteVisible ? (family.inviteCode || '——') : '••••••'}}
+        </view>
+        <view class="code-eye" bindtap="toggleInvite">{{inviteVisible ? '隐藏' : '显示'}}</view>
+      </view>
+      <view class="code-actions">
+        <view class="mini-btn" bindtap="copyInvite">复制邀请码</view>
+        <view wx:if="{{isAdmin}}" class="mini-btn ghost" bindtap="refreshInvite">刷新（旧码失效）</view>
+      </view>
+    </view>
+
+</view>
+          <view wx:if="{{panel === 'members'}}">    <view class="sec-t">家庭成员（{{members.length}}）</view>
+    <view class="card member-card">
+      <view wx:for="{{members}}" wx:key="_id" class="member-row {{item.isMe ? 'member-me' : ''}}">
+        <!-- 头像：真图优先，未设置显示固定色 emoji；自己那行带 ✎ 提示可编辑 -->
+        <view class="m-avatar-wrap">
+          <image wx:if="{{item.avatarUrl}}" class="m-avatar-img" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+          <view wx:else class="m-avatar" style="background:{{item.color}}">{{item.avatarEmoji}}</view>
+          <view wx:if="{{item.isMe}}" class="m-cam">✎</view>
+        </view>
+        <view class="m-info">
+          <view class="m-name">{{item.name}}{{item.isMe ? '（我）' : ''}}</view>
+          <view class="m-role">{{item.role === 'admin' ? '管理员' : '成员'}}</view>
+        </view>
+        <view
+          wx:if="{{isAdmin && !item.isMe}}"
+          class="m-remove"
+          data-openid="{{item.openid}}"
+          data-name="{{item.displayLabel}}"
+          bindtap="removeMember"
+        >移除</view>
+      </view>
+    </view>
+    <view class="m-member-tip">头像和昵称由本人主动填写，只在本小程序内给家人看</view>
+
+</view>
+          <view wx:if="{{panel === 'settings'}}">
+            <view class="settings-name">{{family.name}}</view>
+            <view class="panel-hint">{{isAdmin ? '管理这个家，让家人安心相聚。' : '家庭由管理员管理。你可以查看成员或邀请家人加入。'}}</view>
+            <button wx:if="{{isAdmin}}" class="settings-members" data-panel="members" bindtap="openPanel">管理家庭成员 ›</button>
+                <view wx:if="{{isAdmin}}" class="danger-zone">
+      <view class="dz-title">危险操作</view>
+      <view class="dz-desc">解散后家庭、邀请码和成员关系将被永久删除，无法恢复。</view>
+      <view
+        class="dz-btn {{otherMemberCount > 0 ? 'disabled' : ''}}"
+        bindtap="dissolveFamily"
+      >{{otherMemberCount > 0 ? '请先移除其他 ' + otherMemberCount + ' 位成员' : (dissolving ? '解散中…' : '解散家庭')}}</view>
+    </view>
+          </view>
+        </block>
+      </scroll-view>
+    </view>
+  </view>
+  <!-- V3.9 编辑我的资料浮层：头像 chooseAvatar + 昵称 input type=nickname，本地暂存后一起保存 -->
+  <view wx:if="{{showProfile}}" class="pf-mask" bindtap="closeProfile" catchtouchmove="noop">
+    <view class="pf-sheet" catchtap="noop">
+      <view class="pf-title">编辑我的资料</view>
+      <view class="pf-sub">头像和昵称由你主动填写，家人才能一眼认出你</view>
+
+      <view class="pf-row">
+        <view class="pf-label">头像</view>
+        <button class="pf-avatar-btn" open-type="chooseAvatar" bindchooseavatar="onDraftAvatar">
+          <image wx:if="{{draftAvatarUrl}}" class="pf-avatar-img" src="{{draftAvatarUrl}}" mode="aspectFill"></image>
+          <view wx:else class="pf-avatar-ph">＋</view>
+          <view class="pf-cam">✎</view>
+        </button>
+        <view class="pf-hint">点头像选微信头像或相册图</view>
+      </view>
+
+      <view class="pf-row">
+        <view class="pf-label">昵称</view>
+        <input
+          class="pf-input"
+          type="nickname"
+          value="{{draftNickName}}"
+          bindinput="onNickInput"
+          placeholder="点这里可一键用微信昵称，也能自己改"
+          placeholder-class="pf-pholder"
+          maxlength="20"
+        />
+        <view class="pf-hint">不填则家人那边显示「家人」</view>
+      </view>
+
+      <view class="pf-actions">
+        <view class="pf-btn ghost" bindtap="closeProfile">取消</view>
+        <view class="pf-btn" bindtap="saveProfile">{{profileSaving ? '保存中…' : '保存'}}</view>
+      </view>
+    </view>
+  </view>
+</view>
