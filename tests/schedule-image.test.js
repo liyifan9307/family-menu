@@ -11,7 +11,7 @@ function load(items) {
     setFillStyle() {}, fillRect() {}, setFontSize() {},
     measureText: value => ({ width: Array.from(value).length * 15 }),
     fillText: value => text.push(value), setStrokeStyle() {}, setLineWidth() {},
-    beginPath() {}, moveTo() {}, lineTo() {}, stroke() {},
+    beginPath() {}, moveTo() {}, arc() {}, closePath() {}, fill() {},
     drawImage() { throw Error('纯图片不能绘制小程序码') },
     draw: (_, done) => done(),
   }
@@ -53,7 +53,7 @@ test('图片直接读取家庭日程，生成无扫码文案的多张图片并�
   assert.deepEqual(calls, ['listByDate'])
   assert.ok(text.some(t => t.includes('我的家')))
   assert.ok(text.some(t => t.includes('小宝') && t.includes('爸爸')))
-  assert.ok(text.some(t => t.includes('生成：')))
+  assert.ok(text.some(t => t.includes('生成于')))
   assert.equal(text.some(t => /扫码|链接到期/.test(t)), false)
   await page.save()
   assert.deepEqual(saved, ['poster-1', 'poster-2'])
@@ -63,4 +63,16 @@ test('无日程仍生成可保存的空态图片', async () => {
   await page.build()
   assert.equal(page.data.images.length, 1)
   assert.ok(text.includes('这一天没有安排'))
+})
+
+test('分享预览可以切换图片，保存仍包含所有分页', async () => {
+  const { page, saved } = load([item, item, item])
+  await page.build()
+  assert.equal(page.data.activeImage, 0)
+  page.selectImage({ currentTarget: { dataset: { index: 1 } } })
+  assert.equal(page.data.activeImage, 1)
+  page.selectImage({ currentTarget: { dataset: { index: 3 } } })
+  assert.equal(page.data.activeImage, 1)
+  await page.save()
+  assert.deepEqual(saved, ['poster-1', 'poster-2'])
 })

@@ -1,1 +1,16 @@
 @import "./common.wxss";
+
+.schedule-page.share-page.has-poster { display:flex; flex-direction:column; height:100vh; padding:0; }
+.poster-scroll { flex:1; min-height:0; height:0; }
+.poster-content { padding:36rpx 40rpx 24rpx; }
+.poster-stage { padding:24rpx; background:#ebeee7; border-radius:32rpx; }
+.poster-image { display:block; width:100%; border-radius:26rpx; overflow:hidden; box-shadow:0 10rpx 32rpx rgba(38,62,50,.09); }
+.poster-pages { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:24rpx; margin-top:16rpx; }
+.share-page .poster-pages button { width:auto; min-width:88rpx; padding:12rpx 16rpx; border-radius:16rpx; background:transparent; color:#3d634b; }
+.share-page .poster-pages button.selected { background:#e4eddf; font-weight:600; }
+.poster-save { flex:none; padding:20rpx 40rpx calc(32rpx + env(safe-area-inset-bottom)); background:#fff; border-top:1rpx solid #e3e8e4; }
+.poster-save .hint { margin-bottom:16rpx; font-size:26rpx; text-align:center; }
+@media(max-width:340px) {
+  .poster-stage { padding:16rpx; }
+  .poster-save,.poster-content { padding-left:32rpx; padding-right:32rpx; }
+}

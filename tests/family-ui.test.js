@@ -5,7 +5,7 @@ const vm = require('node:vm')
 const path = require('node:path')
 function load(file, api = {}) {
   let page; const calls = []; const app = { globalData: {} }
-  const auth = { getFamilies: () => [{ familyId:'old' }], getCurrentFamilyId: () => 'old', getCachedMember: () => ({openid:'me'}), setCurrentFamily: id => calls.push(['family',id]) }
+  const auth = { getFamilies: () => [{ familyId:'old' }], getCurrentFamilyId: () => 'old', getCachedMember: () => ({openid:'me'}), setCurrentFamily: id => calls.push(['family',id]), saveSession: session => calls.push(['session', session]) }
   const wx = new Proxy({}, {get: (_, key) => options => calls.push([key, options])})
   vm.runInNewContext(fs.readFileSync(file, 'utf8'), {
     Page: p => page=p, require: name => name.endsWith('/api') ? api : name.endsWith('/auth') ? auth : require(path.resolve(path.dirname(file),name)), getApp:()=>app, wx, console: {error() {}, warn() {}}, setTimeout: fn=>fn(),
@@ -73,4 +73,78 @@ test('选择头像暂时离开页面时保留资料草稿，回来仍隐藏底�
   page.reload=async()=>{}
   await page.onShow()
   assert.equal(page.data.pendingAvatarPath,'tmp/avatar.png');assert.equal(page.data.draftNickName,'新昵称');assert.equal(calls.at(-1)[0],'hideTabBar')
+})
+
+test('切换家庭面板打开时隐藏 Tab，选择当前家庭后恢复', async () => {
+  const { page, calls } = load('pages/my/my.js')
+  page.data.currentFamilyId = 'old'
+  page.toggleSwitcher()
+  assert.equal(page.data.showSwitcher, true)
+  assert.equal(calls.at(-1)[0], 'hideTabBar')
+  await page.switchFamily({ detail: { familyId: 'old' } })
+  assert.equal(page.data.showSwitcher, false)
+  assert.equal(calls.at(-1)[0], 'showTabBar')
+})
+
+test('选择另一个家庭后收起面板并恢复 Tab', async () => {
+  const { page, calls } = load('pages/my/my.js')
+  page.data.currentFamilyId = 'old'
+  page.data.families = [{ familyId: 'new' }]
+  page.reload = async () => {}
+  page.toggleSwitcher()
+  await page.switchFamily({ detail: { familyId: 'new' } })
+  assert.equal(page.data.showSwitcher, false)
+  assert.ok(calls.some(call => call[0] === 'family' && call[1] === 'new'))
+  assert.ok(calls.some(call => call[0] === 'showTabBar'))
+})
+
+for (const mode of ['create', 'join']) test(mode + ' 成功后家庭列表读取失败仍进入首页', async () => {
+  let writes = 0
+  const joinOrCreate = async () => { writes++; return { familyId: 'new', member: { role: 'member' } } }
+  const { page, calls, app } = load('pages/identity/identity.js', {
+    createFamily: joinOrCreate,
+    joinFamily: joinOrCreate,
+    getFamilies: async () => { throw new Error('家庭列表暂不可用') },
+  })
+  page.data.familyName = '我的新家'
+  page.data.inviteCode = 'NEW123'
+  const submit = mode === 'create' ? 'doCreate' : 'doJoin'
+  await page[submit]()
+  calls.find(([action]) => action === 'switchTab')[1].fail()
+  await page[submit]()
+  assert.equal(writes, 1)
+  assert.equal(app.globalData.currentFamilyId, 'new')
+  assert.equal(calls.find(([action]) => action === 'session')[1].currentFamilyId, 'new')
+  assert.equal(calls.filter(([action]) => action === 'switchTab').length, 2)
+  assert.ok(!calls.some(([action, options]) => action === 'showToast' && options.title === '家庭列表暂不可用'))
+})
+
+test('创建请求结果未知时复用原请求标识', async () => {
+  const ids = []
+  const { page } = load('pages/identity/identity.js', {
+    createFamily: async (name, requestId) => {
+      ids.push(requestId)
+      if (ids.length === 1) throw new Error('响应超时')
+      return { familyId: 'new', member: { role: 'admin' } }
+    },
+  })
+  page.data.familyName = '我的新家'
+  await page.doCreate()
+  await page.doCreate()
+  assert.equal(typeof ids[0], 'string')
+  assert.deepEqual(ids, [ids[0], ids[0]])
+})
+
+test('分批解散先关闭加载和旧面板，再刷新家庭', async () => {
+  const { page, calls } = load('pages/my/my.js', { dissolveFamily: async () => ({ processing: true }) })
+  Object.assign(page.data, { currentFamilyId: 'old', isAdmin: true, panel: 'settings' })
+  let snapshot
+  page.reload = async () => {
+    snapshot = { dissolving: page.data.dissolving, panel: page.data.panel, hideLoading: calls.some(([name]) => name === 'hideLoading') }
+  }
+  // 使用和实际确认按钮一样的回调。
+  const pending = page.dissolveFamily()
+  calls.find(([name]) => name === 'showModal')[1].success({ confirm: true })
+  await pending
+  assert.deepEqual(snapshot, { dissolving: false, panel: '', hideLoading: true })
 })

@@ -1,6 +1,7 @@
 // 云函数 familyService —— 家庭创建/加入/成员管理（地基核心）
 // 安全：openid 只从登录态取；familyId 由前端传但必须经 requireMember 归属校验；入口动作例外
 const cloud = require('wx-server-sdk')
+const { createHash, randomInt } = require('crypto')
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 // throwOnNotFound:false —— doc.get() 找不到记录时不抛异常（事务文档建议），由代码显式判断
 const db = cloud.database({ throwOnNotFound: false })
@@ -35,11 +36,20 @@ async function checkText(text, openid) {
   return { pass: true }
 }
 
-function genInviteCode() {
+function genInviteCode(previous) {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // 去掉易混淆的 0/O/1/I
-  let code = ''
-  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)]
+  let code
+  do {
+    code = Array.from({ length: 6 }, () => chars[randomInt(chars.length)]).join('')
+  } while (code === previous)
   return code
+}
+
+function nextInvite(previous) {
+  return {
+    inviteCode: genInviteCode(previous),
+    inviteExpireAt: new Date(Date.now() + INVITE_TTL_MS),
+  }
 }
 
 // 取该家庭最少使用的固定色（新成员分配）
@@ -70,45 +80,52 @@ async function requireMember(openid, familyId) {
 }
 
 // 入口动作例外：createFamily / joinFamily 此刻无家庭上下文，不调 requireMember
-async function createFamily(openid, name) {
+async function createFamily(openid, name, requestId) {
   const nameStr = typeof name === 'string' ? name.trim() : ''
   if (!nameStr) throw Object.assign(new Error('请填写家庭名称'), { code: 'NAME_REQUIRED' })
   if (nameStr.length > 20) throw Object.assign(new Error('家庭名称不超过 20 字'), { code: 'NAME_TOO_LONG' })
+  if (requestId !== undefined && (typeof requestId !== 'string' || !/^[-\w]{8,100}$/.test(requestId))) {
+    throw Object.assign(new Error('创建请求标识无效'), { code: 'BAD_PARAM' })
+  }
   const safe = await checkText(nameStr, openid)
   if (!safe.pass) throw Object.assign(new Error('家庭名称含违规内容'), { code: 'TEXT_RISK' })
 
-  const inviteCode = genInviteCode()
-  const now = Date.now()
-  const nowDate = new Date(now)
-  // 事务：建家庭 + 建管理员成员必须原子，否则中途失败会留"无管理员的孤儿家庭"
-  // 注：事务内不用 db.serverDate()（兼容风险），改用 new Date()，自用场景毫秒差无所谓
+  // 同一用户重试同一请求时命中同一个家庭文档，旧客户端仍可省略请求标识。
+  const requestedId = requestId && createHash('sha256')
+    .update(JSON.stringify([openid, requestId]))
+    .digest('hex').slice(0, 32)
   const transaction = await db.startTransaction()
   try {
-    const famRes = await transaction.collection(FAMILY).add({
-      data: {
-        name: nameStr,
-        ownerOpenid: openid,
-        inviteCode,
-        inviteExpireAt: new Date(now + INVITE_TTL_MS),
-        createdAt: nowDate,
-      },
-    })
-    const familyId = famRes._id
-    await transaction.collection(MEMBER).add({
-      data: {
-        familyId, openid, role: 'admin', color: COLORS[0], status: 'active',
-        joinedAt: nowDate,
-      },
-    })
-    await transaction.commit()
-    // memberView 用内存对象构造，不依赖数据库回读（事务 add 不返回 data）
-    return {
-      familyId, inviteCode,
-      member: memberView({ familyId, openid, role: 'admin', color: COLORS[0], status: 'active' }),
+    let familyId = requestedId
+    if (familyId) {
+      const existing = (await transaction.collection(FAMILY).doc(familyId).get()).data
+      if (existing) {
+        if (existing.ownerOpenid !== openid || existing.name !== nameStr || existing.status === 'dissolving') {
+          throw Object.assign(new Error('创建请求已用于其他家庭或该家庭正在解散'), { code: 'CREATE_REQUEST_CONFLICT' })
+        }
+        await transaction.rollback()
+        return {
+          familyId, familyName: existing.name, inviteCode: existing.inviteCode,
+          member: memberView({ familyId, openid, role: 'admin', color: COLORS[0], status: 'active' }),
+        }
+      }
     }
-  } catch (e) {
-    try { await transaction.rollback() } catch (_) { /* rollback 失败不掩盖原始错误 */ }
-    throw e
+
+    const now = new Date()
+    const invite = nextInvite()
+    const family = { name: nameStr, ownerOpenid: openid, ...invite, createdAt: now }
+    if (familyId) {
+      await transaction.collection(FAMILY).doc(familyId).set({ data: family })
+    } else {
+      familyId = (await transaction.collection(FAMILY).add({ data: family }))._id
+    }
+    const member = { familyId, openid, role: 'admin', color: COLORS[0], status: 'active', joinedAt: now }
+    const { _id } = await transaction.collection(MEMBER).add({ data: member })
+    await transaction.commit()
+    return { familyId, familyName: nameStr, inviteCode: invite.inviteCode, member: memberView({ ...member, _id }) }
+  } catch (error) {
+    try { await transaction.rollback() } catch (_) { /* 保留原始错误 */ }
+    throw error
   }
 }
 
@@ -132,11 +149,16 @@ async function joinFamily(openid, inviteCode) {
   // 曾被移除 → 复用原记录重新激活，颜色重新分配
   const removed = await db.collection(MEMBER).where({ openid, familyId, status: 'removed' }).get()
   const color = await pickColor(familyId)
-  let memberId
+  let memberId, familyName
   const transaction = await db.startTransaction()
   try {
     const f = (await transaction.collection(FAMILY).doc(familyId).get()).data
     if (!f || f.status === 'dissolving') throw Object.assign(new Error('家庭已失效'), {code:'FAMILY_NOT_FOUND'})
+    // 请求进入事务之前，邀请码可能已被刷新、移除成员时换掉或过期。
+    if (f.inviteCode !== code || !(new Date(f.inviteExpireAt).getTime() > Date.now())) {
+      throw Object.assign(new Error('邀请码无效或已过期'), { code: 'CODE_INVALID' })
+    }
+    familyName = f.name
     if (removed.data && removed.data.length) {
       memberId = removed.data[0]._id
       const old = (await transaction.collection(MEMBER).doc(memberId).get()).data
@@ -151,7 +173,7 @@ async function joinFamily(openid, inviteCode) {
   } catch(e) { try { await transaction.rollback() } catch(_) {} throw e }
 
   return {
-    familyId,
+    familyId, familyName,
     member: memberView({
       _id: memberId, familyId, openid, role: 'member', color, status: 'active',
     }),
@@ -226,9 +248,18 @@ async function removeMember(openid, familyId, targetOpenid) {
     const family = (await tx.collection(FAMILY).doc(familyId).get()).data
     const actor = (await tx.collection(MEMBER).doc(me._id).get()).data
     if (!family || family.status === 'dissolving' || !actor || actor.status !== 'active' || actor.role !== 'admin') throw Object.assign(new Error('无权移除成员'), {code:'NO_PERMISSION'})
-    await tx.collection(MEMBER).doc(target.data[0]._id).update({data:{status:'removed'}})
-    // 换掉家庭的分享版本，已发出的只读链接会统一失效。
-    await tx.collection(FAMILY).doc(familyId).update({data:{shareEpoch:(family.shareEpoch||0)+1,mutationVersion:(family.mutationVersion||0)+1}})
+    const targetId = target.data[0]._id
+    const currentTarget = (await tx.collection(MEMBER).doc(targetId).get()).data
+    if (!currentTarget || currentTarget.status !== 'active') {
+      throw Object.assign(new Error('该成员不在此家庭'), { code: 'TARGET_NOT_FOUND' })
+    }
+    await tx.collection(MEMBER).doc(targetId).update({ data: { status: 'removed' } })
+    // 同一事务内撤销旧分享和邀请码，避免中途失败留下可用的旧入口。
+    await tx.collection(FAMILY).doc(familyId).update({ data: {
+      ...nextInvite(family.inviteCode),
+      shareEpoch: (family.shareEpoch || 0) + 1,
+      mutationVersion: (family.mutationVersion || 0) + 1,
+    } })
     await tx.commit()
   } catch(e) { try { await tx.rollback() } catch(_) {} throw e }
 
@@ -240,12 +271,23 @@ async function refreshInvite(openid, familyId) {
   if (me.role !== 'admin') {
     throw Object.assign(new Error('只有管理员可以刷新邀请码'), { code: 'NO_PERMISSION' })
   }
-  const inviteCode = genInviteCode()
-  const expireAt = new Date(Date.now() + INVITE_TTL_MS)
-  await db.collection(FAMILY).doc(familyId).update({
-    data: { inviteCode, inviteExpireAt: expireAt },
-  })
-  return { inviteCode, expireAt }
+  const tx = await db.startTransaction()
+  try {
+    const family = (await tx.collection(FAMILY).doc(familyId).get()).data
+    const actor = (await tx.collection(MEMBER).doc(me._id).get()).data
+    if (!family || family.status === 'dissolving' || !actor || actor.role !== 'admin' || actor.status !== 'active') {
+      throw Object.assign(new Error('无权刷新邀请码'), { code: 'NO_PERMISSION' })
+    }
+    const invite = nextInvite(family.inviteCode)
+    await tx.collection(FAMILY).doc(familyId).update({ data: {
+      ...invite, mutationVersion: (family.mutationVersion || 0) + 1,
+    } })
+    await tx.commit()
+    return { inviteCode: invite.inviteCode, expireAt: invite.inviteExpireAt }
+  } catch (error) {
+    try { await tx.rollback() } catch (_) { /* 保留原始错误 */ }
+    throw error
+  }
 }
 
 // V3.8：更新真头像 —— 按 openid 更新该用户全部家庭记录（跨家庭共用）
@@ -305,11 +347,8 @@ async function updateProfile(openid, nickName) {
   return { ok: true, updated: (r.stats && r.stats.updated) || owned.data.length, nickName: name }
 }
 
-// V3.10：解散家庭 —— 仅 admin、且家庭内除自己外无其他 active 成员时才允许
-// 安全：requireMember 双参数归属校验 + role=admin；防一人解散牵连全家
-// 事务：微信云开发事务不支持 where 批量操作（官方文档），先查出全部 _id，再在事务内逐条 doc().remove()
+// 解散家庭：仅剩管理员本人时可以关闭。关闭后分批清理，定时任务负责续跑。
 async function cleanupFamily(familyId) {
-  // Each pass is bounded. A timer resumes interrupted or large cleanups.
   const tables = ['co_schedule','co_schedule_event','co_schedule_share','co_schedule_notify','co_schedule_request']
   for (const table of tables) {
     const rows = await db.collection(table).where({familyId}).limit(50).get()
@@ -322,6 +361,17 @@ async function cleanupFamily(familyId) {
   await db.collection(FAMILY).doc(familyId).remove()
   return {ok:true,familyId}
 }
+
+async function continueFamilyCleanup(familyId) {
+  try {
+    return await cleanupFamily(familyId)
+  } catch (error) {
+    // 家庭已关闭，即使这批失败，也可以由下一轮定时任务继续清理。
+    console.warn('[familyService] 家庭清理将在下一轮重试', familyId, error && error.code)
+    return { ok: false, processing: true, familyId }
+  }
+}
+
 async function dissolveFamily(openid, familyId) {
   const tx = await db.startTransaction()
   try {
@@ -336,7 +386,7 @@ async function dissolveFamily(openid, familyId) {
     }
     await tx.commit()
   } catch(e) { try { await tx.rollback() } catch(_) {} throw e }
-  return cleanupFamily(familyId)
+  return continueFamilyCleanup(familyId)
 }
 
 exports.main = async (event = {}) => {
@@ -344,13 +394,13 @@ exports.main = async (event = {}) => {
   const openid = cloud.getWXContext().OPENID
   if (!openid && event.Type === 'Timer' && event.TriggerName === 'familyCleanup') {
     const rows = await db.collection(FAMILY).where({status:'dissolving'}).limit(5).get()
-    for (const row of rows.data) await cleanupFamily(row._id)
+    for (const row of rows.data) await continueFamilyCleanup(row._id)
     return {ok:true}
   }
   if (!openid) return { error: { code: 'NO_OPENID', message: '无法识别身份' } }
   try {
     switch (action) {
-      case 'createFamily': return await createFamily(openid, event.name)
+      case 'createFamily': return await createFamily(openid, event.name, event.requestId)
       case 'joinFamily': return await joinFamily(openid, event.inviteCode)
       case 'getFamilies': return await getFamilies(openid)
       case 'getFamily': return await getFamily(openid, event.familyId)

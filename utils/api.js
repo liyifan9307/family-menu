@@ -26,8 +26,8 @@ const api = {
     return r.families
   },
   // 入口动作（无 familyId 上下文）
-  async createFamily(name) {
-    return call('familyService', { action: 'createFamily', name })
+  async createFamily(name, requestId) {
+    return call('familyService', { action: 'createFamily', name, requestId })
   },
   async joinFamily(inviteCode) {
     return call('familyService', { action: 'joinFamily', inviteCode })

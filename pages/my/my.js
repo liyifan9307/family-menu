@@ -44,7 +44,7 @@ Page({
       const families = session.families || []
       const currentFamilyId = session.currentFamilyId
       if (!families.length || !currentFamilyId) {
-        this.setData({ showProfile: false, panel: '' })
+        this.setData({ showProfile: false, showSwitcher: false, panel: '' })
         wx.showTabBar({ animation: false })
         wx.reLaunch({ url: '/pages/identity/identity' })
         return
@@ -106,7 +106,10 @@ Page({
     this.setData({ showSwitcher: false, panel: '' })
     wx.showTabBar({ animation: false })
   },
-  closeSwitcher() { this.setData({ showSwitcher: false }) },
+  closeSwitcher() {
+    this.setData({ showSwitcher: false })
+    if (!this.data.panel && !this.data.showProfile) wx.showTabBar({ animation: false })
+  },
   openPanel(e) {
     const panel = e.currentTarget.dataset.panel
     if (!['members', 'invite', 'settings'].includes(panel)) return
@@ -119,20 +122,26 @@ Page({
     wx.showTabBar({ animation: false })
   },
   toggleSwitcher() {
-    this.setData({ showSwitcher: !this.data.showSwitcher })
+    if (this.data.showSwitcher) {
+      this.closeSwitcher()
+      return
+    }
+    wx.hideTabBar({ animation: false })
+    this.setData({ showSwitcher: true })
   },
 
   async switchFamily(e) {
     const familyId = e.detail.familyId
     if (!familyId || familyId === this.data.currentFamilyId) {
-      this.setData({ showSwitcher: false })
+      this.closeSwitcher()
       return
     }
     if (!this.data.families.some(f => f.familyId === familyId)) return
     this.setData({ panel: '', inviteVisible: false })
     auth.setCurrentFamily(familyId)   // 只切本地指针
     app.globalData.currentFamilyId = familyId
-    this.setData({ showSwitcher: false, loading: true })
+    this.closeSwitcher()
+    this.setData({ loading: true })
     await this.reload()               // 按新 familyId 全量重拉，无旧家庭残留
   },
 
@@ -171,7 +180,7 @@ Page({
     const res = await new Promise(resolve => {
       wx.showModal({
         title: '移除成员',
-        content: '确定移除「' + name + '」吗？移除后其将无法看到本家庭数据（不影响其加入的其他家庭）。',
+        content: '确定移除「' + name + '」吗？移除后旧邀请码和日程分享链接会失效。对方需要新邀请码才能重新加入。',
         confirmColor: '#c0392b',
         success: resolve,
       })
@@ -181,7 +190,7 @@ Page({
     try {
       await api.removeMember(this.data.currentFamilyId, targetOpenid)
       wx.hideLoading()
-      wx.showToast({ title: '已移除', icon: 'success' })
+      wx.showToast({ title: '已移除，邀请码已更新', icon: 'success' })
       await this.reload()
     } catch (err) {
       wx.hideLoading()
@@ -205,38 +214,39 @@ Page({
     const res = await new Promise(resolve => {
       wx.showModal({
         title: '解散家庭',
-        content: '确定解散「' + familyName + '」吗？家庭、邀请码和成员关系将被永久删除，无法恢复。',
+        content: '确定解散「' + familyName + '」吗？家庭、成员关系、邀请码和日程将被永久删除，无法恢复。',
         confirmText: '确认解散',
         confirmColor: '#c0392b',
         success: resolve,
       })
     })
-    if (!res.confirm) return
+    if (!res.confirm || this.data.dissolving) return
     this.setData({ dissolving: true })
     wx.showLoading({ title: '解散中' })
+    let result, failure
     try {
-      const result = await api.dissolveFamily(this.data.currentFamilyId)
-      if (result.processing) {
-        wx.showModal({title:'家庭正在解散',content:'访问已关闭，历史数据正在后台清理，请稍后重新进入。',showCancel:false})
-        await this.reload()
-        return
-      }
-      // 关键：解散后本地缓存仍指向已删家庭，必须强制重登覆盖缓存
-      // （有新家庭→云端返回并自动选第一个；无家庭→status=unknown、currentFamilyId=null）
-      await api.login(true)
-      this.setData({ panel: '' })
-      wx.showTabBar({ animation: false })
-      wx.hideLoading()
-      wx.showToast({ title: '家庭已解散', icon: 'success' })
-      // reload 内部会按最新 families 自动跳引导页或显示其他家庭
-      await this.reload()
-      this.setData({ dissolving: false })
+      result = await api.dissolveFamily(this.data.currentFamilyId)
     } catch (err) {
+      failure = err
+    } finally {
       wx.hideLoading()
       this.setData({ dissolving: false })
-      console.error('[home] 解散家庭失败', err)
-      wx.showToast({ title: err.message || '解散失败', icon: 'none', duration: 2500 })
     }
+
+    if (failure) {
+      console.error('[my] 解散家庭失败', failure)
+      wx.showToast({ title: failure.message || '解散失败', icon: 'none', duration: 2500 })
+      return
+    }
+    this.setData({ panel: '', family: null, members: [], previewMembers: [] })
+    wx.showTabBar({ animation: false })
+    if (result.processing) {
+      wx.showToast({ title: '家庭已关闭，数据正在后台清理', icon: 'none', duration: 2500 })
+    } else {
+      wx.showToast({ title: '家庭已解散', icon: 'success' })
+    }
+    // 重新识别可用家庭，避免旧家庭仍被选中。
+    await this.reload()
   },
 
   // ——— V3.9 编辑我的资料（头像 + 昵称一起填，浮层内本地暂存、保存时一起提交）———

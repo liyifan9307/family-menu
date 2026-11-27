@@ -1,0 +1,1066 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的家 · 需求与 UI 交付稿</title>
+<style>
+/* 我的家 · HTML 预览完整样式。间距使用 4 / 8 / 12 / 16 / 24 px。 */
+:root {
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+
+  --brand: #39654e;
+  --brand-dark: #2c533f;
+  --ink: #233a2e;
+  --ink2: #536258;
+  --line: #dce4da;
+  --bg: #f6f7f1;
+  --card: #fff;
+  --danger: #9e392d;
+  --soft: #eaf0e6;
+  --panel: #25332b;
+  --panel-line: #43584a;
+  --muted: #b6c6ba;
+  --canvas: #1d2922;
+  --canvas-ink: #eff5ee;
+  --canvas-muted: #c3d0c5;
+  --focus: #417358;
+
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-sheet: 24px;
+  --radius-device: 32px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgb(23 47 33 / 5%), 0 4px 16px rgb(23 47 33 / 7%);
+  --shadow-raised: 0 4px 12px rgb(23 47 33 / 9%), 0 8px 24px rgb(23 47 33 / 8%);
+  --shadow-device: 0 2px 8px rgb(8 21 13 / 18%), 0 16px 36px rgb(8 21 13 / 24%);
+  --card-pad: var(--space-16);
+  --group-gap: var(--space-12);
+  --control-height: 44px;
+}
+/* family components */
+.family .h1{font-size:21px;font-weight:600;color:var(--ink);line-height:1.4;}
+.family .h2{font-size:15px;color:var(--ink2);line-height:1.6;margin-top:var(--space-8);}
+.family .sec-t{font-size:14px;color:var(--ink2);margin:var(--space-16) 0 var(--space-8);}
+.family .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:var(--space-16);}
+.family .primary-btn{min-height:48px;line-height:48px;text-align:center;background:var(--brand);color:#fff;font-size:17px;font-weight:600;border-radius:var(--radius);margin-top:var(--space-12);}
+.family .ghost-btn{min-height:48px;line-height:46px;text-align:center;background:#fff;color:var(--brand);font-size:17px;font-weight:600;border:1px solid var(--brand);border-radius:var(--radius);margin-top:var(--space-8);}
+.family .warn-box{background:#fdf6ec;border:1px solid #f0d9b5;color:#8a6d3b;font-size:13px;line-height:1.6;padding:var(--space-8) var(--space-12);border-radius:var(--radius);margin-top:var(--space-8);}
+.family .field-label{font-size:14px;color:var(--ink2);margin-bottom:var(--space-8);display:block;}
+.family .field-input{min-height:48px;padding:0 var(--space-12);background:#fff;border:1px solid var(--line);border-radius:var(--radius);font-size:16px;color:var(--ink);display:flex;align-items:center;}
+.family .field-input.ph{color:#657368;}
+.family .identity{padding-top:calc(var(--space-24) + var(--space-16));}
+.family .hero{margin-bottom:calc(var(--space-16) + var(--space-4));}
+.family .entry-card{display:flex;align-items:center;gap:var(--space-12);background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:var(--space-16);min-height:80px;margin-bottom:var(--space-12);}
+.family .entry-icon{width:44px;height:44px;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;color:#fff;flex-shrink:0;}
+.family .entry-icon.create{background:var(--brand);}
+.family .entry-icon.join{background:#4d7396;}
+.family .entry-body{flex:1;min-width:0;overflow-wrap:anywhere}
+.family .entry-title{font-size:18px;font-weight:600;color:var(--ink);}
+.family .entry-desc{font-size:13px;color:var(--ink2);line-height:1.6;margin-top:var(--space-4);}
+.family .entry-arrow{flex:none;font-size:24px;color:var(--ink2);}
+.family .nav-line{font-size:15px;color:var(--brand);padding:var(--space-8) 0;margin-bottom:var(--space-12);}
+.family .code-input{letter-spacing:4px;}
+.family .home-page{padding:var(--space-24) var(--space-24);}
+.family .family-title{width:100%;justify-content:flex-start;display:flex;align-items:center;gap:var(--space-8);background:transparent;padding:0;margin:0;color:var(--ink);font-size:21px;line-height:1.4;font-weight:500;min-height:44px;}
+.family .family-title.readonly{cursor:default;}
+.family .chevron{flex-shrink:0;font-size:18px;color:var(--brand);}
+.family .greeting{color:var(--ink2);font-size:14px;margin-top:var(--space-4);}
+.family .section-label{display:flex;justify-content:space-between;align-items:center;gap:var(--space-8);flex-wrap:wrap;margin:calc(var(--space-24) + var(--space-8)) 0 var(--space-16);font-size:16px;font-weight:500;}
+.family .section-caption{font-size:12px;color:var(--ink2);font-weight:400;}
+.family .feature{width:100%;background:#eaf0e6;border-radius:var(--radius-lg);padding:var(--space-24);margin:0;text-align:left;color:var(--ink);line-height:1.5;font-weight:400;}
+.family .feature-tag{display:inline-block;border:1px solid var(--brand);border-radius:var(--radius-xl);color:var(--brand);font-size:11px;padding:var(--space-4) var(--space-8);}
+.family .feature-title{font-size:22px;font-weight:500;margin:var(--space-16) 0 var(--space-4);}
+.family .feature-description{font-size:13px;color:var(--ink2);}
+.family .food{display:block;margin:var(--space-16) 0 0 auto;}
+.family .feature-bottom{display:flex;justify-content:space-between;gap:var(--space-8);font-size:12px;color:var(--brand);margin-top:var(--space-12);}
+.family .family-peek{background:var(--card);border-radius:var(--radius-lg);padding:var(--space-16) calc(var(--space-16) + var(--space-4));margin-top:calc(var(--space-16) + var(--space-4));}
+.family .fp-head{display:flex;justify-content:space-between;align-items:center;}
+.family .fp-title{font-size:16px;font-weight:500;color:var(--ink);}
+.family .fp-link{font-size:12px;color:var(--brand);}
+.family .fp-body{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-8);margin-top:var(--space-16)}
+.family .fp-count{font-size:12px;color:var(--ink2);margin-left:var(--space-4);}
+.family .more{text-align:center;font-size:12px;color:var(--ink2);margin-top:var(--space-24);}
+.family .my-page{padding:var(--space-24) var(--space-24);}
+.family .profile-header{display:flex;align-items:center;gap:var(--space-16);margin:var(--space-4) 0 calc(var(--space-24) + var(--space-4));}
+.family .profile-avatar{width:64px;height:64px;border-radius:var(--radius-xl);flex-shrink:0;background:#eaf0e6;display:flex;align-items:center;justify-content:center;font-size:32px;}
+.family .profile-name{font-size:21px;font-weight:500;color:var(--ink);}
+.family .profile-edit{font-size:13px;color:var(--ink2);margin-top:var(--space-4);}
+.family .family-summary{padding:var(--card-pad);background:var(--card);border-radius:var(--radius-lg);}
+.family .eyebrow{font-size:14px;color:var(--ink2);}
+.family .family-title.my{font-size:19px;margin:var(--space-8) 0 var(--space-4);min-height:38px;}
+.family .family-people{display:flex;align-items:center;gap:var(--space-4);flex-wrap:wrap;margin-top:var(--space-16);}
+.family .small-avatar{width:30px;height:30px;border-radius:50%;flex-shrink:0;font-size:15px;display:flex;align-items:center;justify-content:center;}
+.family .people-count{color:var(--ink2);font-size:12px;margin-left:var(--space-4);}
+.family .menu-list{margin-top:calc(var(--space-16) + var(--space-4));border-radius:var(--radius-lg);background:var(--card);padding:0 var(--card-pad);}
+.family .menu-row{display:flex;align-items:center;gap:var(--group-gap);padding:var(--space-16) 0;margin:0;font-size:15px;color:var(--ink);}
+.family .menu-row+.menu-row{border-top:1px solid #f0f2eb;}
+.family .menu-icon{width:22px;height:22px;flex-shrink:0;}
+.family .menu-end{margin-left:auto;color:var(--ink2);font-size:12px;}
+.family .mask{position:absolute;inset:0;background:rgba(16,38,27,.34);z-index:20;display:flex;align-items:flex-end;}
+.family .sheet{width:100%;box-sizing:border-box;padding:var(--space-12) var(--space-24) var(--space-24);background:#fff;border-radius:var(--radius-sheet) var(--radius-sheet) 0 0;color:var(--ink);}
+.family .handle{width:32px;height:4px;background:#eaf0e6;border-radius:var(--radius);margin:0 auto var(--space-16);}
+.family .sheet-heading{display:flex;align-items:center;justify-content:space-between;gap:var(--group-gap);font-size:19px;font-weight:500;margin-bottom:var(--space-12);}
+.family .sheet-close{flex:none;width:var(--control-height);height:var(--control-height);padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--brand);background:#eaf0e6;font-size:22px;}
+.family .sheet-sub{font-size:13px;color:var(--ink2);margin:var(--space-4) 0 var(--space-16);}
+.family .choices{max-height:260px;overflow:auto;}
+.family .choice{display:flex;align-items:center;justify-content:space-between;gap:var(--space-12);text-align:left;background:#f7f7f2;color:var(--ink);padding:var(--space-16) var(--space-16);border-radius:var(--radius-lg);margin-bottom:var(--space-8);}
+.family .choice.selected{background:#eaf0e6;color:var(--brand);}
+.family .name{font-size:16px;}
+.family .role{font-size:12px;color:var(--ink2);margin-top:var(--space-4);}
+.family .sw-dot{width:10px;height:10px;border-radius:50%;margin-right:var(--space-8);display:inline-block;}
+.family .sheet-actions{display:flex;gap:var(--space-8);margin-top:var(--space-16);}
+.family .sheet-actions button{flex:1;min-width:0;min-height:var(--control-height);border:0;padding:var(--space-8) var(--space-8);font:inherit;font-size:15px;color:var(--brand);background:#eaf0e6;border-radius:var(--radius-lg);text-align:center;}
+.family .sheet-actions button.primary{color:#fff;background:var(--brand);}
+.family .code-box{flex:1;min-height:48px;line-height:48px;text-align:center;background:#f4f8f6;border:1px dashed var(--brand);border-radius:var(--radius);font-size:22px;font-weight:600;letter-spacing:5px;color:var(--brand);}
+.family .code-box.masked{color:var(--ink2);letter-spacing:3px;}
+.family .code-row{display:flex;align-items:center;gap:var(--space-8);}
+.family .code-eye{flex:none;min-width:48px;min-height:var(--control-height);display:grid;place-items:center;text-align:center;font-size:15px;color:var(--brand);}
+.family .code-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-8);margin-top:var(--space-12);}
+.family .mini-btn{min-width:0;min-height:var(--control-height);display:grid;place-items:center;padding:var(--space-8);line-height:1.35;text-align:center;background:var(--brand);color:#fff;font-size:15px;font-weight:600;border-radius:var(--radius-lg);}
+.family .mini-btn.ghost{background:#fff;color:var(--brand);border:1px solid var(--brand);}
+.family .member-row{display:flex;align-items:center;gap:var(--group-gap);min-height:56px;border-bottom:1px solid var(--line);}
+.family .member-row:last-child{border-bottom:none;}
+.family .m-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.family .m-info{flex:1;min-width:0;overflow-wrap:anywhere;}
+.family .m-name{font-size:16px;color:var(--ink);}
+.family .m-role{font-size:12px;color:var(--ink2);margin-top:var(--space-4);}
+.family .m-remove{flex:none;min-width:48px;min-height:var(--control-height);display:grid;place-items:center;text-align:center;color:var(--danger);font-size:15px;border:1px solid var(--danger);border-radius:var(--radius-lg);}
+.family .m-tip{font-size:13px;color:var(--ink2);padding:var(--space-8) 0 0;}
+.family .panel-hint{font-size:13px;color:var(--ink2);line-height:1.6;padding:var(--space-8) 0 var(--space-12);}
+.family .settings-name{font-size:17px;}
+.family .settings-members{width:100%;min-height:var(--control-height);margin-top:var(--space-8);background:#eaf0e6;color:var(--brand);border-radius:var(--radius-lg);font-size:15px;padding:var(--space-12);text-align:center;}
+.family .danger-zone{margin-top:calc(var(--space-16) + var(--space-4));padding:var(--space-16);background:#fcf5f2;border-radius:var(--radius-lg);}
+.family .dz-title{font-size:14px;font-weight:600;color:var(--danger);margin-bottom:var(--space-8);}
+.family .dz-desc{font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:var(--space-12);}
+.family .dz-btn{min-height:44px;line-height:44px;text-align:center;border:1px solid var(--danger);color:var(--danger);background:#fff;font-size:15px;font-weight:600;border-radius:var(--radius-lg);}
+.family .dz-btn.disabled{border-color:var(--line);color:#626c63;background:#f6f7f9;font-weight:400;}
+.family .pf-row{margin-top:var(--space-16);}
+.family .pf-label{font-size:14px;font-weight:500;margin-bottom:var(--space-8);}
+.family .pf-avatar-ph{width:56px;height:56px;border-radius:50%;background:#eef5f1;color:var(--brand);font-size:28px;display:flex;align-items:center;justify-content:center;}
+.family .pf-hint{font-size:13px;color:var(--ink2);margin-top:var(--space-8);}
+.family .pf-input{min-height:48px;background:#f4f8f6;border:1px solid var(--line);border-radius:var(--radius-lg);padding:0 var(--space-12);font-size:16px;color:var(--ink);display:flex;align-items:center;}
+.family .pf-input.ph{color:var(--ink2);}
+.family .pf-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-12);margin-top:var(--space-24);}
+.family .pf-btn{min-width:0;min-height:var(--control-height);display:grid;place-items:center;padding:var(--space-8);text-align:center;background:var(--brand);color:#fff;font-size:17px;font-weight:600;border-radius:var(--radius-lg);}
+.family .pf-btn.ghost{background:#fff;color:var(--ink2);border:1px solid var(--line);font-size:15px}
+.family .changelog{max-width:760px;}
+.family .chg{display:flex;gap:var(--space-16);padding:var(--space-16) 0;border-bottom:1px solid #2c342f;}
+.family .chg-k{width:96px;flex-shrink:0;font-size:12px;color:#7f8d84;padding-top:var(--space-4);}
+.family .chg-v{font-size:13px;color:#c3cec6;line-height:1.7;}
+.family .chg-v b{color:#e7efe9;font-weight:600;}
+.family .flag{display:inline-block;font-size:11px;padding:var(--space-4) var(--space-8);border-radius:var(--radius);margin-left:var(--space-8);}
+.family .flag.new{background:#173e2e;color:#8fe0b8;}
+.family .flag.upd{background:#3d2f14;color:#f0c073;}
+.family .icon-compare{background:#2a322c;border:1px solid var(--panel-line);border-radius:var(--radius-lg);padding:calc(var(--space-16) + var(--space-4)) var(--space-24);margin-bottom:calc(var(--space-24) + var(--space-24));}
+.family .cmp-head{display:flex;gap:var(--space-16);font-size:12px;color:#8f9d94;padding:0 0 var(--space-12) calc(var(--space-24) + var(--space-24) + var(--space-24) + var(--space-24) + var(--space-24) + var(--space-12));border-bottom:1px solid #3d4a42;}
+.family .cmp-head span{flex:1;}
+.family .cmp-row{display:flex;align-items:center;gap:var(--space-16);padding:var(--space-16) 0;border-bottom:1px solid #333e37;}
+.family .cmp-row:last-child{border-bottom:none;}
+.family .cmp-label{width:116px;flex-shrink:0;font-size:13px;color:#c3d0c7;}
+.family .cmp-cell{flex:1;display:flex;align-items:center;gap:var(--space-12);background:#232a25;border-radius:var(--radius);padding:var(--space-8) var(--space-16);}
+.family .cmp-cell img{width:36px;height:36px;object-fit:contain;}
+.family .cmp-cell .nm{font-size:12px;color:#8f9d94;}
+.family .cmp-tag{font-size:11px;color:#efa027;border:1px solid #6b5326;border-radius:var(--radius);padding:var(--space-4) var(--space-8);margin-left:auto;}
+.family .cmp-note{font-size:12px;color:#9fb0a5;line-height:1.8;margin:var(--space-16) 0 0;padding:var(--space-12) var(--space-16);background:#232a25;border-radius:var(--radius);}
+.family .cmp-note b{color:#d9e4dc;}
+.family .gallery-img{display:block;width:100%;max-width:520px;margin:var(--space-16) auto 0;border-radius:var(--radius);}
+.family .rec-box{margin-top:var(--space-16);padding:var(--space-16) var(--space-16);background:#233029;border:1px solid #3a5c47;border-radius:var(--radius);font-size:12px;color:#c3d6c8;line-height:1.9;}
+.family .rec-box b{color:#7fe0ac;}
+.family .rec-pick{display:inline-block;background:#2f4a39;color:#a9e8c4;border-radius:var(--radius);padding:var(--space-4) var(--space-8);margin:0 var(--space-4);font-weight:600;}
+.family .chg-k{width:88px;}
+/* schedule components */
+.schedule .page{padding:var(--space-16) var(--space-24);}
+.schedule .family-title{font-size:21px;font-weight:500;color:var(--ink);line-height:1.4;min-height:40px;display:flex;align-items:center;}
+.schedule .greeting{font-size:16px;color:var(--ink2);margin-top:var(--space-4);}
+.schedule .sec-label{font-size:16px;font-weight:500;color:var(--ink);margin:var(--space-24) 0 var(--space-12);display:flex;justify-content:space-between;align-items:baseline;}
+.schedule .sec-label small{font-size:12px;color:var(--ink2);font-weight:400;}
+.schedule .sched-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-xl);padding:var(--card-pad);box-shadow:var(--shadow-card);}
+.schedule .sc-top{display:flex;justify-content:space-between;align-items:center;}
+.schedule .sc-tag{font-size:11px;color:var(--brand);border:1px solid var(--brand);border-radius:var(--radius-xl);padding:var(--space-4) var(--space-8);}
+.schedule .sc-count{font-size:12px;color:var(--ink2);}
+.schedule .sc-next{display:flex;align-items:baseline;gap:var(--space-8);margin-top:var(--space-12);}
+.schedule .sc-time{font-size:24px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;}
+.schedule .sc-title{font-size:16px;color:var(--ink);}
+.schedule .sc-place{font-size:16px;color:var(--ink2);margin-top:var(--space-8);}
+.schedule .sc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:var(--space-16);padding-top:var(--space-12);border-top:1px solid var(--line);font-size:12px;color:var(--brand);}
+.schedule .feature{width:100%;background:#eaf0e6;border-radius:var(--radius);padding:var(--space-16);margin-top:var(--space-16);color:var(--ink);}
+.schedule .feature-t{font-size:22px;font-weight:500;}
+.schedule .feature-d{font-size:12px;color:var(--ink2);margin-top:var(--space-4);}
+.schedule .more{text-align:center;font-size:12px;color:var(--ink2);margin-top:var(--space-16);}
+.schedule .date-switch{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:0 var(--space-4);margin-bottom:var(--space-8);font-size:14px;color:var(--ink);}
+.schedule .date-switch .arrow{color:var(--brand);font-size:22px;flex:0 0 var(--control-height);min-height:var(--control-height);display:grid;place-items:center;}
+.schedule .day-list{display:flex;flex-direction:column;gap:var(--space-8);}
+.schedule .day-item{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:var(--card-pad);display:flex;gap:var(--group-gap);align-items:flex-start;}
+.schedule .day-item.done{opacity:.55;}
+.schedule .time-col{width:52px;flex-shrink:0;text-align:center;}
+.schedule .time-h{font-size:17px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.25;}
+.schedule .time-m{font-size:16px;color:var(--ink2);margin-top:var(--space-4);}
+.schedule .item-main{flex:1;min-width:0;}
+.schedule .item-t{font-size:16px;font-weight:500;color:var(--ink);display:flex;align-items:center;gap:var(--space-8);}
+.schedule .who-dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0;}
+.schedule .item-p{font-size:16px;color:var(--ink2);margin-top:var(--space-4);line-height:1.5;}
+.schedule .item-child{font-size:16px;color:var(--ink2);margin-top:var(--space-4);}
+.schedule .st{font-size:12px;padding:var(--space-4) var(--space-8);border-radius:var(--radius);background:#eaf0e6;color:var(--brand);}
+.schedule .st.done{background:#eef0ee;color:#526156;}
+.schedule .bottom-bar{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
+    padding:var(--space-8) calc(var(--space-16) + var(--space-4)) var(--space-16);display:flex;gap:var(--space-8);align-items:center;}
+.schedule .btn{flex:1;min-height:44px;line-height:44px;text-align:center;border-radius:var(--radius);font-size:15px;font-weight:500;}
+.schedule .btn.primary{background:var(--brand);color:#fff;font-size:17px;font-weight:600}
+.schedule .btn.ghost{border:1px solid var(--brand);color:var(--brand);background:#fff;}
+.schedule .fab{width:46px;height:46px;border-radius:50%;background:var(--brand);color:#fff;font-size:26px;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--shadow-raised);}
+.schedule .form{margin-top:var(--space-8);}
+.schedule .fld{margin-bottom:var(--space-16);}
+.schedule .fld label{display:block;font-size:14px;color:var(--ink2);margin-bottom:var(--space-8);}
+.schedule .inp{min-height:44px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:0 var(--space-12);display:flex;align-items:center;justify-content:space-between;font-size:16px;color:var(--ink);}
+.schedule .inp.ph{color:#657368;}
+.schedule .inp .val{font-variant-numeric:tabular-nums;}
+.schedule .inp .chev{color:var(--ink2);font-size:14px;flex:none;margin-left:var(--space-8);}
+.schedule .row2{display:flex;gap:var(--space-8);}
+.schedule .row2 .fld{flex:1;min-width:0;}
+.schedule .people{display:flex;gap:var(--space-8);}
+.schedule .person{display:flex;align-items:center;gap:var(--space-4);border:1px solid var(--line);border-radius:var(--radius-xl);padding:var(--space-4) var(--space-8);font-size:15px;color:var(--ink);background:var(--card);}
+.schedule .person.on{border-color:var(--brand);background:#eaf0e6;color:var(--brand);font-weight:500;}
+.schedule .switch-row{display:flex;justify-content:space-between;align-items:center;padding:var(--space-4) 0 var(--space-12);font-size:14px;color:var(--ink);}
+.schedule .switch{width:42px;height:24px;border-radius:var(--radius-lg);background:#d5dbd6;position:relative;}
+.schedule .switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;}
+.schedule .form-foot{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:var(--space-12) calc(var(--space-16) + var(--space-4)) var(--space-16);}
+.schedule .form-foot .btn{width:100%;min-height:46px;line-height:46px;}
+.schedule .readonly-top{background:#eaf0e6;border-radius:var(--radius);padding:var(--space-8) var(--space-12);font-size:12px;color:var(--brand-dark);line-height:1.6;margin-bottom:var(--space-16);}
+.schedule .ro-head{font-size:21px;font-weight:500;color:var(--ink);}
+.schedule .ro-sub{font-size:13px;color:var(--ink2);margin:var(--space-4) 0 var(--space-16);}
+.schedule .ro-item{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:var(--card-pad);margin-bottom:var(--group-gap);}
+.schedule .ro-time{font-size:17px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;}
+.schedule .ro-name{font-size:16px;font-weight:600;color:var(--ink);margin-top:var(--space-4);}
+.schedule .ro-place{font-size:16px;color:var(--ink);margin-top:var(--space-8);line-height:1.5;}
+.schedule .ro-meta{font-size:13px;color:var(--ink2);margin-top:var(--space-8);}
+.schedule .ro-foot{text-align:center;font-size:12px;color:var(--ink2);margin-top:var(--space-16);line-height:1.7;}
+.schedule .ro-warn{font-size:11px;color:#8a6d3b;background:#fdf6ec;border-radius:var(--radius);padding:var(--space-8) var(--space-8);margin-top:var(--space-12);line-height:1.5;}
+/* 分享图以时间为主线，所有信息保持在一张可直接发送的卡片上。 */
+.poster-stage{padding:var(--space-12);background:#ebeee7;border-radius:var(--radius-xl)}
+.poster-card{overflow:hidden;border-radius:var(--radius-lg);background:#fffdf8;box-shadow:var(--shadow-raised)}
+.poster-heading{padding:var(--space-16) var(--card-pad) var(--space-16);background:#e4eddf;border-bottom:1px solid #dbe5d7}
+.poster-family{margin:0;color:#3d634b;font-size:12px;font-weight:600}
+.poster-heading h4{margin:var(--space-4) 0 var(--space-4);font-size:22px;line-height:1.4;letter-spacing:-.03em}
+.poster-date{color:#486251;font-size:16px;font-variant-numeric:tabular-nums}
+.poster-entries{list-style:none;padding:0 var(--card-pad);margin:0}
+.poster-entry{display:grid;grid-template-columns:59px minmax(0,1fr);gap:var(--space-8);padding:var(--space-16) 0}
+.poster-entry+.poster-entry{border-top:1px solid #e7e9de}
+.poster-time{display:grid;align-content:start;font-variant-numeric:tabular-nums;line-height:1.35}
+.poster-time strong{font-size:17px;letter-spacing:-.045em}
+.poster-time span{color:var(--ink2);font-size:16px;margin-top:var(--space-4)}
+.poster-entry h5{margin:0;font-size:17px;line-height:1.4;overflow-wrap:anywhere}
+.poster-entry p{margin:var(--space-4) 0 0;color:#536458;font-size:16px;overflow-wrap:anywhere}
+.poster-owner{display:flex;align-items:center;gap:var(--space-4);flex-wrap:wrap}
+.poster-status{font-size:11px;line-height:1.45;background:#e8f0e5;color:#3b5a44;border-radius:var(--radius-pill);padding:var(--space-4) var(--space-8)}
+.poster-status.done{background:#eeeee7;color:#536052}
+.poster-status.cancelled{background:#f2e7dc;color:#795036}
+.poster-foot{border-top:1px solid #e7e9de;padding:var(--space-12) var(--card-pad);color:#536458;font-size:12px;line-height:1.5}
+.poster-stamp{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4) var(--space-8);font-variant-numeric:tabular-nums}
+.poster-foot p{margin:var(--space-4) 0 0}
+.poster-controls{display:flex;justify-content:center;align-items:center;gap:var(--space-12);margin-top:var(--space-8)}
+.poster-controls label{display:grid;place-items:center;min-width:44px;min-height:44px;border-radius:var(--radius);color:#3d634b;font-size:15px;cursor:pointer}
+.poster-picker{position:relative}
+.poster-picker input{position:absolute;width:1px;height:1px;opacity:0}
+.poster-picker .poster-card{display:none}
+#poster-first:checked~.poster-stage .poster-one,#poster-second:checked~.poster-stage .poster-two{display:block}
+#poster-first:checked~.poster-controls [for=poster-first],#poster-second:checked~.poster-controls [for=poster-second]{background:#e4eddf;font-weight:600}
+#poster-first:focus-visible~.poster-controls [for=poster-first],#poster-second:focus-visible~.poster-controls [for=poster-second]{outline:2px solid #46765a;outline-offset:2px}
+.poster-save{flex:none;padding:var(--space-8) var(--inset) var(--space-16);border-top:1px solid var(--line);background:#fff}
+.poster-save p{margin:0 0 var(--space-8);color:var(--ink2);font-size:13px;text-align:center}
+@media(max-width:360px){.poster-stage{padding:var(--space-8)}.poster-entry{grid-template-columns:55px minmax(0,1fr)}.poster-entries{padding-inline:var(--space-12)}.poster-heading,.poster-foot{padding-inline:var(--space-12)}}
+
+.schedule .notes{background:var(--panel);border:1px solid var(--panel-line);border-radius:var(--radius-lg);padding:calc(var(--space-16) + var(--space-4)) var(--space-24);margin-top:calc(var(--space-16) + var(--space-4));}
+.schedule .notes h3{font-size:15px;color:var(--canvas-ink);margin:0 0 var(--space-12);}
+.schedule .notes table{width:100%;border-collapse:collapse;font-size:13px;color:#c9d5cd;}
+.schedule .notes th{text-align:left;color:#9fb0a5;font-weight:500;border-bottom:1px solid var(--panel-line);padding:var(--space-8) var(--space-8);}
+.schedule .notes td{padding:var(--space-8) var(--space-8);border-bottom:1px solid #2d352f;line-height:1.7;vertical-align:top;}
+.schedule .notes tr:last-child td{border-bottom:none;}
+.schedule .notes code{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#e5bd74;}
+.schedule .callout{border-left:3px solid #efa027;background:#2c2a20;padding:var(--space-8) var(--space-16);border-radius:0 8px 8px 0;
+    font-size:12.5px;color:#d8c9a6;line-height:1.7;margin-top:var(--space-16);}
+/* The gallery and device shell share one layout across both sets of screens. */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--space-24) + var(--space-24) + var(--space-24) + var(--space-12))}
+body{margin:0;background:var(--canvas);color:var(--canvas-ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+a{color:inherit}
+.wrap{max-width:1210px;margin:auto;padding:calc(var(--space-24) + var(--space-16)) calc(var(--space-24) + var(--space-4)) calc(var(--space-24) + var(--space-24) + var(--space-16))}
+.masthead h1{font-size:clamp(28px,5vw,44px);font-weight:600;letter-spacing:-.045em;margin:0 0 var(--space-8)}
+.masthead p,.sources{color:var(--canvas-muted);margin:0}
+.jump{position:sticky;top:0;z-index:10;display:flex;gap:var(--space-4);overflow:auto;margin-top:var(--space-24);padding:var(--space-8) 0;background:var(--canvas);border-block:1px solid #3d4a42}
+.jump a{display:block;flex:none;padding:var(--space-8) var(--space-8);border-radius:var(--radius);text-decoration:none;color:#dce7de}
+.jump a:hover,.jump a:focus-visible{background:#334239}
+.preview{margin-top:calc(var(--space-24) + var(--space-24))}
+.section-title{font-size:21px;font-weight:600;margin:0 0 var(--space-8)}
+.section-note{color:var(--canvas-muted);margin:0 0 calc(var(--space-16) + var(--space-4));font-size:14px}
+.preview .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,325px),1fr));gap:var(--space-24) var(--space-24);align-items:start}
+.preview .item{display:grid;grid-template-rows:auto 1fr;min-width:0;width:100%;max-width:360px;scroll-margin-top:var(--space-8)}
+.preview .item-label{min-height:22px;font-size:14px;margin:0 0 var(--space-8);font-weight:500;color:#c8d6cb}
+.preview .phone{--inset:calc(var(--space-12) + var(--space-8));font-size:16px;width:100%;height:654px;display:flex;flex-direction:column;position:relative;overflow:hidden;border:8px solid #111614;border-radius:var(--radius-device);background:var(--bg);color:var(--ink);line-height:1.5;box-shadow:var(--shadow-device)}
+.preview .statusbar,.preview .navbar{flex:none;display:flex;align-items:center;color:var(--ink)}
+.preview .statusbar{height:28px;justify-content:space-between;padding-inline:var(--inset);font-size:11px}
+.preview .navbar{position:relative;height:40px;justify-content:center;font-size:15px;font-weight:500}
+.preview .navbar .back{position:absolute;left:var(--inset);top:0;height:40px;line-height:40px;font-size:22px;color:var(--brand)}
+.preview .screen{position:relative;flex:1;min-height:0;overflow:auto;overscroll-behavior:contain}
+.preview .tabbar{flex:none;display:flex;justify-content:space-around;align-items:center;height:56px;background:#fff;border-top:1px solid var(--line)}
+.preview .tabbar .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:44px;gap:var(--space-4);font-size:11px;color:var(--ink2)}
+.preview .tabbar .tab.on{color:var(--brand)}
+.preview .tabbar .ic{font-size:18px;line-height:1.2}
+.preview .screen.with-footer{display:flex;flex-direction:column;overflow:hidden}
+.preview .screen.with-footer>.page{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain}
+.preview .screen>.bottom-bar,.preview .screen>.form-foot{position:static;flex:none;padding-inline:var(--inset)}
+.preview .page,.preview .identity,.preview .my-page{padding:var(--space-16) var(--inset) var(--space-24)}
+.preview .identity{padding-top:calc(var(--space-24) + var(--space-8))}
+.preview .sheet,.detail-sheet{padding-inline:var(--inset)}
+.preview .sheet{max-height:100%;overflow:auto}
+.family-switch-row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-8);margin:var(--space-4) 0 var(--space-4)}
+.family .family-switch-row .family-title.my{width:auto;min-width:0;margin:0;line-height:1.35;overflow-wrap:anywhere}
+.family-switch-action{display:inline-flex;align-items:center;gap:var(--space-8);flex:none;min-height:44px;padding:0 var(--space-12);border-radius:var(--radius);background:#edf2e9;color:#3d634b;font-size:15px;font-weight:500;line-height:1.35;text-decoration:none}
+.family-switch-action:hover{background:#e2ebdf}
+.family-switch-arrow{width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+.preview .sched-card,.preview .day-item,.preview .ro-item,.preview .feature{border-radius:var(--radius-lg)}
+.preview .day-item.done{opacity:1;background:#f0f4ef}
+.preview .day-item.cancelled{background:#faf7f2}
+.preview .st.cancelled{color:#825b45;background:#f6eee7}
+.preview .item-t{flex-wrap:wrap}
+.preview .day-list{gap:var(--group-gap)}
+.preview .bottom-bar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) var(--control-height);align-items:stretch}
+.preview .bottom-bar .btn{display:grid;place-items:center;min-width:0}
+.preview .bottom-bar .fab{align-self:center;width:var(--control-height);height:var(--control-height)}
+.preview .ro-meta{color:var(--ink);font-size:16px}
+.preview .ro-status{font-size:12px;font-weight:400;color:var(--brand);display:inline-block}
+.preview .ro-foot,.preview .ro-warn,.preview .ro-sub,.preview .readonly-top{font-size:13px}
+.preview .person{min-height:44px}.preview .people{flex-wrap:wrap}.preview .sheet{max-height:100%;overflow:auto}
+.preview .more-fields summary{color:var(--brand);cursor:pointer;min-height:44px;padding:var(--space-8) 0}
+.preview .btn{text-decoration:none;display:block;line-height:1.5;min-height:44px;padding:var(--space-8) var(--space-8)}
+.preview .back{text-decoration:none;min-width:44px}
+.preview .tab{min-width:64px;text-decoration:none}
+.preview [data-jump]{cursor:pointer}
+.preview [data-jump]:focus-visible,.preview a:focus-visible{outline:2px solid #46765a;outline-offset:3px}
+.preview .list-tools{display:flex;justify-content:space-between;color:var(--brand);font-size:15px;gap:var(--space-8);margin:0 0 var(--space-8)}
+.preview .list-tools a{display:flex;align-items:center;min-height:var(--control-height);padding:var(--space-8) 0}
+.preview-hint{color:var(--ink2);font-size:14px}
+.detail-shade{position:absolute;inset:0;background:#263e3240;display:flex;align-items:flex-end}
+.detail-sheet{width:100%;max-height:94%;overflow:auto;background:var(--bg);border-radius:var(--radius-sheet) var(--radius-sheet) 0 0;padding:var(--space-16) calc(var(--space-16) + var(--space-4)) calc(var(--space-16) + var(--space-4));color:var(--ink)}
+.grip{width:34px;height:4px;border-radius:var(--radius);background:#d7e3d8;margin:0 auto var(--space-12)}
+.detail-head{display:flex;justify-content:space-between;align-items:center;font-size:19px}
+.detail-head a{display:flex;align-items:center;min-height:var(--control-height);padding:var(--space-8) 0;color:var(--brand);font-size:15px}
+.detail-title{font-size:19px;margin-right:var(--space-8)}
+.detail-data dl{margin:var(--space-12) 0}
+.detail-data dl div{padding:var(--space-8) 0;border-bottom:1px solid var(--line)}
+.detail-data dt,.history time{font-size:13px;color:var(--ink2)}
+.detail-data dd{margin:var(--space-4) 0 0;font-size:16px}
+.detail-buttons{display:grid;gap:var(--space-8)}
+.detail-buttons .danger{color:#a0382c;border:1px solid #e8cfc9;background:#fff}
+.history-heading{margin:var(--space-16) 0 var(--space-4)}
+.history{list-style:none;margin:0 0 var(--space-12);padding:0 0 0 var(--space-12);border-left:2px solid #dce8dd}
+.history li{padding:var(--space-8) 0}
+.history strong,.history time{display:block}
+.history strong{font-size:16px;font-weight:500}
+.state-panel{display:flex;flex-direction:column;align-items:center;gap:var(--space-8);text-align:center;margin:calc(var(--space-24) + var(--space-24) + var(--space-16) + var(--space-4)) auto 0;color:var(--ink)}
+.state-panel p{margin:0 0 var(--space-8);color:var(--ink2);font-size:16px}
+.state-panel .btn{width:100%}
+.state-icon{background:#eaf0e6;color:var(--brand);border-radius:50%;width:44px;height:44px;display:grid;place-items:center;font-size:22px}
+.state-panel.error .state-icon{background:#f5e7df;color:#825b45}
+.inline-error{color:#9f392c}
+.sources{padding-top:calc(var(--space-24) + var(--space-4));margin-top:calc(var(--space-24) + var(--space-16));border-top:1px solid #3d4a42;font-size:14px}
+@media(max-width:480px){.wrap{padding:var(--space-24) var(--space-16) calc(var(--space-24) + var(--space-16))}.preview{margin-top:calc(var(--space-24) + var(--space-8))}.preview .gallery{justify-content:center;gap:calc(var(--space-16) + var(--space-4))}.preview .phone{--inset:var(--space-16);border-width:6px}.preview .screen>.bottom-bar{gap:var(--space-8)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.family .summary-role{color:var(--ink2);font-size:12px}
+
+
+/* 预览目录与画面标题 */
+body {
+  color: var(--canvas-ink);
+  background: radial-gradient(ellipse at 50% 0%, #293a2f 0, var(--canvas) 44rem);
+}
+.wrap { padding-top: calc(var(--space-24) * 2); }
+.masthead h1 { font-size: clamp(30px, 5vw, 46px); line-height: 1.15; letter-spacing: -.03em; }
+.masthead p { max-width: 65ch; }
+.jump { border-color: var(--panel-line); background: var(--canvas); }
+.jump a { border-radius: var(--radius); white-space: nowrap; }
+.jump a:hover, .jump a:focus-visible { background: var(--panel-line); }
+.section-title { font-size: 24px; line-height: 1.3; letter-spacing: -.015em; }
+.preview .item-label { font-size: 14px; line-height: 1.5; color: var(--canvas-muted); }
+
+/* 画面内部 */
+.preview .navbar { font-weight: 600; }
+.preview .entry-card,
+.preview .sched-card,
+.preview .day-item,
+.preview .ro-item,
+.preview .family-summary,
+.preview .menu-list {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+.preview .entry-card,
+.preview .day-item,
+.preview .ro-item { padding: var(--card-pad); }
+.preview .family-summary { padding: var(--card-pad); }
+.preview .section-label,
+.preview .sec-label { gap: var(--space-8); flex-wrap: wrap; }
+.preview .item-title,
+.preview .item-main,
+.preview .entry-body { min-width: 0; }
+.preview .sc-title,
+.preview .item-p,
+.preview .item-child,
+.preview .ro-place,
+.preview .ro-meta { overflow-wrap: anywhere; }
+.preview .time-h,
+.preview .ro-time,
+.poster-time strong { font-weight: 600; }
+.preview .time-m,
+.preview .item-child,
+.preview .ro-meta { color: var(--ink2); }
+.preview .item-t { column-gap: var(--space-8); row-gap: var(--space-4); }
+.preview .st,
+.poster-status { border-radius: var(--radius-pill); white-space: nowrap; }
+.preview .st.done { color: #526156; background: #e9eee6; }
+.preview .btn,
+.preview .primary-btn,
+.preview .ghost-btn,
+.preview .settings-members,
+.preview .mini-btn,
+.preview .pf-btn,
+.preview .family-switch-action { border-radius: var(--radius); }
+.preview .bottom-bar .btn { padding-inline: var(--space-4); }
+.preview .sheet,
+.detail-sheet { box-shadow: var(--shadow-raised); }
+.detail-head strong,
+.state-panel strong { font-weight: 600; }
+.state-panel strong { font-size: 19px; line-height: 1.4; }
+.state-panel p { max-width: 28ch; }
+.state-panel p:empty { margin: 0; }
+.preview .code-actions,
+.preview .pf-actions,
+.preview .sheet-actions { gap: var(--space-12); }
+
+/* 分享图与交互反馈 */
+.poster-stage { padding: var(--space-8); background: #e9eee5; }
+#poster .page { padding-block: var(--space-12) var(--space-8); }
+.poster-card { border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.poster-heading { padding-block: var(--space-12); background: #e4eddf; }
+.poster-entry { grid-template-columns: 72px minmax(0, 1fr); padding-block: var(--space-12); }
+.poster-time span { white-space: nowrap; }
+.poster-time span, .poster-entry p, .poster-foot, .poster-save p { color: var(--ink2); }
+.poster-controls label { padding-inline: var(--space-8); }
+.preview [data-jump]:focus-visible,
+.preview a:focus-visible,
+#poster-first:focus-visible ~ .poster-controls [for=poster-first],
+#poster-second:focus-visible ~ .poster-controls [for=poster-second] {
+  outline: 2px solid var(--focus);
+  outline-offset: var(--space-4);
+}
+.preview .entry-card[data-jump]:hover,
+.preview .sched-card[data-jump]:hover,
+.preview .day-item[data-jump]:hover { border-color: #a7bba9; }
+.preview .menu-row[data-jump]:hover { background: #f1f5ee; }
+.family-switch-action:hover { background: #dde9da; }
+@media (max-width: 480px) {
+  .wrap { padding-top: var(--space-24); }
+  .preview .gallery { gap: var(--space-24); }
+}
+@media (max-width: 360px) {
+  .poster-entry { grid-template-columns: 68px minmax(0, 1fr); }
+}
+
+/* 交付稿需求摘要，独立于预览样式。 */
+.product-brief{margin:var(--space-24) 0 calc(var(--space-24)*2);padding:var(--space-24);border:1px solid var(--panel-line);border-radius:var(--radius-xl);background:var(--panel);color:var(--canvas-ink)}
+.product-brief h2,.product-brief h3,.product-brief h4,.product-brief p{margin:0}
+.product-brief h2{font-size:clamp(24px,4vw,34px);line-height:1.3}
+.product-brief h3{font-size:21px;margin-bottom:var(--space-12)}
+.product-brief h4{font-size:16px;margin-bottom:var(--space-4)}
+.brief-kicker{font-size:13px;color:var(--canvas-muted);margin-bottom:var(--space-4)!important}
+.brief-intro>p:last-of-type{margin-top:var(--space-8);max-width:60ch}
+.brief-links{display:flex;flex-wrap:wrap;gap:var(--space-8);margin-top:var(--space-16)}
+.brief-links a{padding:var(--space-8) var(--space-12);border:1px solid var(--panel-line);background:var(--canvas);border-radius:var(--radius);text-decoration:none}
+.product-brief>section{margin-top:calc(var(--space-24) + var(--space-8));padding-top:var(--space-16);border-top:1px solid var(--panel-line)}
+.brief-features{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:var(--space-12)}
+.brief-features article,.product-brief .brief-note{padding:var(--space-16);border:1px solid var(--panel-line);border-radius:var(--radius-lg);background:var(--canvas)}
+.brief-features article p,.product-brief li,.product-brief .brief-note{color:var(--canvas-muted)}
+.product-brief .brief-note{margin-top:var(--space-16)}
+.product-brief ul{padding-inline-start:var(--space-24);margin:var(--space-12) 0 0}
+.product-brief li+li{margin-top:var(--space-8)}
+.brief-table{overflow-x:auto}
+.brief-table table{width:100%;min-width:480px;border-collapse:collapse;text-align:left}
+.brief-table th,.brief-table td{padding:var(--space-8) var(--space-12);border-bottom:1px solid var(--panel-line)}
+.brief-table thead{background:var(--canvas)}
+@media(max-width:480px){.product-brief{padding:var(--space-16)}}
+
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="masthead"><h1>我的家</h1><p>当前需求与完整 UI 预览</p></header>
+<nav class="jump" aria-label="页面目录"><a href="#requirements">当前需求</a><a href="#identity">身份引导</a><a href="#home">主页</a><a href="#list">家庭日程</a><a href="#detail">日程详情</a><a href="#history">变更记录</a><a href="#edit">新增与编辑</a><a href="#sharing">分享</a><a href="#empty">空状态与加载</a><a href="#errors">错误与反馈</a><a href="#my">我的与家庭管理</a></nav>
+<section id="requirements" class="product-brief" aria-labelledby="requirements-heading">
+  <header class="brief-intro">
+    <p class="brief-kicker">2026-11-27 · 当前版本</p>
+    <h2 id="requirements-heading">产品需求与 UI 交付稿</h2>
+    <p>为家庭成员提供一处共享的接送日程。家人可以确认几点接、在哪里接、由谁负责，以及安排是否有变动。</p>
+    <div class="brief-links"><a href="#scope">当前范围</a><a href="#permissions">操作权限</a><a href="#acceptance">验收状态</a><a href="#identity">查看 29 个 UI 画面</a></div>
+  </header>
+
+  <section id="scope" aria-labelledby="scope-heading">
+    <h3 id="scope-heading">当前功能范围</h3>
+    <div class="brief-features">
+      <article><h4><a href="#identity">家庭入口</a></h4><p>识别微信身份。用户可创建家庭并成为管理员，或输入 6 位邀请码加入家庭。</p></article>
+      <article><h4><a href="#my">我的与家庭管理</a></h4><p>查看家庭成员，编辑自己的头像和昵称，从家庭卡片右侧的「切换家庭」按钮打开切换面板。管理员可刷新邀请码、移除成员，并在只剩自己时解散家庭。</p></article>
+      <article><h4><a href="#home">首页与按日日程</a></h4><p>底部保留「主页」「我的」。首页展示今日条数与下一条待办，日程页支持前后切日、回到今天和下拉刷新。</p></article>
+      <article><h4><a href="#edit">新增与编辑</a></h4><p>日期、开始时间和事项必填。地点、孩子姓名、结束时间和备注选填，负责人默认本人。可选近期地点，结束时间和备注放在「更多信息」。</p></article>
+      <article><h4><a href="#detail">详情与变更记录</a></h4><p>详情展示时间、地点、孩子、负责人、状态和备注。记录展示操作人、时间和动作，按钮按角色权限显示。</p></article>
+      <article><h4><a href="#poster">静态分享图片</a></h4><p>生成所选日期的纯图片，包含时间、地点、孩子、负责人、状态及生成时间。长列表拆成多张，可逐张预览、批量保存到相册，再手动发到家庭群。安排变动后重新生成。</p></article>
+      <article><h4><a href="#readonly-view">只读分享卡片</a></h4><p>链接只开放所选日期的日程，接收者无需加入家庭。链接有效期为 7 天，成员移除或家庭解散后旧链接失效。微信卡片实际转发和打开能力仍待当前账号验证。</p></article>
+      <article><h4><a href="#notice-state">变更通知</a></h4><p>日程变更可触发微信订阅消息。上线使用需要配置模板，由接收人主动授权。通知失败时日程仍可保存。</p></article>
+    </div>
+    <p class="brief-note"><strong>暂未纳入</strong>　家庭点菜仍为首页占位。购物清单、每周重复、整周视图和固定时点提醒暂未实现。</p>
+  </section>
+
+  <section id="permissions" aria-labelledby="permissions-heading">
+    <h3 id="permissions-heading">角色权限与日程规则</h3>
+    <div class="brief-table" tabindex="0" role="region" aria-label="日程权限表">
+      <table>
+        <thead><tr><th scope="col">角色</th><th scope="col">查看、新增、分享</th><th scope="col">编辑、删除</th><th scope="col">完成、取消、恢复</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">普通家庭成员</th><td>可操作</td><td>—</td><td>—</td></tr>
+          <tr><th scope="row">日程创建人</th><td>可操作</td><td>可操作</td><td>可操作</td></tr>
+          <tr><th scope="row">日程负责人</th><td>可操作</td><td>—</td><td>可操作</td></tr>
+          <tr><th scope="row">家庭管理员</th><td>可操作</td><td>可操作</td><td>可操作</td></tr>
+          <tr><th scope="row">只读分享访客</th><td>仅查看指定日期</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul>
+      <li>成员可同时具有多个角色，权限合并计算。完成和取消后仍可查看，可恢复为待办。删除需确认，并从日程列表和分享中移除。</li>
+      <li>使用北京时间和 24 小时制。结束时间须晚于开始时间，跨午夜的安排拆成两条。事项最多 30 字、地点 50 字、孩子姓名 20 字、备注 200 字。</li>
+      <li>切换家庭时重新读取对应数据。保存失败保留草稿，结果待确认时可重试，遇到家人同时编辑时提示查看最新安排。</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="visual-heading">
+    <h3 id="visual-heading">设计口径</h3>
+    <ul>
+      <li>全站共用字号层级。普通正文及日程关键信息为 16 px，日程时间为 17 px，说明为 13 px，日程状态标签为 12 px。只读页沿用同一套字号。</li>
+      <li>使用 4／8／12／16／24 px 间距，统一图文间隔、卡片圆角和阴影。颜色与文字共同表达状态。</li>
+      <li>图片预览一次展示一张，底部保留保存入口。独立只读页可从分享卡片打开。<a href="#sharing">查看分享设计</a></li>
+    </ul>
+  </section>
+
+  <section id="acceptance" aria-labelledby="acceptance-heading">
+    <h3 id="acceptance-heading">验证状态</h3>
+    <ul>
+      <li><strong>网页预览</strong>　含 29 个画面，支持目录跳转、主要入口跳转和图片分页。此前已在 320、375、430、768 和 1200 px 宽度通过布局检查。</li>
+      <li><strong>小程序代码</strong>　核心流程及 UI 已同步，页面模板和样式已通过本地微信编译器检查。</li>
+      <li><strong>待真实环境确认</strong>　微信模拟器中的最终显示、真机相册保存、双账号的权限与分享卡片打开、订阅通知送达。<a href="../technical/schedule-deployment.md">查看部署与验收说明</a></li>
+    </ul>
+    <p class="brief-note">以下 UI 使用示例数据。预览中的保存和转发入口用于展示交互效果。</p>
+  </section>
+</section>
+
+<section id="identity" class="preview family"><h2 class="section-title">身份引导</h2><p class="section-note">创建自己的家庭，或凭邀请码加入。</p><div class="gallery">
+    <div class="item" id="welcome">
+      <p class="item-label">欢迎回家</p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="identity">
+            <div class="hero"><div class="h1">欢迎回家</div><div class="h2">先建一个家，或加入家人已建好的家</div></div>
+            <div class="entry-card"><div class="entry-icon create">＋</div><div class="entry-body"><div class="entry-title">创建家庭</div><div class="entry-desc">你是这个家的管理员，建好后把邀请码发给家人</div></div><div class="entry-arrow">›</div></div>
+            <div class="entry-card"><div class="entry-icon join">↗</div><div class="entry-body"><div class="entry-title">加入家庭</div><div class="entry-desc">输入家人给的 6 位邀请码，一起开启家庭生活</div></div><div class="entry-arrow">›</div></div>
+            <div class="warn-box">与家人分享生活，从一个家开始。头像和昵称可在加入后随时设置。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="item" id="create-family">
+      <p class="item-label">创建家庭</p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="identity">
+            <div class="nav-line">‹ 返回</div>
+            <div class="hero"><div class="h1">创建家庭</div><div class="h2">起个名字，比如「我的小家」「爸妈家」</div></div>
+            <div class="card"><span class="field-label">家庭名称</span><div class="field-input">输入家庭名称</div></div>
+            <div class="primary-btn">创建并成为管理员</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="item" id="join-family">
+      <p class="item-label">加入家庭</p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="identity">
+            <div class="nav-line">‹ 返回</div>
+            <div class="hero"><div class="h1">加入家庭</div><div class="h2">输入家人给的 6 位邀请码</div></div>
+            <div class="card"><span class="field-label">邀请码</span><div class="field-input code-input">6 位邀请码</div></div>
+            <div class="primary-btn">加入家庭</div>
+            <div class="warn-box">邀请码无效或已过期时不会写入任何数据；同一家庭不能重复加入，但可以加入多个不同的家庭。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+<section id="home" class="preview schedule"><h2 class="section-title">主页</h2><p class="section-note">首页显示当天安排和下一条待办，底部保留「主页」「我的」。</p><div class="gallery">
+  <div class="item">
+    <p class="item-label">今日接送</p>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+      <div class="navbar">主页</div>
+      <div class="screen">
+        <div class="page">
+          <div class="family-title"><span>我的家</span></div>
+          <div class="greeting">一家人的日常，都在这里。</div>
+
+          <div class="sec-label"><span>今日接送</span><small>11月27日 周五</small></div>
+          <div class="sched-card">
+            <div class="sc-top"><span class="sc-tag">家庭日程</span><span class="sc-count">今天 3 条</span></div>
+            <div class="sc-next"><span class="sc-time">15:10</span><span class="sc-title">接孩子放学</span></div>
+            <div class="sc-place">春和路 18 号 · 爸爸</div>
+            <div class="sc-foot"><span>查看今日全部安排</span><span>›</span></div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-t">今天吃点什么？</div>
+            <div class="feature-d">家庭点菜 · 即将开放</div>
+          </div>
+          <div class="more">更多家庭小工具，正在准备中</div>
+        </div>
+      </div>
+      <div class="tabbar"><div class="tab on"><div class="ic">⌂</div>主页</div><div class="tab"><div class="ic">☺</div>我的</div></div>
+    </div>
+  </div>
+</div></section>
+<section id="list" class="preview schedule"><h2 class="section-title">家庭日程</h2><p class="section-note">按天查看安排，点开日程进入详情。</p><div class="gallery">
+  <div class="item">
+    <p class="item-label">日程列表</p>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+      <div class="navbar"><span class="back">‹</span>家庭日程</div>
+      <div class="screen no-tab with-footer">
+        <div class="page">
+          <div class="date-switch"><span class="arrow">‹</span><span>11月27日 周五</span><span class="arrow">›</span></div>
+          <div class="list-tools"><a href="#list">回到今天</a><a href="#notice-state">开启变更通知</a></div><div class="day-list">
+            <div class="day-item done">
+              <div class="time-col"><div class="time-h">08:00</div><div class="time-m">08:30</div></div>
+              <div class="item-main">
+                <div class="item-t"><span class="who-dot" style="background:#6b90b8"></span>送孩子上学<span class="st done">已完成</span></div>
+                <div class="item-p">春和路 18 号</div>
+                <div class="item-child">茂茂 · 爸爸</div>
+              </div>
+            </div>
+            <div class="day-item" id="first-schedule-item">
+              <div class="time-col"><div class="time-h">15:10</div><div class="time-m">16:10</div></div>
+              <div class="item-main">
+                <div class="item-t"><span class="who-dot" style="background:#c48494"></span>接孩子放学<span class="st">待办</span></div>
+                <div class="item-p">春和路 18 号 · 南门</div>
+                <div class="item-child">茂茂 · 爸爸</div>
+              </div>
+            </div>
+            <div class="day-item cancelled">
+              <div class="time-col"><div class="time-h">18:00</div><div class="time-m">19:30</div></div>
+              <div class="item-main">
+                <div class="item-t"><span class="who-dot" style="background:#d0a15e"></span>篮球<span class="st cancelled">已取消</span></div>
+                <div class="item-p">育才体育馆 B 馆</div>
+                <div class="item-child">茂茂 · 爷爷</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-bar">
+          <div class="btn ghost">分享给家人</div>
+          <div class="btn ghost">转发图片</div>
+          <div class="fab">＋</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+<section id="detail" class="preview schedule"><h2 class="section-title">日程详情</h2><p class="section-note">操作随权限变化。负责人可以处理状态，创建人和管理员可编辑、删除。</p><div class="gallery"><article class="item" id="detail-view"><h3 class="item-label">日程详情 · 创建人或管理员</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
+<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>安排详情</strong><a href="#list">关闭</a></div><div class="detail-data"><strong class="detail-title">接孩子放学</strong><span class="st">待办</span><dl><div><dt>时间</dt><dd>11月27日 · 15:10—16:10</dd></div><div><dt>地点</dt><dd>春和路 18 号 · 南门</dd></div><div><dt>孩子 / 负责人</dt><dd>茂茂 · 爸爸</dd></div><div><dt>备注</dt><dd>到南门后在家人群说一声。</dd></div></dl></div><div class="detail-buttons"><a class="btn primary" href="#edit">编辑安排</a><a class="btn ghost" href="#history">查看变更记录</a><div class="btn ghost">标记已完成</div><div class="btn ghost">取消安排</div><div class="btn danger">删除安排</div></div></div></div></div></div>
+</div></article><article class="item" id="member-detail"><h3 class="item-label">日程详情 · 负责人</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
+<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>安排详情</strong><a href="#list">关闭</a></div><div class="detail-data"><strong class="detail-title">接孩子放学</strong><span class="st">待办</span><dl><div><dt>时间</dt><dd>11月27日 · 15:10—16:10</dd></div><div><dt>地点</dt><dd>春和路 18 号 · 南门</dd></div><div><dt>孩子 / 负责人</dt><dd>茂茂 · 爸爸</dd></div><div><dt>备注</dt><dd>到南门后在家人群说一声。</dd></div></dl></div><div class="detail-buttons"><div class="btn primary">标记已完成</div><div class="btn ghost">取消安排</div><a class="btn ghost" href="#history">查看变更记录</a></div></div></div></div></div>
+</div></article></div></section>
+<section id="history" class="preview schedule"><h2 class="section-title">变更记录</h2><p class="section-note">在详情中查看谁在什么时候新增、修改或更新了状态。</p><div class="gallery"><article class="item" id="history-view"><h3 class="item-label">详情弹层 · 变更记录</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
+<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>安排详情</strong><a href="#list">关闭</a></div><div class="detail-data"><strong class="detail-title">接孩子放学</strong><span class="st">待办</span><dl><div><dt>时间</dt><dd>11月27日 · 15:10—16:10</dd></div><div><dt>地点</dt><dd>春和路 18 号 · 南门</dd></div><div><dt>孩子 / 负责人</dt><dd>茂茂 · 爸爸</dd></div><div><dt>备注</dt><dd>到南门后在家人群说一声。</dd></div></dl></div><h4 class="history-heading">变更记录</h4><ol class="history"><li><strong>爸爸 · 修改了接送地点</strong><time>11月27日 14:20</time></li><li><strong>妈妈 · 指派给爸爸</strong><time>11月27日 12:30</time></li><li><strong>妈妈 · 新增了安排</strong><time>11月26日 20:15</time></li></ol><a class="btn ghost" href="#detail-view">返回详情示例</a></div></div></div></div>
+</div></article></div></section>
+<section id="edit" class="preview schedule"><h2 class="section-title">新增与编辑</h2><p class="section-note">负责人、孩子姓名和常用地点沿用当前表单；结束时间与备注放在「更多信息」。</p><div class="gallery">
+  <div class="item">
+    <p class="item-label">新增 / 编辑表单</p>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+      <div class="navbar"><span class="back">‹</span>新增日程</div>
+      <div class="screen no-tab with-footer">
+        <div class="page">
+          <div class="form">
+            <div class="row2">
+              <div class="fld"><label>日期</label><div class="inp"><span class="val">11-27</span><span class="chev">›</span></div></div>
+              <div class="fld"><label>开始时间</label><div class="inp"><span class="val">18:00</span><span class="chev">›</span></div></div>
+            </div>
+            <div class="fld"><label>事项 *</label><div class="inp"><span class="val">篮球</span></div></div>
+            <div class="fld"><label>地点（详细门牌）</label><div class="inp"><span class="val">育才体育馆 B 馆</span></div></div>
+            <div class="fld"><label>孩子姓名（选填）</label><div class="inp"><span class="val">茂茂</span></div></div>
+            <div class="fld">
+              <label>负责人</label>
+              <div class="people">
+                <span class="person on"><span class="who-dot" style="background:#6b90b8"></span>爸爸</span>
+                <span class="person"><span class="who-dot" style="background:#c48494"></span>妈妈</span>
+                <span class="person"><span class="who-dot" style="background:#d0a15e"></span>爷爷</span>
+              </div>
+            </div>
+            <details class="more-fields"><summary>更多信息：结束时间、备注</summary><div class="fld"><label>结束时间（选填）</label><div class="inp">19:30</div></div><div class="fld"><label>备注（选填）</label><div class="inp">从体育馆东门进入</div></div></details>
+          </div>
+        </div>
+        <div class="form-foot"><div class="btn primary">保存</div></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+<section id="sharing" class="preview schedule"><h2 class="section-title">分享</h2><p class="section-note">日程图片可保存到相册后发到家庭群。只读页通过「分享给家人」卡片打开，微信转发能力由平台决定。</p><div class="gallery"><article class="item" id="poster"><h3 class="item-label">分享图片预览</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>分享图片</div>
+<div class="screen no-tab with-footer">
+  <div class="page">
+    <div class="poster-picker" role="group" aria-label="选择预览图片">
+      <input type="radio" id="poster-first" name="poster-page" checked>
+      <input type="radio" id="poster-second" name="poster-page">
+      <div class="poster-stage">
+      <div class="poster-card poster-one">
+        <header class="poster-heading"><p class="poster-family">我的家</p><h4>接送安排</h4><time class="poster-date" datetime="2026-11-27">2026年11月27日 · 周五</time></header>
+        <ul class="poster-entries">
+          <li class="poster-entry">
+            <div class="poster-time"><strong>08:00</strong><span>至 08:30</span></div>
+            <div><h5>送孩子上学</h5><p>春和路 18 号</p><p class="poster-owner">茂茂 · 爸爸 <span class="poster-status done">已完成</span></p></div>
+          </li>
+          <li class="poster-entry">
+            <div class="poster-time"><strong>15:10</strong><span>至 16:10</span></div>
+            <div><h5>接孩子放学</h5><p>春和路 18 号 · 南门</p><p class="poster-owner">茂茂 · 爸爸 <span class="poster-status">待办</span></p></div>
+          </li>
+        </ul>
+        <footer class="poster-foot"><div class="poster-stamp"><time datetime="2026-11-27T15:00:00+08:00">生成于 11月27日 15:00</time><span>1 / 2</span></div><p>仅发给家人 · 安排有变动时请重新发送</p></footer>
+      </div>
+      <div class="poster-card poster-two">
+        <header class="poster-heading"><p class="poster-family">我的家</p><h4>接送安排</h4><time class="poster-date" datetime="2026-11-27">2026年11月27日 · 周五</time></header>
+        <ul class="poster-entries">
+          <li class="poster-entry">
+            <div class="poster-time"><strong>18:00</strong><span>至 19:30</span></div>
+            <div><h5>篮球</h5><p>育才体育馆 B 馆</p><p class="poster-owner">茂茂 · 爷爷 <span class="poster-status cancelled">已取消</span></p></div>
+          </li>
+        </ul>
+        <footer class="poster-foot"><div class="poster-stamp"><time datetime="2026-11-27T15:00:00+08:00">生成于 11月27日 15:00</time><span>2 / 2</span></div><p>仅发给家人 · 安排有变动时请重新发送</p></footer>
+      </div>
+      </div>
+      <div class="poster-controls"><label for="poster-first">第 1 张</label><label for="poster-second">第 2 张</label></div>
+    </div>
+  </div>
+  <div class="poster-save"><p>保存后可在微信家庭群发送</p><a class="btn primary" href="#album-saved">保存两张到相册</a></div>
+</div>
+</div></article>
+  <div class="item">
+    <p class="item-label" id="readonly-view">只读分享页</p>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+      <div class="navbar">今天的接送安排</div>
+      <div class="screen no-tab">
+        <div class="page">
+          <div class="readonly-top">家人分享的接送安排 · 链接 7 天内有效</div>
+          <div class="ro-head">我的家 · 11月27日</div>
+          <div class="ro-sub">共 3 条安排</div>
+
+          <div class="ro-item">
+            <div class="ro-time">08:00 — 08:30</div>
+            <div class="ro-name">送孩子上学 <span class="ro-status">已完成</span></div>
+            <div class="ro-place">春和路 18 号</div>
+            <div class="ro-meta">茂茂 · 爸爸接送</div>
+          </div>
+          <div class="ro-item">
+            <div class="ro-time">15:10 - 16:10</div>
+            <div class="ro-name">接孩子放学 <span class="ro-status">待办</span></div>
+            <div class="ro-place">春和路 18 号 · 南门</div>
+            <div class="ro-meta">茂茂 · 爸爸接送</div>
+          </div>
+          <div class="ro-item">
+            <div class="ro-time">18:00 - 19:30</div>
+            <div class="ro-name">篮球 <span class="ro-status">已取消</span></div>
+            <div class="ro-place">育才体育馆 B 馆</div>
+            <div class="ro-meta">茂茂 · 爷爷接送</div>
+          </div>
+
+          <div class="ro-warn">本页仅可查看，链接到期后自动失效。</div>
+          <div class="ro-foot">查看时间：11月27日 15:00<br>由「我的家」生成</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+<section id="empty" class="preview schedule"><h2 class="section-title">空状态与加载</h2><p class="section-note">区分暂无安排和仍在加载，访客只能查看。</p><div class="gallery"><article class="item" id="empty-day"><h3 class="item-label">当天暂无日程</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
+<div class="screen no-tab"><div class="page"><div class="state-panel empty"><span class="state-icon" aria-hidden="true">＋</span><strong>这一天还没有安排</strong><p>点右下角，为家人加一条</p><a class="btn primary" href="#edit">新增日程</a></div></div></div>
+</div></article><article class="item" id="empty-readonly"><h3 class="item-label">只读页暂无日程</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>接送安排</div>
+<div class="screen no-tab"><div class="page"><div class="state-panel empty"><span class="state-icon" aria-hidden="true">＋</span><strong>这一天没有安排</strong><p>家人分享的 11 月 27 日安排</p></div></div></div>
+</div></article><article class="item" id="loading-day"><h3 class="item-label">日程加载中</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
+<div class="screen no-tab"><div class="page"><div class="state-panel loading"><span class="state-icon" aria-hidden="true">···</span><strong>正在加载安排…</strong><p></p></div></div></div>
+</div></article></div></section>
+<section id="errors" class="preview schedule"><h2 class="section-title">错误与反馈</h2><p class="section-note">常见失败、重试、草稿保留与保存成功的页面示例。</p><div class="gallery"><article class="item" id="list-error"><h3 class="item-label">日程加载失败</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
+<div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>暂时加载不了日程</strong><p>检查网络后再试。</p><a class="btn ghost" href="#list">重新加载</a></div></div></div>
+</div></article><article class="item" id="expired"><h3 class="item-label">只读链接已失效</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>接送安排</div>
+<div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>链接已失效</strong><p>请让家人重新分享安排。</p></div></div></div>
+</div></article><article class="item" id="save-error"><h3 class="item-label">保存失败 · 保留草稿</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>编辑安排</div>
+<div class="screen no-tab"><div class="page"><div class="fld"><label>事项 *</label><div class="inp">接孩子放学</div></div><div class="fld"><label>地点</label><div class="inp">春和路 18 号 · 南门</div></div><p class="inline-error">保存失败，内容已保留。</p><a class="btn primary" href="#edit">返回表单重试</a></div></div>
+</div></article><article class="item" id="save-pending"><h3 class="item-label">保存结果待确认</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>编辑安排</div>
+<div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>保存结果待确认</strong><p>草稿仍在。请确认上次保存结果，避免生成重复安排。</p><a class="btn ghost" href="#edit">确认上次保存结果</a></div></div></div>
+</div></article><article class="item" id="edit-conflict"><h3 class="item-label">编辑冲突 · 保留草稿</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>编辑安排</div>
+<div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>家人已更新这条安排</strong><p>查看最新安排后，可保留当前草稿再继续编辑。</p><a class="btn ghost" href="#edit">查看最新安排并保留草稿</a></div></div></div>
+</div></article><article class="item" id="poster-error"><h3 class="item-label">图片生成失败</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>分享图片</div>
+<div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>暂时生成不了图片</strong><p>请重新读取当天安排并生成。</p><a class="btn ghost" href="#poster">重新生成</a></div></div></div>
+</div></article><article class="item" id="album-error"><h3 class="item-label">相册权限未开启</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>分享图片</div>
+<div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>图片未全部保存</strong><p>请在微信设置中允许保存到相册，预览中的图片仍可查看。</p><a class="btn ghost" href="#poster">返回图片预览</a></div></div></div>
+</div></article><article class="item" id="album-saved"><h3 class="item-label">图片保存成功</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>分享图片</div>
+<div class="screen no-tab"><div class="page"><div class="state-panel empty"><span class="state-icon" aria-hidden="true">＋</span><strong>图片已保存</strong><p>可在微信家庭群从相册选择并发送。</p><a class="btn primary" href="#poster">返回图片预览</a></div></div></div>
+</div></article><article class="item" id="notice-state"><h3 class="item-label">通知未配置</h3>
+<div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
+<div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>通知服务尚未配置</strong><p>日程照常保存，家人可从列表查看最新安排。</p><a class="btn ghost" href="#list">返回日程列表</a></div></div></div>
+</div></article></div></section>
+<section id="my" class="preview family"><h2 class="section-title">我的与家庭管理</h2><p class="section-note">个人资料、家庭切换、成员、邀请与设置。</p><div class="gallery">
+    <div class="item" id="my-main">
+      <p class="item-label">我的 </p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="my-page">
+            <div class="profile-header">
+              <div class="profile-avatar">🌿</div>
+              <div><div class="profile-name">家人</div><div class="profile-edit">编辑个人资料 ›</div></div>
+            </div>
+            <div class="family-summary">
+              <div class="eyebrow">当前家庭</div>
+              <div class="family-switch-row">
+                <div class="family-title my">我的家</div>
+                <a class="family-switch-action" href="#switch-family"><span>切换家庭</span><span class="family-switch-arrow" aria-hidden="true"></span></a>
+              </div>
+              <div class="summary-role">管理员</div>
+              <div class="family-people">
+                <div class="small-avatar" style="background:#6b90b8">🧑</div>
+                <div class="small-avatar" style="background:#c48494">👩</div>
+                <div class="small-avatar" style="background:#d0a15e">👨</div>
+                <span class="people-count">3 位家人，一起生活</span>
+              </div>
+            </div>
+            <div class="menu-list">
+              <div class="menu-row"><img class="menu-icon" src="data:image/png;base64,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" alt="" />家庭成员<span class="menu-end">3 人 ›</span></div>
+              <div class="menu-row"><img class="menu-icon" src="data:image/png;base64,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" alt="" />邀请家人<span class="menu-end">›</span></div>
+              <div class="menu-row"><img class="menu-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAEaklEQVR4nO2aTYgcRRSA36ufmUni5kdPK3hQgocFvUSQXJwIuxtQiacOMuIPCjnEs1lEpBnIQTBhj4JHMTE4NyGK7iIRRIiHRQQ9SMhFvIyERV13prt+nlTPZpjoxB11qn9m64Pev+mt6Xld71X1xwMIBAKBQCAQCAQKAIEAi3jjUhN9FPE4jtnIn7AZN0UWsD0NZQEYBmFxJTr0bPzS4dFT/hK40oNTDQ4CuR+XV55/BTlrkTKPIkOODG8Q4KfmVn91/b3Ory5I7XbbQpUDFEURn3SQ7kIXT8AJ+1Vy84gEe4nXayfJWDDaZJFjnAMTHIwyP9qeeuHz1Q+/OXbmjHxoc7M0Qep0Ou5ashs8ylRrwtK51lrjwL7F/lYvBQQORKPjG1mvSaN11yp8ZO3iB12oAGMD1Ixj0di+cZwEF6D1Pw9ALhBGE+PHRKN2QfUThYjy9uhZ3llLgIhEpGr76jLtJZeJwbscRYOMcdOsUERDACr97dW3L2/uxGQ4k9zK8rc6Uv/th4NWyHUpWI1QTDDPBFhjQCcp7QSHkDG01hoA22eCH7DauhhJ1UuJMdZyNQoZAvA7LyFviAiYEKB6egkA1qMoYp1OZ3jTxl6drEtKDf2uU3WELJH7vLu9ESIOVjByRSc7vccITwotbirQXzDJHzZKW0Rk5FDaDVwGXO1hwHFsqtx9yUV0aeEik33f7XAM/9V9Iatpf+P7q6vv/wwAm1n83LnZa0Q0wZj5HC6ddq5rDGNnkHJlRMjDsia5W40mKeXWWjBKuxRDV3OY4HN2e/v68rnWLeTscaO0G8YVbkLOmRATL5JeISIu6hKSrXRQNycJUEMkqofiE52kcy7FKJtI40FwU4NSIlC8Jp82qTaIyF3N4VIcRYZHTTqYvURkRE1yo/SGSsxPyPkhF1maIIU94j4hI8t+cb8sLCzcMZumdmHNs9E9jTn5HZfyQZWoFBFklnaDNGVAYAabRgak7WOfvXNpAyrAXZeQf/NIcA2Afdluby2+/txpNPbj2v76vO6nWanJ9kKIKOpSkCWt0vTs+oUrG26j+Mz8fOFL/G3a7TZ53SjGO48Pi6+dup8fnDsPgKcY4n0uA8mYP4Cxr02i3lq7eOW626WPLqV7hnhk1i3Hr967tNJ64qk3Xnxy+c2XH/gvjzCzCRGODQIBVu1J3uFv9SDA6HSUBaTjVoaKPL3PGhiM5RiCsSyRsaxOxKkYYzkVo+ibPIxlLkbRN0UYy/9tFH2Th7HMwSj6xp+xzM0o+sajsczHKILnw5+xzMko+saXsfRuFH2Tg7HMxyj6pihjORWj6Js8jKV3o+ibYCwnIBjLEhrLyqTYXjOWGEzgGIIJnMHeRf93jqrdu+jVKHYr1LtYqFFcqnDvojejiBXqXSzQKIrS9y4WbhSx/L2LxRpFx3DIUvYuFmwUbcl7Fwszilid3sVijWKz4r2LXo3itQr1LhZmFONgAncnmMAZ7l3M38PQbJvAQCAQCAQCgQDsDf4Em6A5SoU//lIAAAAASUVORK5CYII=" alt="" />家庭设置<span class="menu-end">›</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar"><div class="tab"><div class="ic">⌂</div>主页</div><div class="tab on"><div class="ic">☺</div>我的</div></div>
+      </div>
+    </div>
+    <div class="item" id="members">
+      <p class="item-label">家庭成员弹层 </p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="mask">
+            <div class="sheet">
+              <div class="handle"></div>
+              <div class="sheet-heading"><span>家庭成员</span><span class="sheet-close">×</span></div>
+              <div class="sec-t">家庭成员（3）</div>
+              <div class="card" style="padding:4px 16px;">
+                <div class="member-row"><div class="m-avatar" style="background:#6b90b8">🧑</div><div class="m-info"><div class="m-name">我（管理员）</div><div class="m-role">管理员</div></div></div>
+                <div class="member-row"><div class="m-avatar" style="background:#c48494">👩</div><div class="m-info"><div class="m-name">家人乙</div><div class="m-role">成员</div></div><div class="m-remove">移除</div></div>
+                <div class="member-row"><div class="m-avatar" style="background:#d0a15e">👨</div><div class="m-info"><div class="m-name">家人丙</div><div class="m-role">成员</div></div><div class="m-remove">移除</div></div>
+              </div>
+              <div class="m-tip">头像和昵称由本人主动填写，只在本小程序内给家人看</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="item" id="invite">
+      <p class="item-label">邀请家人弹层 </p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="mask">
+            <div class="sheet">
+              <div class="handle"></div>
+              <div class="sheet-heading"><span>邀请家人</span><span class="sheet-close">×</span></div>
+              <div class="card">
+                <div style="font-size:17px;font-weight:600;">家庭邀请码</div>
+                <div style="font-size:13px;color:var(--ink2);margin:4px 0 12px;">发给家人，凭码加入这个家</div>
+                <div class="code-row"><div class="code-box masked">••••••</div><div class="code-eye">显示</div></div>
+                <div class="code-actions"><div class="mini-btn">复制邀请码</div><div class="mini-btn ghost">刷新（旧码失效）</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="item" id="settings">
+      <p class="item-label">家庭设置弹层 </p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="mask">
+            <div class="sheet">
+              <div class="handle"></div>
+              <div class="sheet-heading"><span>家庭设置</span><span class="sheet-close">×</span></div>
+              <div class="settings-name">我的家</div>
+              <div class="panel-hint">管理这个家，让家人安心相聚。</div>
+              <div class="settings-members">管理家庭成员 ›</div>
+              <div class="danger-zone">
+                <div class="dz-title">危险操作</div>
+                <div class="dz-desc">解散后家庭、成员关系、邀请码和日程将被永久删除。</div>
+                <div class="dz-btn disabled">请先移除其他 2 位成员</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="item" id="profile">
+      <p class="item-label">编辑我的资料 </p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="mask">
+            <div class="sheet">
+              <div class="handle"></div>
+              <div class="pf-title" style="font-size:19px;font-weight:500;">编辑我的资料</div>
+              <div class="sheet-sub">头像和昵称由你主动填写，家人才能一眼认出你</div>
+              <div class="pf-row"><div class="pf-label">头像</div><div class="pf-avatar-ph">＋</div><div class="pf-hint">点头像选微信头像或相册图</div></div>
+              <div class="pf-row"><div class="pf-label">昵称</div><div class="pf-input ph">点这里可一键用微信昵称，也能自己改</div><div class="pf-hint">不填则家人那边显示「家人」</div></div>
+              <div class="pf-actions"><div class="pf-btn ghost">取消</div><div class="pf-btn">保存</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="item" id="switch-family">
+      <p class="item-label">家庭切换弹层 </p>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
+        <div class="navbar">我的家</div>
+        <div class="screen">
+          <div class="my-page">
+            <div class="profile-header">
+              <div class="profile-avatar">🌿</div>
+              <div><div class="profile-name">家人</div><div class="profile-edit">编辑个人资料 ›</div></div>
+            </div>
+            <div class="family-summary">
+              <div class="eyebrow">当前家庭</div>
+              <div class="family-switch-row">
+                <div class="family-title my">我的家</div>
+                <a class="family-switch-action" href="#switch-family"><span>切换家庭</span><span class="family-switch-arrow" aria-hidden="true"></span></a>
+              </div>
+              <div class="summary-role">管理员</div>
+              <div class="family-people"><div class="small-avatar" style="background:#6b90b8">🧑</div><div class="small-avatar" style="background:#c48494">👩</div><span class="people-count">3 位家人，一起生活</span></div>
+            </div>
+          </div>
+          <div class="mask">
+            <div class="sheet">
+              <div class="handle"></div>
+              <div class="sheet-heading"><span>切换家庭</span><span class="sheet-close">×</span></div>
+              <div class="choices">
+                <div class="choice selected"><div><div class="name"><span class="sw-dot" style="background:#6b90b8"></span>我的家</div><div class="role">管理员</div></div><span>✓</span></div>
+                <div class="choice"><div><div class="name"><span class="sw-dot" style="background:#c48494"></span>爸妈家</div><div class="role">成员</div></div><span></span></div>
+              </div>
+              <div class="sheet-actions"><button class="primary">＋ 创建家庭</button><button>加入家庭</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+<p class="sources">来源 <a href="../prd/family-schedule-prd-v0.3.md">当前 PRD</a> · <a href="schedule-design-addendum.md">最新设计补充</a> · <a href="family-ui-preview.html">完整 UI 源稿</a> · <a href="family-preview.html">家庭基础稿</a> · <a href="schedule-preview.html">原日程稿</a> · <a href="design-tokens.html">设计规范</a></p>
+</main>
+<script>
+  // 画面间跳转使用本页锚点，方便离线评审。
+  const links = {
+    '#welcome .entry-card:nth-child(2)': 'create-family',
+    '#welcome .entry-card:nth-child(3)': 'join-family',
+    '#create-family .nav-line': 'welcome',
+    '#join-family .nav-line': 'welcome',
+    '#home .sched-card': 'list',
+    '#home .tab:last-child': 'my-main',
+    '#my-main .tab:first-child': 'home',
+    '#my-main .profile-header': 'profile',
+    '#my-main .menu-row:nth-child(1)': 'members',
+    '#my-main .menu-row:nth-child(2)': 'invite',
+    '#my-main .menu-row:nth-child(3)': 'settings',
+    '#my .sheet-close': 'my-main',
+    '#settings .settings-members': 'members',
+    '#list .day-item:nth-child(2)': 'detail-view',
+    '#list .bottom-bar .btn:first-child': 'readonly-view',
+    '#list .bottom-bar .btn:nth-child(2)': 'poster',
+    '#list .fab': 'edit',
+    '#list .back': 'home',
+    '#edit .back': 'list',
+    '#edit .form-foot .btn': 'list'
+  };
+  for (const [selector, target] of Object.entries(links)) {
+    for (const control of document.querySelectorAll(selector)) {
+      control.dataset.jump = target;
+      control.tabIndex = 0;
+      control.setAttribute('role', 'link');
+      function go() { window.location.hash = target; }
+      control.addEventListener('click', go);
+      control.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          go();
+        }
+      });
+    }
+  }
+</script>
+</body>
+</html>

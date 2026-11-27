@@ -9,7 +9,10 @@
     </button>
     <view class="family-summary">
       <view class="eyebrow">当前家庭</view>
-      <button class="family-title" bindtap="toggleSwitcher"><text>{{family.name}}</text><text class="chevron">⌄</text></button>
+      <view class="family-switch-row">
+        <text class="family-title">{{family.name}}</text>
+        <button class="family-switch-action" bindtap="toggleSwitcher"><text>切换家庭</text><view class="family-switch-arrow" aria-hidden="true" /></button>
+      </view>
       <view class="summary-role">{{isAdmin ? '管理员' : '成员'}}</view>
       <view class="family-people">
         <block wx:for="{{previewMembers}}" wx:key="_id">
@@ -97,6 +100,7 @@
   <!-- V3.9 编辑我的资料浮层：头像 chooseAvatar + 昵称 input type=nickname，本地暂存后一起保存 -->
   <view wx:if="{{showProfile}}" class="pf-mask" bindtap="closeProfile" catchtouchmove="noop">
     <view class="pf-sheet" catchtap="noop">
+      <view class="sheet-handle"></view>
       <view class="pf-title">编辑我的资料</view>
       <view class="pf-sub">头像和昵称由你主动填写，家人才能一眼认出你</view>
 

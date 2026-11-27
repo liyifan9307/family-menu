@@ -1,4 +1,7 @@
-.identity { padding-top: 80rpx; }
+.identity { padding:64rpx 40rpx 44rpx; }
+.identity .h1 { font-size:42rpx; font-weight:600; }
+.identity .field-input { font-size:32rpx; }
+@media(max-width:340px) { .page.identity { padding-left:32rpx; padding-right:32rpx; } }
 
 .hero { margin-bottom: 40rpx; }
 
@@ -23,6 +26,7 @@
 .entry-card {
   display: flex;
   align-items: center;
+  gap:24rpx;
   background: var(--card);
   border: 1rpx solid var(--line);
   border-radius: var(--radius);
@@ -45,10 +49,10 @@
 }
 .entry-icon.create { background: var(--brand); }
 .entry-icon.join { background: #6b90b8; }
-.entry-body { flex: 1; margin-left: 24rpx; }
+.entry-body { flex:1; min-width:0; overflow-wrap:anywhere; }
 .entry-title { font-size: 36rpx; font-weight: 600; color: var(--ink); }
 .entry-desc { font-size: 26rpx; color: var(--ink2); line-height: 1.6; margin-top: 8rpx; }
-.entry-arrow { font-size: 48rpx; color: var(--ink2); margin-left: 16rpx; }
+.entry-arrow { flex:none; font-size:48rpx; color:var(--ink2); }
 
 .nav-line {
   font-size: 30rpx;

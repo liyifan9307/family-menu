@@ -15,5 +15,35 @@
     </view>
   </view>
   <view class="bottom-actions"><button wx:if="{{!shareReady}}" class="ghost" bindtap="prepareShare" loading="{{sharing}}">分享给家人</button><button wx:else class="ghost" open-type="share">点击转发</button><button class="ghost" bindtap="image">转发图片</button><button class="primary fab" bindtap="add" aria-label="新增日程">＋</button></view>
- <view wx:if="{{detail}}" class="overlay" bindtap="close"><view class="sheet" catchtap="noop"><view class="sheet-handle"></view><view class="sheet-top"><text class="section">安排详情</text><button class="text-button" bindtap="close">关闭</button></view><view class="title">{{detail.title}}</view><view>{{detail.date}} {{detail.timeStart}}{{detail.timeEnd ? " — " + detail.timeEnd : ""}}</view><view>{{detail.place}}</view><view>{{detail.childName ? detail.childName + " · " : ""}}{{detail.ownerName}}</view><view class="badge">{{detail.statusLabel}}</view><view class="note">{{detail.note}}</view><button wx:if="{{permissions.edit}}" bindtap="edit">编辑安排</button><block wx:if="{{permissions.status}}"><button wx:if="{{detail.status === 'pending'}}" data-action="setStatus" data-status="done" bindtap="action" disabled="{{busy}}">标记已完成</button><button wx:if="{{detail.status === 'pending'}}" data-action="setStatus" data-status="cancelled" bindtap="action" disabled="{{busy}}">取消安排</button><button wx:else data-action="setStatus" data-status="pending" bindtap="action" disabled="{{busy}}">恢复待办</button></block><button wx:if="{{permissions.delete}}" class="danger" data-action="delete" bindtap="action" disabled="{{busy}}">删除安排</button><view class="section">变更记录</view><view wx:for="{{events}}" wx:key="_id" class="event">{{item.time}} · {{item.actorName}} · {{item.label}} {{item.toStatus}} {{item.reason}}</view><button wx:if="{{eventCursor}}" bindtap="moreEvents">更多记录</button></view></view>
+  <view wx:if="{{detail}}" class="overlay" bindtap="close">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-handle"></view>
+      <view class="sheet-top">
+        <text class="section">安排详情</text>
+        <button class="text-button" bindtap="close">关闭</button>
+      </view>
+      <view class="detail-title-row"><text class="title">{{detail.title}}</text><text class="badge">{{detail.statusLabel}}</text></view>
+      <view class="detail-data">
+        <view class="detail-row"><view class="detail-label">时间</view><view>{{detail.date}} · {{detail.timeStart}}{{detail.timeEnd ? '—' + detail.timeEnd : ''}}</view></view>
+        <view wx:if="{{detail.place}}" class="detail-row"><view class="detail-label">地点</view><view>{{detail.place}}</view></view>
+        <view class="detail-row"><view class="detail-label">{{detail.childName ? '孩子 / 负责人' : '负责人'}}</view><view>{{detail.childName ? detail.childName + ' · ' : ''}}{{detail.ownerName}}</view></view>
+        <view wx:if="{{detail.note}}" class="detail-row"><view class="detail-label">备注</view><view class="detail-note">{{detail.note}}</view></view>
+      </view>
+      <button wx:if="{{permissions.edit}}" class="primary" bindtap="edit">编辑安排</button>
+      <block wx:if="{{permissions.status}}">
+        <button wx:if="{{detail.status === 'pending'}}" class="{{permissions.edit ? 'ghost' : 'primary'}}" data-action="setStatus" data-status="done" bindtap="action" disabled="{{busy}}">标记已完成</button>
+        <button wx:if="{{detail.status === 'pending'}}" class="ghost" data-action="setStatus" data-status="cancelled" bindtap="action" disabled="{{busy}}">取消安排</button>
+        <button wx:else class="ghost" data-action="setStatus" data-status="pending" bindtap="action" disabled="{{busy}}">恢复待办</button>
+      </block>
+      <button wx:if="{{permissions.delete}}" class="danger" data-action="delete" bindtap="action" disabled="{{busy}}">删除安排</button>
+      <view class="section">变更记录</view>
+      <view wx:if="{{events.length}}" class="history-list">
+        <view wx:for="{{events}}" wx:key="_id" class="event">
+          <view class="event-description">{{item.actorName}} · {{item.label}}{{item.toStatusLabel ? ' · ' + item.toStatusLabel : ''}}{{item.reason ? ' · ' + item.reason : ''}}</view>
+          <view class="event-time">{{item.time}}</view>
+        </view>
+      </view>
+      <button wx:if="{{eventCursor}}" class="ghost" bindtap="moreEvents">更多记录</button>
+    </view>
+  </view>
 </view>
