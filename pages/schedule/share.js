@@ -111,7 +111,6 @@ function drawPoster(ctx, items, familyName, date, number, total, generatedAt) {
     if (index < items.length - 1) rule(y)
     y += 48
   }
-  if (!items.length) y = write('这一天没有安排', inset, y, right - inset, 32)
   rule(y - 26)
   const local = new Date(generatedAt + 8 * 3600000).toISOString()
   const stamp = '生成于 ' + Number(local.slice(5, 7)) + '月' + Number(local.slice(8, 10)) + '日 ' + local.slice(11, 16)
@@ -127,7 +126,7 @@ function drawPoster(ctx, items, familyName, date, number, total, generatedAt) {
 
 Page({
   data: {
-    loading: true, error: '', images: [], activeImage: 0,
+    loading: true, error: '', empty: false, images: [], activeImage: 0,
     saving: false, date: '', canvasWidth: POSTER_WIDTH, canvasHeight: CANVAS_HEIGHT,
   },
 
@@ -149,17 +148,20 @@ Page({
     if (this.invalid || this.building) return
     this.building = true
     let stage = '读取家庭日程'
-    this.setData({ loading: true, error: '', images: [], activeImage: 0 })
+    this.setData({ loading: true, error: '', empty: false, images: [], activeImage: 0 })
     try {
-      const [result, familyResult] = await Promise.all([
-        schedule.all('listByDate', { familyId: this.familyId, date: this.data.date }),
-        api.getFamily(this.familyId),
-      ])
+      const result = await schedule.all('listByDate', { familyId: this.familyId, date: this.data.date })
+      if (this.invalid || this.familyId !== auth.getCurrentFamilyId()) return
+      if (!result.items.length) {
+        this.setData({ empty: true, loading: false })
+        return
+      }
+      const familyResult = await api.getFamily(this.familyId)
       if (this.invalid || this.familyId !== auth.getCurrentFamilyId()) return
       stage = '绘制分享图片'
       const items = schedule.display(result.items)
       const generatedAt = Date.now()
-      const total = Math.max(1, Math.ceil(items.length / 2))
+      const total = Math.ceil(items.length / 2)
       const images = []
       for (let index = 0; index < total; index++) {
         if (this.invalid) return

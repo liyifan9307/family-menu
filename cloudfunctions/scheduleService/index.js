@@ -166,6 +166,9 @@ exports.main=async(e={})=>{
       const tx=await db.startTransaction()
       try {
         const fresh=await context(e.familyId,openid,tx)
+        // 日程写入也会更新家庭版本，避免在最后一条安排被删除时生成空链接。
+        const rows=await db.collection('co_schedule').where({familyId:e.familyId,date:e.date,deletedAt:null}).limit(1).get()
+        if(!rows.data.length)R.fail('EMPTY_DAY','当天没有可分享的安排')
         await tx.collection('co_schedule_share').add({data:{tokenHash:hash(token),familyId:e.familyId,date:e.date,createdBy:openid,createdAt:now,expiresAt,shareEpoch:fresh.family.shareEpoch||0}})
         await tx.collection('co_family').doc(e.familyId).update({data:{mutationVersion:(fresh.family.mutationVersion||0)+1}})
         await tx.commit()

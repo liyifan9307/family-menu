@@ -1,7 +1,8 @@
 <view class="schedule-page share-page {{images.length ? 'has-poster' : ''}}">
   <view wx:if="{{loading}}" class="state">正在生成完整安排…</view>
   <view wx:elif="{{error}}" class="state">{{error}}<button bindtap="build">重新生成</button></view>
-  <block wx:else>
+  <view wx:elif="{{empty}}" class="state">当天没有可分享的安排<view class="hint">返回日程，添加安排后再分享</view></view>
+  <block wx:elif="{{images.length}}">
     <scroll-view class="poster-scroll" scroll-y>
       <view class="poster-content">
         <view class="poster-stage">

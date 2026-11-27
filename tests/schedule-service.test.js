@@ -26,6 +26,7 @@ test('内容校验不通过不写入日程',async()=>{const s=setup();s.cloud.op
 test('小程序码接口失败时返回明确阶段与平台错误码',async()=>{
  const s=setup()
  s.cloud.openapi.wxacode={getUnlimited:async()=>{throw Object.assign(new Error('platform failure'),{errCode:41030})}}
+ await s.call({action:'create',familyId:'f',requestId:'request-001',fields})
  const share=await s.call({action:'createShareToken',familyId:'f',date:fields.date})
  const r=await s.call({action:'generateShareCode',familyId:'f',token:share.token})
  assert.equal(r.error.code,'SHARE_CODE_FAILED')
@@ -37,9 +38,20 @@ test('小程序码接口失败时返回明确阶段与平台错误码',async()=>
 test('85412明确提示主体认证，不误导检查页面发布',async()=>{
  const s=setup()
  s.cloud.openapi.wxacode={getUnlimited:async()=>{throw {errCode:85412}}}
+ await s.call({action:'create',familyId:'f',requestId:'request-001',fields})
  const share=await s.call({action:'createShareToken',familyId:'f',date:fields.date})
  const r=await s.call({action:'generateShareCode',familyId:'f',token:share.token})
  assert.match(r.error.message,/主体认证/)
  assert.doesNotMatch(r.error.message,/页面发布/)
  assert.equal(r.error.platformCode,'85412')
+})
+
+test('空日期不能生成分享链接，已删除的安排不计入',async()=>{
+ const s=setup()
+ const share={action:'createShareToken',familyId:'f',date:fields.date}
+ assert.equal((await s.call(share)).error.code,'EMPTY_DAY')
+ const created=await s.call({action:'create',familyId:'f',requestId:'request-001',fields})
+ s.data.co_schedule[created.item._id].deletedAt=Date.now()
+ assert.equal((await s.call(share)).error.code,'EMPTY_DAY')
+ assert.equal(Object.keys(s.data.co_schedule_share||{}).length,0)
 })

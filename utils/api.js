@@ -42,6 +42,12 @@ const api = {
   async removeMember(familyId, targetOpenid) {
     return call('familyService', { action: 'removeMember', familyId, targetOpenid })
   },
+  renameFamily(familyId, name) {
+    return call('familyService', { action: 'renameFamily', familyId, name })
+  },
+  transferAdmin(familyId, memberId) {
+    return call('familyService', { action: 'transferAdmin', familyId, memberId })
+  },
   async refreshInvite(familyId) {
     return call('familyService', { action: 'refreshInvite', familyId: familyId || getCurrentFamilyId() })
   },

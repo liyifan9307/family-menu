@@ -1,7 +1,7 @@
 <view wx:if="{{visible}}" class="mask" bindtap="close" catchtouchmove="noop">
   <view class="sheet" catchtap="noop">
     <view class="handle"></view>
-    <view class="heading">切换家庭<button class="close" bindtap="close" aria-label="关闭">×</button></view>
+    <view class="heading">切换家庭<button class="sheet-close" bindtap="close" aria-label="关闭">×</button></view>
     <scroll-view scroll-y class="choices" style="height:{{families.length * 160}}rpx">
       <button wx:for="{{families}}" wx:key="familyId" class="choice {{item.familyId === current ? 'selected' : ''}}" data-id="{{item.familyId}}" bindtap="select">
         <view class="info"><view class="name"><view class="family-dot" style="background:{{item.color || '#46765a'}}" aria-hidden="true" /><text>{{item.name}}</text></view><view class="role">{{item.role === 'admin' ? '管理员' : '成员'}}</view></view>

@@ -121,3 +121,45 @@ test('首批数据清理失败后仍确认家庭已关闭，定时任务可以�
   assert.equal(s.data.co_family.f, undefined)
   assert.equal(Object.keys(s.data.co_member).length, 0)
 })
+
+test('移交后只有接任管理员能修改名称，原管理员保留成员身份', async () => {
+  const s = service()
+  const transfer = { action: 'transferAdmin', familyId: 'f', memberId: 'b' }
+  const rename = { action: 'renameFamily', familyId: 'f', name: ' 新家 ' }
+  assert.equal((await s.call(transfer)).ok, true)
+  assert.equal(s.data.co_family.f.ownerOpenid, 'member')
+  assert.equal(s.data.co_member.a.role, 'member')
+  assert.equal(s.data.co_member.b.role, 'admin')
+  assert.equal((await s.call(rename)).error.code, 'NO_PERMISSION')
+  s.as('member')
+  assert.equal((await s.call(rename)).ok, true)
+  assert.equal(s.data.co_family.f.name, '新家')
+  assert.equal((await s.call({ ...rename, name: ' ' })).error.code, 'BAD_NAME')
+})
+
+test('移交拒绝自己、外家及已移除成员', async () => {
+  for (const overrides of [{ openid: 'owner' }, { familyId: 'another' }, { status: 'removed' }]) {
+    const s = service()
+    Object.assign(s.data.co_member.b, overrides)
+    assert.equal((await s.call({ action: 'transferAdmin', familyId: 'f', memberId: 'b' })).error.code, 'INVALID_TARGET')
+    assert.equal(s.data.co_family.f.ownerOpenid, 'owner')
+    assert.equal(s.data.co_member.a.role, 'admin')
+  }
+})
+
+test('每个家庭在成功改名后须等待 30 天，管理员移交不重置等待期', async () => {
+  const s = service()
+  const rename = name => s.call({ action: 'renameFamily', familyId: 'f', name })
+  assert.equal((await rename(' 家 ')).ok, true)
+  assert.equal(s.data.co_family.f.lastRenamedAt, undefined)
+  assert.equal((await rename('新家')).ok, true)
+  const firstRename = s.data.co_family.f.lastRenamedAt.getTime()
+  assert.equal((await rename('新家')).ok, true)
+  assert.equal(s.data.co_family.f.lastRenamedAt.getTime(), firstRename)
+  await s.call({ action: 'transferAdmin', familyId: 'f', memberId: 'b' })
+  s.as('member')
+  assert.equal((await rename('另一个名字')).error.code, 'RENAME_COOLDOWN')
+  assert.equal(s.data.co_family.f.name, '新家')
+  s.data.co_family.f.lastRenamedAt = new Date(Date.now() - 30 * 86400000)
+  assert.equal((await rename('另一个名字')).ok, true)
+})

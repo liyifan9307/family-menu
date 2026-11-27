@@ -82,6 +82,7 @@ Page({
         loading: false,
         families,
         family: familyRes.family,
+        renameAvailableLabel: this.getRenameAvailableLabel(familyRes.family),
         members,
         me: members.find(m => m.isMe) || null,
         previewMembers: members.slice(0, 4),
@@ -112,9 +113,55 @@ Page({
   },
   openPanel(e) {
     const panel = e.currentTarget.dataset.panel
-    if (!['members', 'invite', 'settings'].includes(panel)) return
+    if (!['members', 'invite', 'settings', 'transfer'].includes(panel)) return
     this.setData({ panel, inviteVisible: false })
     wx.hideTabBar({ animation: false })
+  },
+  getRenameAvailableLabel(family) {
+    const next = family && family.nextRenameAt
+    return next > Date.now() ? new Date(next + 8 * 3600000).toISOString().slice(0, 16).replace('T', ' ') : ''
+  },
+  async renameFamily() {
+    if (!this.data.isAdmin || this.settingBusy) return
+    const { currentFamilyId, family } = this.data
+    if (!family) return
+    const available = this.getRenameAvailableLabel(family)
+    this.setData({ renameAvailableLabel: available })
+    if (available) {
+      wx.showModal({ title: '暂不能修改家庭名称', content: '下次可修改时间为 ' + available + '（北京时间）', showCancel: false })
+      return
+    }
+    await this.confirmSetting({
+      title: '修改家庭名称', editable: true, content: family.name, placeholderText: '输入 1 到 20 个字', confirmText: '保存',
+    }, async result => {
+      const name = (result.content || '').trim()
+      if (!name || name.length > 20) throw new Error('家庭名称须为 1 到 20 个字')
+      await api.renameFamily(currentFamilyId, name)
+    }, '家庭名称已更新')
+  },
+  async transferAdmin(e) {
+    if (!this.data.isAdmin || this.settingBusy) return
+    const { currentFamilyId, members } = this.data
+    const target = members.find(m => m._id === e.currentTarget.dataset.id && !m.isMe)
+    if (!target) return
+    await this.confirmSetting({
+      title: '移交管理员', content: '确认将管理员移交给「' + target.displayLabel + '」？对方将接管家庭设置和解散权限，你将成为普通成员。', confirmText: '确认移交',
+    }, () => api.transferAdmin(currentFamilyId, target._id), '管理员已移交')
+  },
+  async confirmSetting(options, save, successTitle) {
+    this.settingBusy = true
+    try {
+      const result = await new Promise((resolve, reject) => wx.showModal({ ...options, success: resolve, fail: reject }))
+      if (!result.confirm) return
+      await save(result)
+      this.setData({ panel: 'settings' })
+      wx.showToast({ title: successTitle, icon: 'success' })
+      await this.reload()
+    } catch (err) {
+      wx.showToast({ title: err.message || '操作失败，请重试', icon: 'none' })
+    } finally {
+      this.settingBusy = false
+    }
   },
   closePanel() {
     if (this.data.dissolving) return

@@ -10,7 +10,7 @@ Page({
  // 切换日期或家庭后清空旧列表和分享状态，丢弃迟到的请求结果。
  async reload(){
   const seq=this.seq=(this.seq||0)+1,familyId=auth.getCurrentFamilyId(),date=this.data.date||S.today()
-  this.setData({loading:true,error:'',items:[],detail:null,shareReady:false});this.share=null;wx.hideShareMenu()
+  this.setData({loading:true,error:'',items:[],detail:null,sharing:false,shareReady:false});this.share=null;wx.hideShareMenu()
   try{const r=await S.all('listByDate',{date,familyId});if(seq!==this.seq||familyId!==auth.getCurrentFamilyId())return;this.setData({items:S.display(r.items),loading:false})}
   catch(e){if(seq!==this.seq)return;this.setData({error:e.message,loading:false});if(S.lost(e))S.handleLost()}
  },
@@ -26,7 +26,25 @@ Page({
  action(e){const action=e.currentTarget.dataset.action,targetStatus=e.currentTarget.dataset.status;wx.showModal({title:action==='delete'?'删除这条安排？':'确认修改状态？',content:action==='delete'?'删除后不再显示，无法在页面恢复。':'家人将看到更新后的状态。',success:r=>{if(r.confirm)this.mutate(action,targetStatus)}})},
  async mutate(action,targetStatus){if(this.data.busy)return;const item=this.data.detail;this.setData({busy:true});const payload={action,scheduleId:item._id,expectedVersion:item.version,targetStatus};const key=JSON.stringify(payload);if(!this.pending||this.pending.key!==key)this.pending={key,id:S.requestId()};try{const r=await S.call(action,{...payload,requestId:this.pending.id});this.pending=null;wx.showToast({title:r.notificationStatus==='unavailable'?'已保存，部分家人未收到通知，可分享安排':'已保存',icon:'none'});await this.reload()}catch(e){wx.showModal({title:'操作未完成',content:e.message,showCancel:false});if(S.lost(e))S.handleLost()}finally{this.setData({busy:false})}},
  // 先取只读凭证，再开放微信转发。图片分享走独立入口。
- async prepareShare(){if(this.data.sharing)return;const seq=this.seq,date=this.data.date,familyId=auth.getCurrentFamilyId();this.setData({sharing:true});try{const share=await S.call('createShareToken',{date,familyId});if(seq!==this.seq||date!==this.data.date||familyId!==auth.getCurrentFamilyId())return;this.share=share;this.setData({shareReady:true});wx.showShareMenu({menus:['shareAppMessage']})}catch(e){wx.showToast({title:e.message,icon:'none'})}finally{this.setData({sharing:false})}},
- onShareAppMessage(){return this.share?{title:this.share.title||this.data.date+'的接送安排',path:this.share.path}:{title:'我的家',path:'/pages/home/home'}},
- image(){wx.navigateTo({url:'/pages/schedule/share?date='+this.data.date})},
+ canShare(){return !this.data.loading && !this.data.error && this.data.items.length > 0},
+ async prepareShare(){
+  if(!this.canShare() || this.data.sharing)return
+  const seq=this.seq,date=this.data.date,familyId=auth.getCurrentFamilyId()
+  this.setData({sharing:true})
+  try{
+   const share=await S.call('createShareToken',{date,familyId})
+   if(seq!==this.seq || date!==this.data.date || familyId!==auth.getCurrentFamilyId() || !this.canShare())return
+   this.share=share
+   this.setData({shareReady:true})
+   wx.showShareMenu({menus:['shareAppMessage']})
+  }catch(e){
+   if(seq!==this.seq)return
+   if(e.code==='EMPTY_DAY')this.reload()
+   wx.showToast({title:e.message,icon:'none'})
+  }finally{
+   if(seq===this.seq)this.setData({sharing:false})
+  }
+ },
+ onShareAppMessage(){return this.canShare() && this.share?{title:this.share.title||this.data.date+'的接送安排',path:this.share.path}:{title:'我的家',path:'/pages/home/home'}},
+ image(){if(!this.canShare())return;wx.navigateTo({url:'/pages/schedule/share?date='+this.data.date})},
 })

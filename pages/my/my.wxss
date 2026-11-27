@@ -289,7 +289,6 @@ button::after { border:0; }
 .pf-sheet { border-radius:48rpx 48rpx 0 0; padding:24rpx 40rpx calc(40rpx + env(safe-area-inset-bottom)); max-height:90vh; overflow-y:auto; }
 .sheet-handle { width:64rpx; height:8rpx; border-radius:8rpx; background:#eaf0e6; margin:0 auto 24rpx; }
 .sheet-heading { display:flex; align-items:center; justify-content:space-between; font-size:38rpx; font-weight:500; margin-bottom:24rpx; }
-.my-page button.sheet-close { display:flex; align-items:center; justify-content:center; flex:none; width:88rpx; height:88rpx; padding:0; margin:0; border-radius:50%; background:#eaf0e6; color:var(--brand); line-height:1; }
 .panel-scroll { max-height:64vh; }.panel-hint { color:var(--ink2); font-size:26rpx; line-height:1.6; padding:16rpx 0 24rpx; }
 .settings-name { font-size:34rpx; overflow-wrap:break-word; }.my-page button.settings-members { width:100%; min-height:88rpx; margin-left:0; margin-right:0; font-weight:400; background:#eaf0e6; color:var(--brand); border-radius:24rpx; font-size:30rpx; }
 .invite-card,.member-card { border:0; padding-left:0; padding-right:0; }.danger-zone { border:0; background:#fcf5f2; border-radius:24rpx; margin-top:32rpx; }.m-info { min-width:0; }.m-name { overflow-wrap:break-word; }.m-remove { flex-shrink:0; }
@@ -299,3 +298,6 @@ button::after { border:0; }
    自定义按钮用页面作用域 + 元素 + 类名覆盖，避免卡片/列表被压窄。 */
 
 @media(max-width:340px) { .my-page { padding-left:32rpx; padding-right:32rpx; } .pf-sheet { padding-left:32rpx; padding-right:32rpx; } }
+
+.settings-members + .settings-members { margin-top:16rpx; }
+.my-page button.transfer-action { flex:none; width:auto; margin:0; padding:16rpx; font-size:26rpx; color:var(--brand); background:#eaf0e6; }

@@ -32,7 +32,7 @@
   <view wx:if="{{panel}}" class="pf-mask" bindtap="closePanel" catchtouchmove="noop">
     <view class="pf-sheet" catchtap="noop">
       <view class="sheet-handle"></view>
-      <view class="sheet-heading"><text>{{panel === 'members' ? '家庭成员' : panel === 'invite' ? '邀请家人' : '家庭设置'}}</text><button class="sheet-close" bindtap="closePanel" aria-label="关闭">×</button></view>
+      <view class="sheet-heading"><text>{{panel === 'members' ? '家庭成员' : panel === 'transfer' ? '移交管理员' : panel === 'invite' ? '邀请家人' : '家庭设置'}}</text><button class="sheet-close" bindtap="closePanel" aria-label="关闭">×</button></view>
       <scroll-view scroll-y class="panel-scroll" style="height:{{panel === 'members' ? '60vh' : panel === 'invite' ? '540rpx' : '640rpx'}}">
         <view wx:if="{{loading}}" class="panel-hint">加载中…</view>
         <view wx:elif="{{error}}" class="panel-hint">{{error}}<button bindtap="reload">重新加载</button></view>
@@ -55,7 +55,7 @@
     </view>
 
 </view>
-          <view wx:if="{{panel === 'members'}}">    <view class="sec-t">家庭成员（{{members.length}}）</view>
+          <view wx:if="{{panel === 'members' || panel === 'transfer'}}">    <view class="sec-t">家庭成员（{{members.length}}）</view>
     <view class="card member-card">
       <view wx:for="{{members}}" wx:key="_id" class="member-row {{item.isMe ? 'member-me' : ''}}">
         <!-- 头像：真图优先，未设置显示固定色 emoji；自己那行带 ✎ 提示可编辑 -->
@@ -69,12 +69,13 @@
           <view class="m-role">{{item.role === 'admin' ? '管理员' : '成员'}}</view>
         </view>
         <view
-          wx:if="{{isAdmin && !item.isMe}}"
+          wx:if="{{panel === 'members' && isAdmin && !item.isMe}}"
           class="m-remove"
           data-openid="{{item.openid}}"
           data-name="{{item.displayLabel}}"
           bindtap="removeMember"
         >移除</view>
+        <button wx:if="{{panel === 'transfer' && isAdmin && !item.isMe}}" class="transfer-action" data-id="{{item._id}}" bindtap="transferAdmin">移交给TA</button>
       </view>
     </view>
     <view class="m-member-tip">头像和昵称由本人主动填写，只在本小程序内给家人看</view>
@@ -83,6 +84,9 @@
           <view wx:if="{{panel === 'settings'}}">
             <view class="settings-name">{{family.name}}</view>
             <view class="panel-hint">{{isAdmin ? '管理这个家，让家人安心相聚。' : '家庭由管理员管理。你可以查看成员或邀请家人加入。'}}</view>
+            <button wx:if="{{isAdmin}}" class="settings-members" bindtap="renameFamily">修改家庭名称</button>
+            <view wx:if="{{isAdmin}}" class="panel-hint">{{renameAvailableLabel ? '下次可修改：' + renameAvailableLabel + '（北京时间）' : '每 30 天可修改一次家庭名称'}}</view>
+            <button wx:if="{{isAdmin}}" class="settings-members" disabled="{{!otherMemberCount}}" data-panel="transfer" bindtap="openPanel">{{otherMemberCount ? '移交管理员 ›' : '邀请其他成员后可移交管理员'}}</button>
             <button wx:if="{{isAdmin}}" class="settings-members" data-panel="members" bindtap="openPanel">管理家庭成员 ›</button>
                 <view wx:if="{{isAdmin}}" class="danger-zone">
       <view class="dz-title">危险操作</view>
@@ -101,7 +105,7 @@
   <view wx:if="{{showProfile}}" class="pf-mask" bindtap="closeProfile" catchtouchmove="noop">
     <view class="pf-sheet" catchtap="noop">
       <view class="sheet-handle"></view>
-      <view class="pf-title">编辑我的资料</view>
+      <view class="sheet-heading"><text>编辑我的资料</text><button class="sheet-close" bindtap="closeProfile" aria-label="关闭">×</button></view>
       <view class="pf-sub">头像和昵称由你主动填写，家人才能一眼认出你</view>
 
       <view class="pf-row">

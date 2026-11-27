@@ -13,6 +13,7 @@ const MEMBER = 'co_member'
 // 固定雾感五色板（对齐 UI 稿 V3.6 / 需求基准 V3.8 / 技术设计 v2.1 §2.2）——系统按加入顺序分配，无分配界面
 const COLORS = ['#6b90b8', '#c48494', '#d0a15e', '#7a9e7e', '#9a86a8']
 const EMOJIS = ['🧑', '👩', '👨', '🧒', '👵']
+const FAMILY_RENAME_INTERVAL_MS = 30 * 24 * 60 * 60 * 1000
 const INVITE_TTL_MS = 30 * 24 * 60 * 60 * 1000 // 邀请码 30 天有效（自用够长）
 
 function memberView(m) {
@@ -197,6 +198,10 @@ async function getFamilies(openid) {
   return { families }
 }
 
+function nextFamilyRenameAt(family) {
+  return family.lastRenamedAt ? new Date(family.lastRenamedAt).getTime() + FAMILY_RENAME_INTERVAL_MS : 0
+}
+
 async function getFamily(openid, familyId) {
   await requireMember(openid, familyId)
   let fam
@@ -217,6 +222,7 @@ async function getFamily(openid, familyId) {
       ownerOpenid: fam.data.ownerOpenid,
       inviteCode: fam.data.inviteCode,
       inviteExpireAt: fam.data.inviteExpireAt,
+      nextRenameAt: nextFamilyRenameAt(fam.data),
     },
     members: members.members,
   }
@@ -264,6 +270,63 @@ async function removeMember(openid, familyId, targetOpenid) {
   } catch(e) { try { await tx.rollback() } catch(_) {} throw e }
 
   return { ok: true }
+}
+
+// 改名和移交都锁定同一个家庭文档，避免旧管理员在移交后继续提交设置。
+async function updateFamilySettings(openid, familyId, applyChange) {
+  const member = await requireMember(openid, familyId)
+  const tx = await db.startTransaction()
+  try {
+    const familyDoc = tx.collection(FAMILY).doc(familyId)
+    const adminDoc = tx.collection(MEMBER).doc(member._id)
+    const family = (await familyDoc.get()).data
+    const admin = (await adminDoc.get()).data
+    if (!family || family.status === 'dissolving' || family.ownerOpenid !== openid ||
+        !admin || admin.role !== 'admin' || admin.status !== 'active') {
+      throw Object.assign(new Error('仅当前管理员可操作'), { code: 'NO_PERMISSION' })
+    }
+    const changes = await applyChange(tx, adminDoc, family)
+    if (changes) {
+      await familyDoc.update({ data: { ...changes, mutationVersion: (family.mutationVersion || 0) + 1 } })
+    }
+    await tx.commit()
+    return { ok: true }
+  } catch (error) {
+    try { await tx.rollback() } catch (_) { /* 保留原始错误 */ }
+    throw error
+  }
+}
+
+async function renameFamily(openid, familyId, value) {
+  const name = typeof value === 'string' ? value.trim() : ''
+  if (!name || name.length > 20) throw Object.assign(new Error('家庭名称须为 1 到 20 个字'), { code: 'BAD_NAME' })
+  if (!(await checkText(name, openid)).pass) throw Object.assign(new Error('家庭名称含违规内容'), { code: 'TEXT_RISK' })
+  return updateFamilySettings(openid, familyId, (_tx, _adminDoc, family) => {
+    if (name === family.name) return null
+    const now = Date.now()
+    const next = nextFamilyRenameAt(family)
+    if (now < next) {
+      const available = new Date(next + 8 * 3600000).toISOString().slice(0, 16).replace('T', ' ')
+      throw Object.assign(new Error('每 30 天可改名一次，下次可修改时间为 ' + available + '（北京时间）'), { code: 'RENAME_COOLDOWN' })
+    }
+    return { name, lastRenamedAt: new Date(now) }
+  })
+}
+
+async function transferAdmin(openid, familyId, memberId) {
+  return updateFamilySettings(openid, familyId, async (tx, adminDoc) => {
+    if (typeof memberId !== 'string' || !memberId) throw Object.assign(new Error('请选择接任成员'), { code: 'BAD_PARAM' })
+    const targetDoc = tx.collection(MEMBER).doc(memberId)
+    const target = (await targetDoc.get()).data
+    if (!target || target.familyId !== familyId || target.openid === openid ||
+        target.status !== 'active' || target.role !== 'member') {
+      throw Object.assign(new Error('请选择本家庭的其他有效成员'), { code: 'INVALID_TARGET' })
+    }
+    // 两人的角色和家庭所有者一起提交，解散权限也随之移交。
+    await adminDoc.update({ data: { role: 'member' } })
+    await targetDoc.update({ data: { role: 'admin' } })
+    return { ownerOpenid: target.openid }
+  })
 }
 
 async function refreshInvite(openid, familyId) {
@@ -406,6 +469,8 @@ exports.main = async (event = {}) => {
       case 'getFamily': return await getFamily(openid, event.familyId)
       case 'listMembers': return await listMembers(openid, event.familyId)
       case 'removeMember': return await removeMember(openid, event.familyId, event.targetOpenid)
+      case 'renameFamily': return await renameFamily(openid, event.familyId, event.name)
+      case 'transferAdmin': return await transferAdmin(openid, event.familyId, event.memberId)
       case 'refreshInvite': return await refreshInvite(openid, event.familyId)
       case 'updateAvatar': return await updateAvatar(openid, event.fileID)
       case 'updateProfile': return await updateProfile(openid, event.nickName)

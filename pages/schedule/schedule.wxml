@@ -14,13 +14,13 @@
       <view class="item-main"><view class="item-heading"><view class="who-dot" style="background:{{item.ownerColor}}"></view><text class="item-title">{{item.title}}</text><text class="badge">{{item.statusLabel}}</text></view><view wx:if="{{item.place}}" class="place">{{item.place}}</view><view class="meta">{{item.childName ? item.childName + ' · ' : ''}}{{item.ownerName}}</view></view>
     </view>
   </view>
-  <view class="bottom-actions"><button wx:if="{{!shareReady}}" class="ghost" bindtap="prepareShare" loading="{{sharing}}">分享给家人</button><button wx:else class="ghost" open-type="share">点击转发</button><button class="ghost" bindtap="image">转发图片</button><button class="primary fab" bindtap="add" aria-label="新增日程">＋</button></view>
+  <view class="bottom-actions"><button wx:if="{{!shareReady}}" class="ghost" bindtap="prepareShare" loading="{{sharing}}" disabled="{{loading || error || !items.length || sharing}}">分享给家人</button><button wx:else class="ghost" open-type="share" disabled="{{loading || error || !items.length}}">点击转发</button><button class="ghost" bindtap="image" disabled="{{loading || error || !items.length}}">转发图片</button><button class="primary fab" bindtap="add" aria-label="新增日程">＋</button></view>
   <view wx:if="{{detail}}" class="overlay" bindtap="close">
     <view class="sheet" catchtap="noop">
       <view class="sheet-handle"></view>
       <view class="sheet-top">
         <text class="section">安排详情</text>
-        <button class="text-button" bindtap="close">关闭</button>
+        <button class="sheet-close" bindtap="close" aria-label="关闭">×</button>
       </view>
       <view class="detail-title-row"><text class="title">{{detail.title}}</text><text class="badge">{{detail.statusLabel}}</text></view>
       <view class="detail-data">

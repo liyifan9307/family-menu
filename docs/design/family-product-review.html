@@ -106,7 +106,7 @@
 .family .sheet{width:100%;box-sizing:border-box;padding:var(--space-12) var(--space-24) var(--space-24);background:#fff;border-radius:var(--radius-sheet) var(--radius-sheet) 0 0;color:var(--ink);}
 .family .handle{width:32px;height:4px;background:#eaf0e6;border-radius:var(--radius);margin:0 auto var(--space-16);}
 .family .sheet-heading{display:flex;align-items:center;justify-content:space-between;gap:var(--group-gap);font-size:19px;font-weight:500;margin-bottom:var(--space-12);}
-.family .sheet-close{flex:none;width:var(--control-height);height:var(--control-height);padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--brand);background:#eaf0e6;font-size:22px;}
+.preview a.sheet-close{box-sizing:border-box;flex:none;width:var(--control-height);height:var(--control-height);padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--brand);background:#eaf0e6;font-size:20px;text-decoration:none;line-height:1;}
 .family .sheet-sub{font-size:13px;color:var(--ink2);margin:var(--space-4) 0 var(--space-16);}
 .family .choices{max-height:260px;overflow:auto;}
 .family .choice{display:flex;align-items:center;justify-content:space-between;gap:var(--space-12);text-align:left;background:#f7f7f2;color:var(--ink);padding:var(--space-16) var(--space-16);border-radius:var(--radius-lg);margin-bottom:var(--space-8);}
@@ -351,7 +351,6 @@ a{color:inherit}
 .detail-sheet{width:100%;max-height:94%;overflow:auto;background:var(--bg);border-radius:var(--radius-sheet) var(--radius-sheet) 0 0;padding:var(--space-16) calc(var(--space-16) + var(--space-4)) calc(var(--space-16) + var(--space-4));color:var(--ink)}
 .grip{width:34px;height:4px;border-radius:var(--radius);background:#d7e3d8;margin:0 auto var(--space-12)}
 .detail-head{display:flex;justify-content:space-between;align-items:center;font-size:19px}
-.detail-head a{display:flex;align-items:center;min-height:var(--control-height);padding:var(--space-8) 0;color:var(--brand);font-size:15px}
 .detail-title{font-size:19px;margin-right:var(--space-8)}
 .detail-data dl{margin:var(--space-12) 0}
 .detail-data dl div{padding:var(--space-8) 0;border-bottom:1px solid var(--line)}
@@ -497,6 +496,21 @@ body {
 .brief-table thead{background:var(--canvas)}
 @media(max-width:480px){.product-brief{padding:var(--space-16)}}
 
+
+#settings button.settings-members { border:0; cursor:pointer; font:inherit; }
+#settings .settings-input { width:100%; box-sizing:border-box; padding:12px; border:1px solid var(--line); border-radius:var(--radius); color:var(--ink); font:inherit; }
+#settings .settings-actions { display:flex; gap:8px; margin-top:16px; }
+#settings .settings-actions button { flex:1; }
+#settings .settings-actions button:last-child { background:var(--brand); color:white; }
+#settings [hidden] { display:none!important; }
+#settings .preview-role { margin:8px 0; padding:8px 12px; border-radius:8px; cursor:pointer; }
+
+#member-detail [hidden]{display:none!important}
+#member-detail select,#member-detail button{font:inherit;min-height:44px;border:1px solid var(--line);border-radius:var(--radius);padding:8px 12px;cursor:pointer}
+#member-detail .pickup-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;color:var(--canvas-ink)}
+#member-detail [data-pickup="ask"],#member-detail [data-pickup="reply"]{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#member-detail [data-pickup="waiting"]:empty,#member-detail [data-pickup="event"]:empty{display:none}
+#empty-day .bottom-bar button:disabled{background:#eff1ec;border-color:#e3e8e0;color:#626e65;cursor:default;font:inherit;}
 </style>
 </head>
 <body>
@@ -515,7 +529,7 @@ body {
     <h3 id="scope-heading">当前功能范围</h3>
     <div class="brief-features">
       <article><h4><a href="#identity">家庭入口</a></h4><p>识别微信身份。用户可创建家庭并成为管理员，或输入 6 位邀请码加入家庭。</p></article>
-      <article><h4><a href="#my">我的与家庭管理</a></h4><p>查看家庭成员，编辑自己的头像和昵称，从家庭卡片右侧的「切换家庭」按钮打开切换面板。管理员可刷新邀请码、移除成员，并在只剩自己时解散家庭。</p></article>
+      <article><h4><a href="#my">我的与家庭管理</a></h4><p>查看家庭成员，编辑自己的头像和昵称，从家庭卡片右侧的「切换家庭」按钮打开切换面板。管理员可修改家庭名称、移交给一位有效成员、刷新邀请码、移除成员，并在只剩自己时解散家庭。移交后原管理员成为普通成员。</p></article>
       <article><h4><a href="#home">首页与按日日程</a></h4><p>底部保留「主页」「我的」。首页展示今日条数与下一条待办，日程页支持前后切日、回到今天和下拉刷新。</p></article>
       <article><h4><a href="#edit">新增与编辑</a></h4><p>日期、开始时间和事项必填。地点、孩子姓名、结束时间和备注选填，负责人默认本人。可选近期地点，结束时间和备注放在「更多信息」。</p></article>
       <article><h4><a href="#detail">详情与变更记录</a></h4><p>详情展示时间、地点、孩子、负责人、状态和备注。记录展示操作人、时间和动作，按钮按角色权限显示。</p></article>
@@ -693,16 +707,25 @@ body {
 <section id="detail" class="preview schedule"><h2 class="section-title">日程详情</h2><p class="section-note">操作随权限变化。负责人可以处理状态，创建人和管理员可编辑、删除。</p><div class="gallery"><article class="item" id="detail-view"><h3 class="item-label">日程详情 · 创建人或管理员</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
 <div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
-<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>安排详情</strong><a href="#list">关闭</a></div><div class="detail-data"><strong class="detail-title">接孩子放学</strong><span class="st">待办</span><dl><div><dt>时间</dt><dd>11月27日 · 15:10—16:10</dd></div><div><dt>地点</dt><dd>春和路 18 号 · 南门</dd></div><div><dt>孩子 / 负责人</dt><dd>茂茂 · 爸爸</dd></div><div><dt>备注</dt><dd>到南门后在家人群说一声。</dd></div></dl></div><div class="detail-buttons"><a class="btn primary" href="#edit">编辑安排</a><a class="btn ghost" href="#history">查看变更记录</a><div class="btn ghost">标记已完成</div><div class="btn ghost">取消安排</div><div class="btn danger">删除安排</div></div></div></div></div></div>
-</div></article><article class="item" id="member-detail"><h3 class="item-label">日程详情 · 负责人</h3>
+<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>安排详情</strong><a class="sheet-close" href="#list" aria-label="关闭">×</a></div><div class="detail-data"><strong class="detail-title">接孩子放学</strong><span class="st">待办</span><dl><div><dt>时间</dt><dd>11月27日 · 15:10—16:10</dd></div><div><dt>地点</dt><dd>春和路 18 号 · 南门</dd></div><div><dt>孩子 / 负责人</dt><dd>茂茂 · 爸爸</dd></div><div><dt>备注</dt><dd>到南门后在家人群说一声。</dd></div></dl></div><div class="detail-buttons"><a class="btn primary" href="#edit">编辑安排</a><a class="btn ghost" href="#history">查看变更记录</a><a class="btn ghost" href="#member-detail">查看接送确认与换人</a><div class="btn ghost">取消安排</div><div class="btn danger">删除安排</div></div></div></div></div></div>
+</div></article><article class="item" id="member-detail"><h3 class="item-label">接送确认与换人</h3><div class="pickup-tools"><label>预览身份 <select data-pickup="viewer"><option>爸爸</option><option>奶奶</option><option value="妈妈">妈妈（创建人）</option></select></label>
+<button type="button" data-act="reset">重新演练</button></div>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
 <div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
-<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>安排详情</strong><a href="#list">关闭</a></div><div class="detail-data"><strong class="detail-title">接孩子放学</strong><span class="st">待办</span><dl><div><dt>时间</dt><dd>11月27日 · 15:10—16:10</dd></div><div><dt>地点</dt><dd>春和路 18 号 · 南门</dd></div><div><dt>孩子 / 负责人</dt><dd>茂茂 · 爸爸</dd></div><div><dt>备注</dt><dd>到南门后在家人群说一声。</dd></div></dl></div><div class="detail-buttons"><div class="btn primary">标记已完成</div><div class="btn ghost">取消安排</div><a class="btn ghost" href="#history">查看变更记录</a></div></div></div></div></div>
+<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>安排详情</strong><a class="sheet-close" href="#list" aria-label="关闭">×</a></div><div class="detail-data"><strong class="detail-title">接茂茂放学</strong><p>11月27日 15:10 · 春和路小学南门</p>
+<dl><div><dt>当前负责人</dt><dd data-pickup="driver">爸爸</dd></div><div><dt>接送确认</dt><dd data-pickup="confirmation">待确认</dd></div><div><dt>接送进度</dt><dd data-pickup="progress">未接到</dd></div></dl>
+<p data-pickup="waiting"></p></div><div class="detail-buttons">
+<button class="btn primary" data-pickup="accept" data-act="accept">我来接</button>
+<button class="btn primary" data-pickup="finish" data-act="finish" hidden>我已接到</button>
+<div data-pickup="ask"><label>代接人 <select data-pickup="candidate"></select></label><button class="btn ghost" data-act="invite">邀请代接</button></div>
+<button class="btn ghost" data-pickup="withdraw" data-act="withdraw" hidden>撤回邀请</button>
+<div data-pickup="reply" hidden><button class="btn primary" data-act="take">确认接任</button><button class="btn ghost" data-act="decline">暂时不能接</button></div>
+<small role="status" data-pickup="event"></small></div></div></div></div></div>
 </div></article></div></section>
 <section id="history" class="preview schedule"><h2 class="section-title">变更记录</h2><p class="section-note">在详情中查看谁在什么时候新增、修改或更新了状态。</p><div class="gallery"><article class="item" id="history-view"><h3 class="item-label">详情弹层 · 变更记录</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
 <div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
-<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>安排详情</strong><a href="#list">关闭</a></div><div class="detail-data"><strong class="detail-title">接孩子放学</strong><span class="st">待办</span><dl><div><dt>时间</dt><dd>11月27日 · 15:10—16:10</dd></div><div><dt>地点</dt><dd>春和路 18 号 · 南门</dd></div><div><dt>孩子 / 负责人</dt><dd>茂茂 · 爸爸</dd></div><div><dt>备注</dt><dd>到南门后在家人群说一声。</dd></div></dl></div><h4 class="history-heading">变更记录</h4><ol class="history"><li><strong>爸爸 · 修改了接送地点</strong><time>11月27日 14:20</time></li><li><strong>妈妈 · 指派给爸爸</strong><time>11月27日 12:30</time></li><li><strong>妈妈 · 新增了安排</strong><time>11月26日 20:15</time></li></ol><a class="btn ghost" href="#detail-view">返回详情示例</a></div></div></div></div>
+<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>安排详情</strong><a class="sheet-close" href="#list" aria-label="关闭">×</a></div><div class="detail-data"><strong class="detail-title">接孩子放学</strong><span class="st">待办</span><dl><div><dt>时间</dt><dd>11月27日 · 15:10—16:10</dd></div><div><dt>地点</dt><dd>春和路 18 号 · 南门</dd></div><div><dt>孩子 / 负责人</dt><dd>茂茂 · 爸爸</dd></div><div><dt>备注</dt><dd>到南门后在家人群说一声。</dd></div></dl></div><h4 class="history-heading">变更记录</h4><ol class="history"><li><strong>爸爸 · 修改了接送地点</strong><time>11月27日 14:20</time></li><li><strong>妈妈 · 指派给爸爸</strong><time>11月27日 12:30</time></li><li><strong>妈妈 · 新增了安排</strong><time>11月26日 20:15</time></li></ol><a class="btn ghost" href="#detail-view">返回详情示例</a></div></div></div></div>
 </div></article></div></section>
 <section id="edit" class="preview schedule"><h2 class="section-title">新增与编辑</h2><p class="section-note">负责人、孩子姓名和常用地点沿用当前表单；结束时间与备注放在「更多信息」。</p><div class="gallery">
   <div class="item">
@@ -816,7 +839,7 @@ body {
 <section id="empty" class="preview schedule"><h2 class="section-title">空状态与加载</h2><p class="section-note">区分暂无安排和仍在加载，访客只能查看。</p><div class="gallery"><article class="item" id="empty-day"><h3 class="item-label">当天暂无日程</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
 <div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
-<div class="screen no-tab"><div class="page"><div class="state-panel empty"><span class="state-icon" aria-hidden="true">＋</span><strong>这一天还没有安排</strong><p>点右下角，为家人加一条</p><a class="btn primary" href="#edit">新增日程</a></div></div></div>
+<div class="screen no-tab"><div class="page"><div class="state-panel empty"><span class="state-icon" aria-hidden="true">＋</span><strong>这一天还没有安排</strong><p>添加安排后即可分享</p><a class="btn primary" href="#edit">新增日程</a></div><div class="bottom-bar"><button class="btn ghost" disabled>分享给家人</button><button class="btn ghost" disabled>转发图片</button></div></div></div>
 </div></article><article class="item" id="empty-readonly"><h3 class="item-label">只读页暂无日程</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
 <div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>接送安排</div>
@@ -908,7 +931,7 @@ body {
           <div class="mask">
             <div class="sheet">
               <div class="handle"></div>
-              <div class="sheet-heading"><span>家庭成员</span><span class="sheet-close">×</span></div>
+              <div class="sheet-heading"><span>家庭成员</span><a class="sheet-close" href="#my-main" aria-label="关闭">×</a></div>
               <div class="sec-t">家庭成员（3）</div>
               <div class="card" style="padding:4px 16px;">
                 <div class="member-row"><div class="m-avatar" style="background:#6b90b8">🧑</div><div class="m-info"><div class="m-name">我（管理员）</div><div class="m-role">管理员</div></div></div>
@@ -930,7 +953,7 @@ body {
           <div class="mask">
             <div class="sheet">
               <div class="handle"></div>
-              <div class="sheet-heading"><span>邀请家人</span><span class="sheet-close">×</span></div>
+              <div class="sheet-heading"><span>邀请家人</span><a class="sheet-close" href="#my-main" aria-label="关闭">×</a></div>
               <div class="card">
                 <div style="font-size:17px;font-weight:600;">家庭邀请码</div>
                 <div style="font-size:13px;color:var(--ink2);margin:4px 0 12px;">发给家人，凭码加入这个家</div>
@@ -943,7 +966,7 @@ body {
       </div>
     </div>
     <div class="item" id="settings">
-      <p class="item-label">家庭设置弹层 </p>
+      <p class="item-label">家庭设置 · 改名与管理员移交</p><button class="preview-role" hidden>预览接任管理员视角</button>
       <div class="phone">
         <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
         <div class="navbar">我的家</div>
@@ -951,15 +974,36 @@ body {
           <div class="mask">
             <div class="sheet">
               <div class="handle"></div>
-              <div class="sheet-heading"><span>家庭设置</span><span class="sheet-close">×</span></div>
-              <div class="settings-name">我的家</div>
-              <div class="panel-hint">管理这个家，让家人安心相聚。</div>
-              <div class="settings-members">管理家庭成员 ›</div>
+              <div class="sheet-heading"><span>家庭设置</span><a class="sheet-close" href="#my-main" aria-label="关闭">×</a></div>
+              <div data-step="main"><div class="settings-name">我的家</div>
+              <div class="panel-hint" data-role-hint>管理这个家，让家人安心相聚。</div>
+              <div data-admin-actions>
+              <button class="settings-members" data-go="rename">修改家庭名称</button>
+              <p class="panel-hint" data-rename-hint>每 30 天可修改一次家庭名称</p>
+              <button class="settings-members" data-go="select">移交管理员 ›</button>
+              <div class="settings-members" data-manage>管理家庭成员 ›</div>
               <div class="danger-zone">
                 <div class="dz-title">危险操作</div>
                 <div class="dz-desc">解散后家庭、成员关系、邀请码和日程将被永久删除。</div>
                 <div class="dz-btn disabled">请先移除其他 2 位成员</div>
+              </div></div></div>
+              <div data-step="rename" hidden>
+                <label for="family-name">家庭名称（1～20 个字）</label>
+                <input class="settings-input" id="family-name" maxlength="20" required>
+                <div class="settings-actions"><button class="settings-members" data-go="main">取消</button><button class="settings-members" data-go="save">保存</button></div>
               </div>
+              <div data-step="select" hidden>
+                <p class="panel-hint">选择接任成员</p>
+                <button class="settings-members" data-person="家人乙">👩　家人乙　·　移交给TA</button>
+                <button class="settings-members" data-person="家人丙">👨　家人丙　·　移交给TA</button>
+                <button class="settings-members" data-go="main">返回设置</button>
+              </div>
+              <div data-step="confirm" hidden>
+                <p>确认将管理员移交给「<strong data-recipient></strong>」？</p>
+                <p class="panel-hint">对方将接管家庭设置和解散权限，你将成为普通成员。</p>
+                <div class="settings-actions"><button class="settings-members" data-go="select">取消</button><button class="settings-members" data-go="finish">确认移交</button></div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -974,7 +1018,7 @@ body {
           <div class="mask">
             <div class="sheet">
               <div class="handle"></div>
-              <div class="pf-title" style="font-size:19px;font-weight:500;">编辑我的资料</div>
+              <div class="sheet-heading"><span>编辑我的资料</span><a class="sheet-close" href="#my-main" aria-label="关闭">×</a></div>
               <div class="sheet-sub">头像和昵称由你主动填写，家人才能一眼认出你</div>
               <div class="pf-row"><div class="pf-label">头像</div><div class="pf-avatar-ph">＋</div><div class="pf-hint">点头像选微信头像或相册图</div></div>
               <div class="pf-row"><div class="pf-label">昵称</div><div class="pf-input ph">点这里可一键用微信昵称，也能自己改</div><div class="pf-hint">不填则家人那边显示「家人」</div></div>
@@ -1008,7 +1052,7 @@ body {
           <div class="mask">
             <div class="sheet">
               <div class="handle"></div>
-              <div class="sheet-heading"><span>切换家庭</span><span class="sheet-close">×</span></div>
+              <div class="sheet-heading"><span>切换家庭</span><a class="sheet-close" href="#my-main" aria-label="关闭">×</a></div>
               <div class="choices">
                 <div class="choice selected"><div><div class="name"><span class="sw-dot" style="background:#6b90b8"></span>我的家</div><div class="role">管理员</div></div><span>✓</span></div>
                 <div class="choice"><div><div class="name"><span class="sw-dot" style="background:#c48494"></span>爸妈家</div><div class="role">成员</div></div><span></span></div>
@@ -1036,8 +1080,7 @@ body {
     '#my-main .menu-row:nth-child(1)': 'members',
     '#my-main .menu-row:nth-child(2)': 'invite',
     '#my-main .menu-row:nth-child(3)': 'settings',
-    '#my .sheet-close': 'my-main',
-    '#settings .settings-members': 'members',
+    '#settings [data-manage]': 'members',
     '#list .day-item:nth-child(2)': 'detail-view',
     '#list .bottom-bar .btn:first-child': 'readonly-view',
     '#list .bottom-bar .btn:nth-child(2)': 'poster',
@@ -1061,6 +1104,104 @@ body {
       });
     }
   }
+
+  // 仅在本页模拟该家庭的设置，刷新预览可还原样例。
+  const settings = document.querySelector('#settings');
+  const input = settings.querySelector('#family-name');
+  const nameLabel = settings.querySelector('.settings-name');
+  const roleButton = settings.querySelector('.preview-role');
+  const hint = settings.querySelector('[data-role-hint]');
+  let owner = '我', previousOwner = '我', recipient = '', transferred = false, successorView = false;
+  let renameAvailableAt = 0;
+  function showStep(step) {
+    settings.querySelectorAll('[data-step]').forEach(panel => { panel.hidden = panel.dataset.step !== step; });
+    settings.querySelector('.sheet-heading span').textContent = ({ main:'家庭设置', rename:'修改家庭名称', select:'移交管理员', confirm:'确认移交' })[step];
+    settings.querySelector('[data-admin-actions]').hidden = transferred && !successorView;
+    roleButton.hidden = !transferred || step !== 'main';
+    hint.textContent = transferred ? (successorView ? owner + '（管理员）' : previousOwner + '（普通成员） · 管理员为' + owner + '。你可以查看成员或邀请家人加入。') : '管理这个家，让家人安心相聚。';
+    roleButton.textContent = successorView ? '预览原管理员视角' : '预览接任管理员视角';
+  }
+  settings.addEventListener('click', event => {
+    const button = event.target.closest('button');
+    if (!button) return;
+    if (button === roleButton) { successorView = !successorView; showStep('main'); return; }
+    let step = button.dataset.go;
+    if (button.dataset.person) {
+      recipient = button.dataset.person;
+      settings.querySelector('[data-recipient]').textContent = recipient;
+      step = 'confirm';
+    }
+    if (!step) return;
+    if (step === 'rename' && Date.now() < renameAvailableAt) return;
+    if (step === 'rename') { input.value = nameLabel.textContent; input.setCustomValidity(''); }
+    if (step === 'save') {
+      const value = input.value.trim();
+      input.setCustomValidity(value ? '' : '请输入家庭名称');
+      if (!input.reportValidity()) return;
+      if (value !== nameLabel.textContent) {
+        nameLabel.textContent = value;
+        renameAvailableAt = Date.now() + 30 * 86400000;
+        const available = new Date(renameAvailableAt + 8 * 3600000).toISOString().slice(0, 16).replace('T', ' ');
+        settings.querySelector('[data-rename-hint]').textContent = '下次可修改：' + available + '（北京时间）';
+        settings.querySelector('[data-go="rename"]').textContent = '修改家庭名称（等待期内）';
+      }
+      step = 'main';
+    }
+    if (step === 'finish') { previousOwner = owner; owner = recipient; transferred = true; successorView = false; step = 'main'; }
+    if (step === 'select') {
+      const candidates = ['我', '家人乙', '家人丙'].filter(person => person !== owner);
+      settings.querySelectorAll('[data-person]').forEach((choice, index) => {
+        choice.dataset.person = candidates[index];
+        choice.textContent = candidates[index] + '　·　移交给TA';
+      });
+    }
+    showStep(step);
+    if (step === 'rename') input.focus();
+  });
+
+  // 接送示例：邀请、当前负责人的确认和实际接到是三个独立状态。
+  const pickup = document.querySelector('#member-detail');
+  const field = key => pickup.querySelector('[data-pickup="' + key + '"]');
+  const family = ['爸爸', '奶奶', '妈妈'];
+  let driver, confirmed, received, invited, requestedBy;
+  const canInvite = me => me === driver || me === '妈妈';
+  function renderPickup() {
+    const me = field('viewer').value;
+    const mine = me === driver;
+    field('driver').textContent = driver;
+    field('confirmation').textContent = confirmed ? '已确认' : '待确认';
+    field('progress').textContent = received ? '已接到' : '未接到';
+    field('waiting').textContent = invited ? '等待' + invited + '答复，当前仍由' + driver + '负责。' : '';
+    field('accept').hidden = !mine || confirmed || received;
+    field('finish').hidden = !mine || !confirmed || received;
+    field('ask').hidden = !canInvite(me) || !!invited || received;
+    field('withdraw').hidden = me !== requestedBy || !invited;
+    field('reply').hidden = me !== invited;
+    const candidates = family.filter(name => name !== driver);
+    field('candidate').replaceChildren(...candidates.map(name => new Option(name, name)));
+  }
+  function resetPickup() {
+    driver = '爸爸'; confirmed = false; received = false; invited = ''; requestedBy = '';
+    field('viewer').value = driver;
+    field('event').textContent = '';
+    renderPickup();
+  }
+  field('viewer').addEventListener('change', renderPickup);
+  pickup.addEventListener('click', event => {
+    const action = event.target.closest('[data-act]')?.dataset.act;
+    const me = field('viewer').value;
+    let note;
+    if (action === 'reset') { resetPickup(); return; }
+    if (received) return;
+    if (action === 'accept' && me === driver && !confirmed) { confirmed = true; note = me + '已确认负责接送'; }
+    if (action === 'invite' && canInvite(me) && !invited) { invited = field('candidate').value; requestedBy = me; note = me + '邀请' + invited + '代接'; }
+    if (action === 'withdraw' && me === requestedBy && invited) { invited = ''; note = me + '撤回了代接邀请'; }
+    if (action === 'decline' && invited === me) { invited = ''; note = me + '暂时不能接，仍由' + driver + '负责'; }
+    if (action === 'take' && invited === me) { driver = me; invited = ''; confirmed = true; note = me + '已确认接任'; }
+    if (action === 'finish' && me === driver && confirmed) { received = true; invited = ''; note = me + '已接到茂茂'; }
+    if (note) { field('event').textContent = note; renderPickup(); }
+  });
+  resetPickup();
 </script>
 </body>
 </html>

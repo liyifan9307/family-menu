@@ -58,11 +58,15 @@ test('图片直接读取家庭日程，生成无扫码文案的多张图片并�
   await page.save()
   assert.deepEqual(saved, ['poster-1', 'poster-2'])
 })
-test('无日程仍生成可保存的空态图片', async () => {
-  const { page, text } = load([])
+test('无日程时显示空态，不生成或保存分享图片', async () => {
+  const { page, text, saved } = load([])
   await page.build()
-  assert.equal(page.data.images.length, 1)
-  assert.ok(text.includes('这一天没有安排'))
+  assert.equal(page.data.empty, true)
+  assert.equal(page.data.loading, false)
+  assert.equal(page.data.images.length, 0)
+  assert.deepEqual(text, [])
+  await page.save()
+  assert.deepEqual(saved, [])
 })
 
 test('分享预览可以切换图片，保存仍包含所有分页', async () => {
