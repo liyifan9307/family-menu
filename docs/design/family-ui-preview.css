@@ -476,6 +476,6 @@ body {
 
 #member-detail [hidden]{display:none!important}
 #member-detail select,#member-detail button{font:inherit;min-height:44px;border:1px solid var(--line);border-radius:var(--radius);padding:8px 12px;cursor:pointer}
-#member-detail .pickup-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;color:var(--canvas-ink)}
+#member-detail .pickup-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px;color:var(--canvas-ink)}
 #member-detail [data-pickup="ask"],#member-detail [data-pickup="reply"]{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 #member-detail [data-pickup="waiting"]:empty,#member-detail [data-pickup="event"]:empty{display:none}

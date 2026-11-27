@@ -483,7 +483,7 @@ body {
 
 #member-detail [hidden]{display:none!important}
 #member-detail select,#member-detail button{font:inherit;min-height:44px;border:1px solid var(--line);border-radius:var(--radius);padding:8px 12px;cursor:pointer}
-#member-detail .pickup-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;color:var(--canvas-ink)}
+#member-detail .pickup-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px;color:var(--canvas-ink)}
 #member-detail [data-pickup="ask"],#member-detail [data-pickup="reply"]{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 #member-detail [data-pickup="waiting"]:empty,#member-detail [data-pickup="event"]:empty{display:none}
 #empty-day .bottom-bar button:disabled{background:#eff1ec;border-color:#e3e8e0;color:#626e65;cursor:default;font:inherit;}
@@ -491,8 +491,8 @@ body {
 </head>
 <body>
 <main class="wrap">
-<header class="masthead"><h1>我的家 · 完整 UI 预览</h1><p>家庭管理与接送日程。使用示例数据，目录和主要入口可点击查看对应画面。</p></header>
-<nav class="jump" aria-label="页面目录"><a href="#identity">身份引导</a><a href="#home">主页</a><a href="#list">家庭日程</a><a href="#detail">日程详情</a><a href="#history">变更记录</a><a href="#edit">新增与编辑</a><a href="#sharing">分享</a><a href="#empty">空状态与加载</a><a href="#errors">错误与反馈</a><a href="#my">我的与家庭管理</a></nav>
+<header class="masthead"><h1>我的家 · 完整 UI 预览</h1><p>家庭管理与家庭事项。使用示例数据，目录和主要入口可点击查看对应画面。</p></header>
+<nav class="jump" aria-label="页面目录"><a href="#identity">身份引导</a><a href="#home">主页</a><a href="#list">家庭事项</a><a href="#detail">事项详情</a><a href="#history">变更记录</a><a href="#edit">新增与编辑</a><a href="#sharing">分享</a><a href="#empty">空状态与加载</a><a href="#errors">错误与反馈</a><a href="#my">我的与家庭管理</a></nav>
 <section id="identity" class="preview family"><h2 class="section-title">身份引导</h2><p class="section-note">创建自己的家庭，或凭邀请码加入。</p><div class="gallery">
     <div class="item" id="welcome">
       <p class="item-label">欢迎回家</p>
@@ -541,9 +541,9 @@ body {
       </div>
     </div>
   </div></section>
-<section id="home" class="preview schedule"><h2 class="section-title">主页</h2><p class="section-note">首页显示当天安排和下一条待办，底部保留「主页」「我的」。</p><div class="gallery">
+<section id="home" class="preview schedule"><h2 class="section-title">主页</h2><p class="section-note">首页显示当天安排和下一条待处理，底部保留「主页」「我的」。</p><div class="gallery">
   <div class="item">
-    <p class="item-label">今日接送</p>
+    <p class="item-label">今天的事项</p>
     <div class="phone">
       <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
       <div class="navbar">主页</div>
@@ -552,11 +552,11 @@ body {
           <div class="family-title"><span>我的家</span></div>
           <div class="greeting">一家人的日常，都在这里。</div>
 
-          <div class="sec-label"><span>今日接送</span><small>11月27日 周五</small></div>
+          <div class="sec-label"><span>今天的事项</span><small>11月27日 周五</small></div>
           <div class="sched-card">
-            <div class="sc-top"><span class="sc-tag">家庭日程</span><span class="sc-count">今天 3 条</span></div>
+            <div class="sc-top"><span class="sc-tag">家庭事项</span><span class="sc-count">今天 3 条</span></div>
             <div class="sc-next"><span class="sc-time">15:10</span><span class="sc-title">接孩子放学</span></div>
-            <div class="sc-place">春和路 18 号 · 爸爸</div>
+            <div class="sc-place">买牛奶和鸡蛋 · 家庭聚餐</div>
             <div class="sc-foot"><span>查看今日全部安排</span><span>›</span></div>
           </div>
 
@@ -571,38 +571,38 @@ body {
     </div>
   </div>
 </div></section>
-<section id="list" class="preview schedule"><h2 class="section-title">家庭日程</h2><p class="section-note">按天查看安排，点开日程进入详情。</p><div class="gallery">
+<section id="list" class="preview schedule"><h2 class="section-title">家庭事项</h2><p class="section-note">接送、买菜和聚餐按天查看。</p><div class="gallery">
   <div class="item">
-    <p class="item-label">日程列表</p>
+    <p class="item-label">事项列表</p>
     <div class="phone">
       <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
-      <div class="navbar"><span class="back">‹</span>家庭日程</div>
+      <div class="navbar"><span class="back">‹</span>家庭事项</div>
       <div class="screen no-tab with-footer">
         <div class="page">
           <div class="date-switch"><span class="arrow">‹</span><span>11月27日 周五</span><span class="arrow">›</span></div>
           <div class="list-tools"><a href="#list">回到今天</a><a href="#notice-state">开启变更通知</a></div><div class="day-list">
             <div class="day-item done">
-              <div class="time-col"><div class="time-h">08:00</div><div class="time-m">08:30</div></div>
+              <div class="time-col"><div class="time-h">当天</div></div>
               <div class="item-main">
-                <div class="item-t"><span class="who-dot" style="background:#6b90b8"></span>送孩子上学<span class="st done">已完成</span></div>
-                <div class="item-p">春和路 18 号</div>
-                <div class="item-child">茂茂 · 爸爸</div>
+                <div class="item-t"><span class="who-dot" style="background:#6b90b8"></span>买牛奶和鸡蛋<span class="st done">已完成</span></div>
+                <div class="item-p">社区超市</div>
+                <div class="item-child">妈妈</div>
               </div>
             </div>
             <div class="day-item" id="first-schedule-item">
               <div class="time-col"><div class="time-h">15:10</div><div class="time-m">16:10</div></div>
               <div class="item-main">
-                <div class="item-t"><span class="who-dot" style="background:#c48494"></span>接孩子放学<span class="st">待办</span></div>
+                <div class="item-t"><span class="who-dot" style="background:#c48494"></span>接孩子放学<span class="st">待处理</span></div>
                 <div class="item-p">春和路 18 号 · 南门</div>
-                <div class="item-child">茂茂 · 爸爸</div>
+                <div class="item-child">爸爸 · 已确认</div>
               </div>
             </div>
-            <div class="day-item cancelled">
+            <div class="day-item">
               <div class="time-col"><div class="time-h">18:00</div><div class="time-m">19:30</div></div>
               <div class="item-main">
-                <div class="item-t"><span class="who-dot" style="background:#d0a15e"></span>篮球<span class="st cancelled">已取消</span></div>
-                <div class="item-p">育才体育馆 B 馆</div>
-                <div class="item-child">茂茂 · 爷爷</div>
+                <div class="item-t"><span class="who-dot" style="background:#d0a15e"></span>家庭聚餐<span class="st">待处理</span></div>
+                <div class="item-p">外婆家</div>
+                <div class="item-child">未指定负责人</div>
               </div>
             </div>
           </div>
@@ -616,54 +616,56 @@ body {
     </div>
   </div>
 </div></section>
-<section id="detail" class="preview schedule"><h2 class="section-title">日程详情</h2><p class="section-note">操作随权限变化。负责人可以处理状态，创建人和管理员可编辑、删除。</p><div class="gallery"><article class="item" id="detail-view"><h3 class="item-label">日程详情 · 创建人或管理员</h3>
+<section id="detail" class="preview schedule"><h2 class="section-title">事项详情</h2><p class="section-note">操作随权限变化。负责人可以处理状态，创建人和管理员可编辑、删除。</p><div class="gallery"><article class="item" id="detail-view"><h3 class="item-label">事项详情 · 创建人或管理员</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
-<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>安排详情</strong><a class="sheet-close" href="#list" aria-label="关闭">×</a></div><div class="detail-data"><strong class="detail-title">接孩子放学</strong><span class="st">待办</span><dl><div><dt>时间</dt><dd>11月27日 · 15:10—16:10</dd></div><div><dt>地点</dt><dd>春和路 18 号 · 南门</dd></div><div><dt>孩子 / 负责人</dt><dd>茂茂 · 爸爸</dd></div><div><dt>备注</dt><dd>到南门后在家人群说一声。</dd></div></dl></div><div class="detail-buttons"><a class="btn primary" href="#edit">编辑安排</a><a class="btn ghost" href="#history">查看变更记录</a><a class="btn ghost" href="#member-detail">查看接送确认与换人</a><div class="btn ghost">取消安排</div><div class="btn danger">删除安排</div></div></div></div></div></div>
-</div></article><article class="item" id="member-detail"><h3 class="item-label">接送确认与换人</h3><div class="pickup-tools"><label>预览身份 <select data-pickup="viewer"><option>爸爸</option><option>奶奶</option><option value="妈妈">妈妈（创建人）</option></select></label>
-<button type="button" data-act="reset">重新演练</button></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>家庭事项</div>
+<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>事项详情</strong><a class="sheet-close" href="#list" aria-label="关闭">×</a></div><div class="detail-data"><strong class="detail-title">接孩子放学</strong><span class="st">待处理</span><dl><div><dt>负责人确认</dt><dd>已确认</dd></div><div><dt>时间</dt><dd>11月27日 · 15:10—16:10</dd></div><div><dt>地点</dt><dd>春和路 18 号 · 南门</dd></div><div><dt>孩子 / 负责人</dt><dd>茂茂 · 爸爸</dd></div><div><dt>备注</dt><dd>到南门后在家人群说一声。</dd></div></dl></div><div class="detail-buttons"><a class="btn primary" href="#edit">编辑安排</a><a class="btn ghost" href="#history">查看变更记录</a><a class="btn ghost" href="#member-detail">查看负责人确认与换人</a><div class="btn ghost">取消安排</div><div class="btn danger">删除安排</div></div></div></div></div></div>
+</div></article><article class="item" id="member-detail"><h3 class="item-label">负责人确认与换人</h3><div class="pickup-tools"><label>预览身份 <select data-pickup="viewer"><option>爸爸</option><option>奶奶</option><option value="妈妈">妈妈（创建人）</option></select></label>
+<label><input type="checkbox" data-pickup="optional" checked> 需要确认</label><button type="button" data-act="reset">重新演练</button></div>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
-<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>安排详情</strong><a class="sheet-close" href="#list" aria-label="关闭">×</a></div><div class="detail-data"><strong class="detail-title">接茂茂放学</strong><p>11月27日 15:10 · 春和路小学南门</p>
-<dl><div><dt>当前负责人</dt><dd data-pickup="driver">爸爸</dd></div><div><dt>接送确认</dt><dd data-pickup="confirmation">待确认</dd></div><div><dt>接送进度</dt><dd data-pickup="progress">未接到</dd></div></dl>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>家庭事项</div>
+<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>事项详情</strong><a class="sheet-close" href="#list" aria-label="关闭">×</a></div><div class="detail-data"><strong class="detail-title">接茂茂放学</strong><p>11月27日 15:10 · 春和路小学南门</p>
+<dl><div><dt>当前负责人</dt><dd data-pickup="driver">爸爸</dd></div><div data-pickup="confirmation-row"><dt>负责人确认</dt><dd data-pickup="confirmation">待确认</dd></div><div><dt>事项进度</dt><dd data-pickup="progress">待处理</dd></div></dl>
 <p data-pickup="waiting"></p></div><div class="detail-buttons">
-<button class="btn primary" data-pickup="accept" data-act="accept">我来接</button>
-<button class="btn primary" data-pickup="finish" data-act="finish" hidden>我已接到</button>
-<div data-pickup="ask"><label>代接人 <select data-pickup="candidate"></select></label><button class="btn ghost" data-act="invite">邀请代接</button></div>
+<button class="btn primary" data-pickup="accept" data-act="accept">确认负责</button>
+<button class="btn primary" data-pickup="finish" data-act="finish" hidden>标记已完成</button>
+<div data-pickup="ask"><label>接任人 <select data-pickup="candidate"></select></label><button class="btn ghost" data-act="invite">发起换人</button></div>
 <button class="btn ghost" data-pickup="withdraw" data-act="withdraw" hidden>撤回邀请</button>
-<div data-pickup="reply" hidden><button class="btn primary" data-act="take">确认接任</button><button class="btn ghost" data-act="decline">暂时不能接</button></div>
+<div data-pickup="reply" hidden><button class="btn primary" data-act="take">确认接任</button><button class="btn ghost" data-act="decline">无法接任</button></div>
 <small role="status" data-pickup="event"></small></div></div></div></div></div>
 </div></article></div></section>
 <section id="history" class="preview schedule"><h2 class="section-title">变更记录</h2><p class="section-note">在详情中查看谁在什么时候新增、修改或更新了状态。</p><div class="gallery"><article class="item" id="history-view"><h3 class="item-label">详情弹层 · 变更记录</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
-<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>安排详情</strong><a class="sheet-close" href="#list" aria-label="关闭">×</a></div><div class="detail-data"><strong class="detail-title">接孩子放学</strong><span class="st">待办</span><dl><div><dt>时间</dt><dd>11月27日 · 15:10—16:10</dd></div><div><dt>地点</dt><dd>春和路 18 号 · 南门</dd></div><div><dt>孩子 / 负责人</dt><dd>茂茂 · 爸爸</dd></div><div><dt>备注</dt><dd>到南门后在家人群说一声。</dd></div></dl></div><h4 class="history-heading">变更记录</h4><ol class="history"><li><strong>爸爸 · 修改了接送地点</strong><time>11月27日 14:20</time></li><li><strong>妈妈 · 指派给爸爸</strong><time>11月27日 12:30</time></li><li><strong>妈妈 · 新增了安排</strong><time>11月26日 20:15</time></li></ol><a class="btn ghost" href="#detail-view">返回详情示例</a></div></div></div></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>家庭事项</div>
+<div class="screen no-tab"><div class="page"><div class="detail-shade"><div class="detail-sheet"><div class="grip"></div><div class="detail-head"><strong>事项详情</strong><a class="sheet-close" href="#list" aria-label="关闭">×</a></div><div class="detail-data"><strong class="detail-title">接孩子放学</strong><span class="st">待处理</span><dl><div><dt>负责人确认</dt><dd>已确认</dd></div><div><dt>时间</dt><dd>11月27日 · 15:10—16:10</dd></div><div><dt>地点</dt><dd>春和路 18 号 · 南门</dd></div><div><dt>孩子 / 负责人</dt><dd>茂茂 · 爸爸</dd></div><div><dt>备注</dt><dd>到南门后在家人群说一声。</dd></div></dl></div><h4 class="history-heading">变更记录</h4><ol class="history"><li><strong>爸爸 · 修改了接送地点</strong><time>11月27日 14:20</time></li><li><strong>妈妈 · 指派给爸爸</strong><time>11月27日 12:30</time></li><li><strong>妈妈 · 新增了安排</strong><time>11月26日 20:15</time></li></ol><a class="btn ghost" href="#detail-view">返回详情示例</a></div></div></div></div>
 </div></article></div></section>
 <section id="edit" class="preview schedule"><h2 class="section-title">新增与编辑</h2><p class="section-note">负责人、孩子姓名和常用地点沿用当前表单；结束时间与备注放在「更多信息」。</p><div class="gallery">
   <div class="item">
     <p class="item-label">新增 / 编辑表单</p>
     <div class="phone">
       <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
-      <div class="navbar"><span class="back">‹</span>新增日程</div>
+      <div class="navbar"><span class="back">‹</span>添加事项</div>
       <div class="screen no-tab with-footer">
         <div class="page">
           <div class="form">
             <div class="row2">
               <div class="fld"><label>日期</label><div class="inp"><span class="val">11-27</span><span class="chev">›</span></div></div>
-              <div class="fld"><label>开始时间</label><div class="inp"><span class="val">18:00</span><span class="chev">›</span></div></div>
+              <div class="fld"><label>开始时间（选填）</label><div class="inp"><span class="val">18:00</span><span class="chev">›</span></div></div>
             </div>
-            <div class="fld"><label>事项 *</label><div class="inp"><span class="val">篮球</span></div></div>
-            <div class="fld"><label>地点（详细门牌）</label><div class="inp"><span class="val">育才体育馆 B 馆</span></div></div>
-            <div class="fld"><label>孩子姓名（选填）</label><div class="inp"><span class="val">茂茂</span></div></div>
+            <div class="fld"><label>事项 *</label><div class="inp"><span class="val">家庭聚餐</span></div></div>
+            <div class="fld"><label>地点（选填）</label><div class="inp"><span class="val">外婆家</span></div></div>
+
             <div class="fld">
-              <label>负责人</label>
+              <label>负责人（选填）</label>
               <div class="people">
-                <span class="person on"><span class="who-dot" style="background:#6b90b8"></span>爸爸</span>
+                <span class="person on">暂不指定</span>
+                <span class="person"><span class="who-dot" style="background:#6b90b8"></span>爸爸</span>
                 <span class="person"><span class="who-dot" style="background:#c48494"></span>妈妈</span>
                 <span class="person"><span class="who-dot" style="background:#d0a15e"></span>爷爷</span>
               </div>
             </div>
-            <details class="more-fields"><summary>更多信息：结束时间、备注</summary><div class="fld"><label>结束时间（选填）</label><div class="inp">19:30</div></div><div class="fld"><label>备注（选填）</label><div class="inp">从体育馆东门进入</div></div></details>
+            <div class="fld"><label><input type="checkbox"> 需要负责人确认</label><small>开启时请选择负责人。换人需接任人同意。</small></div>
+            <details class="more-fields"><summary>更多信息：结束时间、备注</summary><div class="fld"><label>结束时间（选填）</label><div class="inp">19:30</div></div><div class="fld"><label>备注（选填）</label><div class="inp">提前确认到场人数</div></div></details>
           </div>
         </div>
         <div class="form-foot"><div class="btn primary">保存</div></div>
@@ -673,7 +675,7 @@ body {
 </div></section>
 <section id="sharing" class="preview schedule"><h2 class="section-title">分享</h2><p class="section-note">日程图片可保存到相册后发到家庭群。只读页通过「分享给家人」卡片打开，微信转发能力由平台决定。</p><div class="gallery"><article class="item" id="poster"><h3 class="item-label">分享图片预览</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>分享图片</div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>分享图片</div>
 <div class="screen no-tab with-footer">
   <div class="page">
     <div class="poster-picker" role="group" aria-label="选择预览图片">
@@ -681,25 +683,25 @@ body {
       <input type="radio" id="poster-second" name="poster-page">
       <div class="poster-stage">
       <div class="poster-card poster-one">
-        <header class="poster-heading"><p class="poster-family">我的家</p><h4>接送安排</h4><time class="poster-date" datetime="2026-11-27">2026年11月27日 · 周五</time></header>
+        <header class="poster-heading"><p class="poster-family">我的家</p><h4>家庭安排</h4><time class="poster-date" datetime="2026-11-27">2026年11月27日 · 周五</time></header>
         <ul class="poster-entries">
           <li class="poster-entry">
-            <div class="poster-time"><strong>08:00</strong><span>至 08:30</span></div>
-            <div><h5>送孩子上学</h5><p>春和路 18 号</p><p class="poster-owner">茂茂 · 爸爸 <span class="poster-status done">已完成</span></p></div>
+            <div class="poster-time"><strong>当天</strong></div>
+            <div><h5>买牛奶和鸡蛋</h5><p>社区超市</p><p class="poster-owner">妈妈 <span class="poster-status done">已完成</span></p></div>
           </li>
           <li class="poster-entry">
             <div class="poster-time"><strong>15:10</strong><span>至 16:10</span></div>
-            <div><h5>接孩子放学</h5><p>春和路 18 号 · 南门</p><p class="poster-owner">茂茂 · 爸爸 <span class="poster-status">待办</span></p></div>
+            <div><h5>接孩子放学</h5><p>春和路 18 号 · 南门</p><p class="poster-owner">爸爸 · 已确认 <span class="poster-status">待处理</span></p></div>
           </li>
         </ul>
         <footer class="poster-foot"><div class="poster-stamp"><time datetime="2026-11-27T15:00:00+08:00">生成于 11月27日 15:00</time><span>1 / 2</span></div><p>仅发给家人 · 安排有变动时请重新发送</p></footer>
       </div>
       <div class="poster-card poster-two">
-        <header class="poster-heading"><p class="poster-family">我的家</p><h4>接送安排</h4><time class="poster-date" datetime="2026-11-27">2026年11月27日 · 周五</time></header>
+        <header class="poster-heading"><p class="poster-family">我的家</p><h4>家庭安排</h4><time class="poster-date" datetime="2026-11-27">2026年11月27日 · 周五</time></header>
         <ul class="poster-entries">
           <li class="poster-entry">
             <div class="poster-time"><strong>18:00</strong><span>至 19:30</span></div>
-            <div><h5>篮球</h5><p>育才体育馆 B 馆</p><p class="poster-owner">茂茂 · 爷爷 <span class="poster-status cancelled">已取消</span></p></div>
+            <div><h5>家庭聚餐</h5><p>外婆家</p><p class="poster-owner">未指定负责人 <span class="poster-status">待处理</span></p></div>
           </li>
         </ul>
         <footer class="poster-foot"><div class="poster-stamp"><time datetime="2026-11-27T15:00:00+08:00">生成于 11月27日 15:00</time><span>2 / 2</span></div><p>仅发给家人 · 安排有变动时请重新发送</p></footer>
@@ -715,30 +717,30 @@ body {
     <p class="item-label" id="readonly-view">只读分享页</p>
     <div class="phone">
       <div class="statusbar"><span>9:41</span><span class="icons">▮▮▮ ⌁ ▰</span></div>
-      <div class="navbar">今天的接送安排</div>
+      <div class="navbar">家庭安排</div>
       <div class="screen no-tab">
         <div class="page">
-          <div class="readonly-top">家人分享的接送安排 · 链接 7 天内有效</div>
+          <div class="readonly-top">家人分享的家庭安排 · 链接 7 天内有效</div>
           <div class="ro-head">我的家 · 11月27日</div>
           <div class="ro-sub">共 3 条安排</div>
 
           <div class="ro-item">
-            <div class="ro-time">08:00 — 08:30</div>
-            <div class="ro-name">送孩子上学 <span class="ro-status">已完成</span></div>
-            <div class="ro-place">春和路 18 号</div>
-            <div class="ro-meta">茂茂 · 爸爸接送</div>
+            <div class="ro-time">当天</div>
+            <div class="ro-name">买牛奶和鸡蛋 <span class="ro-status">已完成</span></div>
+            <div class="ro-place">社区超市</div>
+            <div class="ro-meta">妈妈</div>
           </div>
           <div class="ro-item">
             <div class="ro-time">15:10 - 16:10</div>
-            <div class="ro-name">接孩子放学 <span class="ro-status">待办</span></div>
+            <div class="ro-name">接孩子放学 <span class="ro-status">待处理</span></div>
             <div class="ro-place">春和路 18 号 · 南门</div>
-            <div class="ro-meta">茂茂 · 爸爸接送</div>
+            <div class="ro-meta">爸爸 · 已确认</div>
           </div>
           <div class="ro-item">
             <div class="ro-time">18:00 - 19:30</div>
-            <div class="ro-name">篮球 <span class="ro-status">已取消</span></div>
-            <div class="ro-place">育才体育馆 B 馆</div>
-            <div class="ro-meta">茂茂 · 爷爷接送</div>
+            <div class="ro-name">家庭聚餐 <span class="ro-status">待处理</span></div>
+            <div class="ro-place">外婆家</div>
+            <div class="ro-meta">未指定负责人</div>
           </div>
 
           <div class="ro-warn">本页仅可查看，链接到期后自动失效。</div>
@@ -750,53 +752,53 @@ body {
 </div></section>
 <section id="empty" class="preview schedule"><h2 class="section-title">空状态与加载</h2><p class="section-note">区分暂无安排和仍在加载，访客只能查看。</p><div class="gallery"><article class="item" id="empty-day"><h3 class="item-label">当天暂无日程</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
-<div class="screen no-tab"><div class="page"><div class="state-panel empty"><span class="state-icon" aria-hidden="true">＋</span><strong>这一天还没有安排</strong><p>添加安排后即可分享</p><a class="btn primary" href="#edit">新增日程</a></div><div class="bottom-bar"><button class="btn ghost" disabled>分享给家人</button><button class="btn ghost" disabled>转发图片</button></div></div></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>家庭事项</div>
+<div class="screen no-tab"><div class="page"><div class="state-panel empty"><span class="state-icon" aria-hidden="true">＋</span><strong>这一天还没有安排</strong><p>添加安排后即可分享</p><a class="btn primary" href="#edit">添加事项</a></div><div class="bottom-bar"><button class="btn ghost" disabled>分享给家人</button><button class="btn ghost" disabled>转发图片</button></div></div></div>
 </div></article><article class="item" id="empty-readonly"><h3 class="item-label">只读页暂无日程</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>接送安排</div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>家庭安排</div>
 <div class="screen no-tab"><div class="page"><div class="state-panel empty"><span class="state-icon" aria-hidden="true">＋</span><strong>这一天没有安排</strong><p>家人分享的 11 月 27 日安排</p></div></div></div>
 </div></article><article class="item" id="loading-day"><h3 class="item-label">日程加载中</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>家庭事项</div>
 <div class="screen no-tab"><div class="page"><div class="state-panel loading"><span class="state-icon" aria-hidden="true">···</span><strong>正在加载安排…</strong><p></p></div></div></div>
 </div></article></div></section>
 <section id="errors" class="preview schedule"><h2 class="section-title">错误与反馈</h2><p class="section-note">常见失败、重试、草稿保留与保存成功的页面示例。</p><div class="gallery"><article class="item" id="list-error"><h3 class="item-label">日程加载失败</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>家庭事项</div>
 <div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>暂时加载不了日程</strong><p>检查网络后再试。</p><a class="btn ghost" href="#list">重新加载</a></div></div></div>
 </div></article><article class="item" id="expired"><h3 class="item-label">只读链接已失效</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>接送安排</div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>家庭安排</div>
 <div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>链接已失效</strong><p>请让家人重新分享安排。</p></div></div></div>
 </div></article><article class="item" id="save-error"><h3 class="item-label">保存失败 · 保留草稿</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>编辑安排</div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>编辑安排</div>
 <div class="screen no-tab"><div class="page"><div class="fld"><label>事项 *</label><div class="inp">接孩子放学</div></div><div class="fld"><label>地点</label><div class="inp">春和路 18 号 · 南门</div></div><p class="inline-error">保存失败，内容已保留。</p><a class="btn primary" href="#edit">返回表单重试</a></div></div>
 </div></article><article class="item" id="save-pending"><h3 class="item-label">保存结果待确认</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>编辑安排</div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>编辑安排</div>
 <div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>保存结果待确认</strong><p>草稿仍在。请确认上次保存结果，避免生成重复安排。</p><a class="btn ghost" href="#edit">确认上次保存结果</a></div></div></div>
 </div></article><article class="item" id="edit-conflict"><h3 class="item-label">编辑冲突 · 保留草稿</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>编辑安排</div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>编辑安排</div>
 <div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>家人已更新这条安排</strong><p>查看最新安排后，可保留当前草稿再继续编辑。</p><a class="btn ghost" href="#edit">查看最新安排并保留草稿</a></div></div></div>
 </div></article><article class="item" id="poster-error"><h3 class="item-label">图片生成失败</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>分享图片</div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>分享图片</div>
 <div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>暂时生成不了图片</strong><p>请重新读取当天安排并生成。</p><a class="btn ghost" href="#poster">重新生成</a></div></div></div>
 </div></article><article class="item" id="album-error"><h3 class="item-label">相册权限未开启</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>分享图片</div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>分享图片</div>
 <div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>图片未全部保存</strong><p>请在微信设置中允许保存到相册，预览中的图片仍可查看。</p><a class="btn ghost" href="#poster">返回图片预览</a></div></div></div>
 </div></article><article class="item" id="album-saved"><h3 class="item-label">图片保存成功</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>分享图片</div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>分享图片</div>
 <div class="screen no-tab"><div class="page"><div class="state-panel empty"><span class="state-icon" aria-hidden="true">＋</span><strong>图片已保存</strong><p>可在微信家庭群从相册选择并发送。</p><a class="btn primary" href="#poster">返回图片预览</a></div></div></div>
 </div></article><article class="item" id="notice-state"><h3 class="item-label">通知未配置</h3>
 <div class="phone"><div class="statusbar" aria-hidden="true"><span>9:41</span><span>▮▮▮ ⌁ ▰</span></div>
-<div class="navbar"><a class="back" href="#list" aria-label="返回日程列表">‹</a>家庭日程</div>
-<div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>通知服务尚未配置</strong><p>日程照常保存，家人可从列表查看最新安排。</p><a class="btn ghost" href="#list">返回日程列表</a></div></div></div>
+<div class="navbar"><a class="back" href="#list" aria-label="返回事项列表">‹</a>家庭事项</div>
+<div class="screen no-tab"><div class="page"><div class="state-panel error"><span class="state-icon" aria-hidden="true">!</span><strong>通知服务尚未配置</strong><p>日程照常保存，家人可从列表查看最新安排。</p><a class="btn ghost" href="#list">返回事项列表</a></div></div></div>
 </div></article></div></section>
 <section id="my" class="preview family"><h2 class="section-title">我的与家庭管理</h2><p class="section-note">个人资料、家庭切换、成员、邀请与设置。</p><div class="gallery">
     <div class="item" id="my-main">
@@ -1071,46 +1073,49 @@ body {
     if (step === 'rename') input.focus();
   });
 
-  // 接送示例：邀请、当前负责人的确认和实际接到是三个独立状态。
+  // 负责人确认与事项完成独立呈现。
   const pickup = document.querySelector('#member-detail');
   const field = key => pickup.querySelector('[data-pickup="' + key + '"]');
   const family = ['爸爸', '奶奶', '妈妈'];
-  let driver, confirmed, received, invited, requestedBy;
+  let driver, confirmed, completed, invited, requestedBy;
   const canInvite = me => me === driver || me === '妈妈';
   function renderPickup() {
     const me = field('viewer').value;
     const mine = me === driver;
+    const requiresConfirmation = field('optional').checked;
+    field('confirmation-row').hidden = !requiresConfirmation;
     field('driver').textContent = driver;
     field('confirmation').textContent = confirmed ? '已确认' : '待确认';
-    field('progress').textContent = received ? '已接到' : '未接到';
+    field('progress').textContent = completed ? '已完成' : '待处理';
     field('waiting').textContent = invited ? '等待' + invited + '答复，当前仍由' + driver + '负责。' : '';
-    field('accept').hidden = !mine || confirmed || received;
-    field('finish').hidden = !mine || !confirmed || received;
-    field('ask').hidden = !canInvite(me) || !!invited || received;
+    field('accept').hidden = !requiresConfirmation || !mine || confirmed || completed;
+    field('finish').hidden = !mine || (requiresConfirmation && !confirmed) || completed;
+    field('ask').hidden = !requiresConfirmation || !canInvite(me) || !!invited || completed;
     field('withdraw').hidden = me !== requestedBy || !invited;
     field('reply').hidden = me !== invited;
     const candidates = family.filter(name => name !== driver);
     field('candidate').replaceChildren(...candidates.map(name => new Option(name, name)));
   }
   function resetPickup() {
-    driver = '爸爸'; confirmed = false; received = false; invited = ''; requestedBy = '';
+    driver = '爸爸'; confirmed = false; completed = false; invited = ''; requestedBy = '';
     field('viewer').value = driver;
     field('event').textContent = '';
     renderPickup();
   }
+  field('optional').addEventListener('change', resetPickup);
   field('viewer').addEventListener('change', renderPickup);
   pickup.addEventListener('click', event => {
     const action = event.target.closest('[data-act]')?.dataset.act;
     const me = field('viewer').value;
     let note;
     if (action === 'reset') { resetPickup(); return; }
-    if (received) return;
-    if (action === 'accept' && me === driver && !confirmed) { confirmed = true; note = me + '已确认负责接送'; }
-    if (action === 'invite' && canInvite(me) && !invited) { invited = field('candidate').value; requestedBy = me; note = me + '邀请' + invited + '代接'; }
+    if (completed) return;
+    if (action === 'accept' && field('optional').checked && me === driver && !confirmed) { confirmed = true; note = me + '已确认负责该事项'; }
+    if (action === 'invite' && field('optional').checked && canInvite(me) && !invited) { invited = field('candidate').value; requestedBy = me; note = me + '邀请' + invited + '接任'; }
     if (action === 'withdraw' && me === requestedBy && invited) { invited = ''; note = me + '撤回了代接邀请'; }
-    if (action === 'decline' && invited === me) { invited = ''; note = me + '暂时不能接，仍由' + driver + '负责'; }
+    if (action === 'decline' && invited === me) { invited = ''; note = me + '无法接任，仍由' + driver + '负责'; }
     if (action === 'take' && invited === me) { driver = me; invited = ''; confirmed = true; note = me + '已确认接任'; }
-    if (action === 'finish' && me === driver && confirmed) { received = true; invited = ''; note = me + '已接到茂茂'; }
+    if (action === 'finish' && me === driver && (confirmed || !field('optional').checked)) { completed = true; invited = ''; note = me + '已完成事项'; }
     if (note) { field('event').textContent = note; renderPickup(); }
   });
   resetPickup();

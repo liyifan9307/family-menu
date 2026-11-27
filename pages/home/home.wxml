@@ -3,12 +3,12 @@
   <view wx:elif="{{error}}" class="load-error"><view>{{error}}</view><button class="primary-btn" bindtap="reload">重新加载</button></view>
   <block wx:else>
     <view class="welcome"><view class="family-title">{{familyName}}</view><view class="greeting">一家人的日常，都在这里。</view></view>
-    <view class="section-label"><text>今日接送</text><text class="section-caption">{{todayLabel}}</text></view>
+    <view class="section-label"><text>今天的事项</text><text class="section-caption">{{todayLabel}}</text></view>
     <button class="schedule-entry" bindtap="gotoSchedule">
-      <view class="schedule-top"><text class="feature-tag">家庭日程</text><text wx:if="{{!scheduleLoading && !scheduleError}}" class="schedule-count">今天 {{scheduleCount}} 条</text></view>
+      <view class="schedule-top"><text class="feature-tag">家庭事项</text><text wx:if="{{!scheduleLoading && !scheduleError}}" class="schedule-count">今天 {{scheduleCount}} 条</text></view>
       <view wx:if="{{scheduleLoading}}" class="schedule-empty">正在读取安排…</view>
       <view wx:elif="{{scheduleError}}" class="schedule-empty">{{scheduleError}}</view>
-      <block wx:elif="{{nextSchedule}}"><view class="schedule-next"><text class="schedule-time">{{nextSchedule.timeStart}}</text><text class="schedule-title">{{nextSchedule.title}}</text></view><view class="schedule-place">{{nextSchedule.place ? nextSchedule.place + ' · ' : ''}}{{nextSchedule.ownerName}}</view></block>
+      <block wx:elif="{{nextSchedule}}"><view class="schedule-next"><text class="schedule-time">{{nextSchedule.timeStart || '当天'}}</text><text class="schedule-title">{{nextSchedule.title}}</text></view><view class="schedule-place">{{nextSchedule.place ? nextSchedule.place + ' · ' : ''}}{{nextSchedule.ownerName}}{{nextSchedule.confirmationLabel ? ' · ' + nextSchedule.confirmationLabel : ''}}</view></block>
       <view wx:else class="schedule-empty">{{scheduleSummary}}</view>
       <view class="schedule-foot"><text>{{scheduleCount ? '查看今日全部安排' : '为家人加一条安排'}}</text><text>›</text></view>
     </button>

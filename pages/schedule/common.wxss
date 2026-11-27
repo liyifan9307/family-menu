@@ -83,3 +83,18 @@ page { background:#f7f7f2; color:#263e32; font-size:32rpx; }
 .readonly .meta { color:#263e32; }
 .readonly-foot { text-align:center; margin-top:36rpx; color:#657368; font-size:26rpx; line-height:1.7; }
 @media (max-width:340px) { .schedule-page{padding-left:32rpx;padding-right:32rpx}.bottom-actions{padding-left:32rpx;padding-right:32rpx;gap:12rpx}.time-col{flex-basis:94rpx}.day-item{gap:24rpx}.form-footer{padding-left:32rpx;padding-right:32rpx} }
+
+.confirmation-setting, .confirmation-panel > view:first-child {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16rpx;
+}
+.confirmation-panel {
+  padding:24rpx;
+  margin-bottom:16rpx;
+  border-radius:24rpx;
+  background:#edf2e9;
+}
+.confirmation-panel .hint { margin-top:12rpx; }
+.schedule-page .confirmation-panel button { margin-top:12rpx; }

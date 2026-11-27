@@ -1,15 +1,16 @@
 <view class="schedule-page readonly">
-  <view class="readonly-banner">家人分享的接送安排 · 仅供查看</view>
+  <view class="readonly-banner">家人分享的家庭安排 · 仅供查看</view>
   <view wx:if="{{loading}}" class="state">正在更新安排…</view>
   <view wx:elif="{{error}}" class="state"><view class="state-symbol">!</view>{{error}}<button bindtap="reload">重新查看</button></view>
   <block wx:else>
     <view class="title">{{familyName}} · {{date}}</view><view class="hint">共 {{items.length}} 条安排</view>
     <view wx:if="{{!items.length}}" class="state">这一天没有安排</view>
     <view wx:for="{{items}}" wx:key="_id" class="schedule-card {{item.status}}">
-      <view class="time">{{item.timeStart}}{{item.timeEnd ? ' — ' + item.timeEnd : ''}}</view>
+      <view class="time">{{item.timeStart || '当天'}}{{item.timeEnd ? ' — ' + item.timeEnd : ''}}</view>
       <view class="item-heading"><text class="item-title">{{item.title}}</text><text class="badge">{{item.statusLabel}}</text></view>
       <view wx:if="{{item.place}}" class="place">{{item.place}}</view>
-      <view class="meta">{{item.childName ? item.childName + ' · ' : ''}}{{item.ownerName}}</view>
+      <view class="meta">{{item.childName ? item.childName + ' · ' : ''}}{{item.ownerName}}{{item.confirmationLabel ? ' · ' + item.confirmationLabel : ''}}</view>
+      <view wx:if="{{item.handoffPending}}" class="hint">等待接任人答复</view>
     </view>
     <view class="readonly-foot"><view>查看时间：{{updatedAt}}</view><view>下拉刷新，查看最新安排</view><view>请仅转发给家人 · 链接到期后失效</view><view>由「我的家」生成</view></view>
   </block>

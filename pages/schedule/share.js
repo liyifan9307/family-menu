@@ -71,19 +71,19 @@ function drawPoster(ctx, items, familyName, date, number, total, generatedAt) {
   ctx.setFillStyle(COLORS.heading)
   ctx.fillRect(0, 0, POSTER_WIDTH, headerHeight)
   let y = write(familyName, inset, 54, right - inset, familySize, COLORS.green, 600)
-  y = write('接送安排', inset, y + 8, right - inset, 44, COLORS.ink, 600)
+  y = write('家庭安排', inset, y + 8, right - inset, 44, COLORS.ink, 600)
   write(posterDate(date), inset, y - 8, right - inset, 32, COLORS.muted)
 
   y = headerHeight + 52
   for (const [index, item] of items.entries()) {
-    const next = write(item.timeStart, inset, y, detailX - inset - 12, 34, COLORS.ink, 600)
+    const next = write(item.timeStart || '当天', inset, y, detailX - inset - 12, 34, COLORS.ink, 600)
     const timeEnd = item.timeEnd
       ? write('至 ' + item.timeEnd, inset, next, detailX - inset - 12, 32, COLORS.muted)
       : next
 
     let detailY = write(item.title, detailX, y, right - detailX, 34, COLORS.ink, 600)
     detailY = write(item.place, detailX, detailY, right - detailX, 32, COLORS.muted)
-    const owner = [item.childName, item.ownerName].filter(Boolean).join(' · ')
+    const owner = [item.childName, item.ownerName, item.confirmationLabel].filter(Boolean).join(' · ')
     const status = item.statusLabel
     if (status) {
       const [background, foreground] = STATUS_COLORS[item.status] || STATUS_COLORS.pending
@@ -107,6 +107,7 @@ function drawPoster(ctx, items, familyName, date, number, total, generatedAt) {
     } else {
       detailY = write(owner, detailX, detailY, right - detailX, 32, COLORS.muted)
     }
+    if (item.handoffPending) detailY = write('等待接任人答复', detailX, detailY, right - detailX, 24, COLORS.muted)
     y = Math.max(detailY, timeEnd)
     if (index < items.length - 1) rule(y)
     y += 48
@@ -147,7 +148,7 @@ Page({
   async build() {
     if (this.invalid || this.building) return
     this.building = true
-    let stage = '读取家庭日程'
+    let stage = '读取家庭事项'
     this.setData({ loading: true, error: '', empty: false, images: [], activeImage: 0 })
     try {
       const result = await schedule.all('listByDate', { familyId: this.familyId, date: this.data.date })

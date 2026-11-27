@@ -47,9 +47,9 @@ Page({
       if(sequence !== this.sequence || familyId !== this.data.currentFamilyId) return
       const time = new Date(Date.now()+8*3600000).toISOString().slice(11,16)
       // 优先显示还没到时间的待办，没有时再显示较早的未完成安排。
-      const pending = r.items.filter(i=>i.status==='pending')
+      const pending = schedule.display(r.items).filter(i=>i.status==='pending')
       const next = pending.find(i=>i.timeStart>=time)||pending[0]
-      this.setData({nextSchedule:next||null,scheduleCount:r.items.length,scheduleSummary:next?next.timeStart+' '+next.title+' · '+next.ownerName:r.items.length?'今天的安排已结束':'今天还没有安排',scheduleLoading:false})
+      this.setData({nextSchedule:next||null,scheduleCount:r.items.length,scheduleSummary:next?(next.timeStart||'当天')+' '+next.title+' · '+next.ownerName:r.items.length?'今天的安排已结束':'今天还没有安排',scheduleLoading:false})
     } catch(e) { if(sequence===this.sequence)this.setData({scheduleError:e.message,scheduleLoading:false}) }
   },
   gotoSchedule() { wx.navigateTo({url:'/pages/schedule/schedule'}) },

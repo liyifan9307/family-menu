@@ -16,7 +16,7 @@ module.exports=function(cloud,db){
    if(!process.env.SCHEDULE_TEMPLATE_ID)return await update({status:'unavailable',lastError:'TEMPLATE_NOT_CONFIGURED'})
    let mapping;try{mapping=JSON.parse(process.env.SCHEDULE_TEMPLATE_FIELDS||'{}')}catch(_){mapping={}}
    if(!mapping.title||!mapping.time||!mapping.place)return await update({status:'unavailable',lastError:'TEMPLATE_FIELDS_NOT_CONFIGURED'})
-   const kind={create:'新增',update:'变更',setStatus:'状态更新',delete:'删除'};const data={};data[mapping.title]={value:Array.from((kind[task.kind]||'更新')+'：'+item.title).slice(0,20).join('')};data[mapping.time]={value:item.date+' '+item.timeStart};data[mapping.place]={value:Array.from(item.place||'未填写地点').slice(0,20).join('')}
+   const kind={create:'新增',update:'变更',setStatus:'状态更新',delete:'删除',confirmOwner:'确认负责',requestHandoff:'邀请接任',acceptHandoff:'确认接任',declineHandoff:'拒绝接任',withdrawHandoff:'撤回邀请'};const data={};data[mapping.title]={value:Array.from((kind[task.kind]||'更新')+'：'+item.title).slice(0,20).join('')};data[mapping.time]={value:item.timeStart?item.date+' '+item.timeStart:item.date};data[mapping.place]={value:Array.from(item.place||'未填写地点').slice(0,20).join('')}
    const r=await cloud.openapi.subscribeMessage.send({touser:task.recipientOpenid,templateId:process.env.SCHEDULE_TEMPLATE_ID,page:'pages/schedule/schedule',data,miniprogramState:process.env.SCHEDULE_MESSAGE_STATE||'formal',lang:'zh_CN'})
    if(r.errCode&&r.errCode!==0)throw Object.assign(Error('send failed'),{errCode:r.errCode})
    await update({status:'sent',sentAt:Date.now()})

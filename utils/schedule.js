@@ -13,8 +13,8 @@ async function call(action,data={}) {
 }
 // 列表和图片需要完整日程，按服务端返回的游标逐页读取。
 async function all(action,data){let items=[],cursor;do{const r=await call(action,{...data,cursor,limit:50});items=items.concat(r.items);cursor=r.nextCursor;if(!cursor)return {...r,items}}while(cursor)}
-const labels={pending:'待办',done:'已完成',cancelled:'已取消'}
-function display(items){return items.map(i=>({...i,statusLabel:labels[i.status]||i.status}))}
+const labels={pending:'待处理',done:'已完成',cancelled:'已取消'}
+function display(items){return items.map(i=>({...i,statusLabel:labels[i.status]||i.status,confirmationLabel:i.requiresConfirmation?(i.ownerConfirmed?'已确认':'待确认'):''}))}
 function lost(err){return ['NOT_MEMBER','FAMILY_NOT_FOUND','FAMILY_DISSOLVING'].includes(err.code)}
 function handleLost(){wx.reLaunch({url:'/pages/identity/identity'})}
 module.exports={today,shift,requestId,call,all,display,lost,handleLost}

@@ -45,7 +45,8 @@ function load(items) {
 }
 const item = { title: '接孩子', timeStart: '16:00', place: '幼儿园一号门', childName: '小宝', ownerName: '爸爸', status: 'pending' }
 test('图片直接读取家庭日程，生成无扫码文案的多张图片并可全部保存', async () => {
-  const { page, text, saved, calls } = load([item, item, item])
+  const confirmed = { ...item, timeStart: '', requiresConfirmation: true, ownerConfirmed: true, status: 'done' }
+  const { page, text, saved, calls } = load([item, item, confirmed])
   await page.build()
   assert.equal(page.data.error, '')
   assert.equal(page.data.loading, false)
@@ -54,6 +55,9 @@ test('图片直接读取家庭日程，生成无扫码文案的多张图片并�
   assert.ok(text.some(t => t.includes('我的家')))
   assert.ok(text.some(t => t.includes('小宝') && t.includes('爸爸')))
   assert.ok(text.some(t => t.includes('生成于')))
+  assert.ok(text.includes('当天'))
+  assert.ok(text.some(t => t.includes('已确认')))
+  assert.ok(text.includes('已完成'))
   assert.equal(text.some(t => /扫码|链接到期/.test(t)), false)
   await page.save()
   assert.deepEqual(saved, ['poster-1', 'poster-2'])

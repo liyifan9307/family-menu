@@ -2,7 +2,7 @@
 
 2026-11-27 更新。
 
-- [家庭日程 PRD v0.3](prd/family-schedule-prd-v0.3.md)：当前需求基准，第10节明确补充规则。
+- [家庭事项 PRD v0.3](prd/family-schedule-prd-v0.3.md)：当前需求基准，第 12 节说明通用事项与可选的负责人交接。
 - [日程技术方案 v0.1](technical/family-schedule-technical-v0.1.md)：接口、数据、权限、并发、通知、分享及部署。
 - [完整 UI 预览](design/family-ui-preview.html)：合并家庭管理和日程流程，补齐详情、变更记录与边界状态，展示当前纯图片分享。
 - [日程设计补充](design/schedule-design-addendum.md)：当前交互和异常状态规范。

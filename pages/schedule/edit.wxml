@@ -1,11 +1,22 @@
 <view class="schedule-page"><view wx:if="{{loading}}" class="state">正在加载…</view><view wx:elif="{{error}}" class="state">{{error}}<button bindtap="load">重试</button></view><block wx:else>
 <view class="form-row"><view class="field"><label>日期 *</label><picker mode="date" value="{{form.date}}" data-field="date" bindchange="input"><view class="picker">{{form.date}}<text class="picker-arrow">›</text></view></picker></view>
-<view class="field"><label>开始时间 *</label><picker mode="time" value="{{form.timeStart}}" data-field="timeStart" bindchange="input"><view class="picker">{{form.timeStart}}<text class="picker-arrow">›</text></view></picker></view>
+<view class="field"><label>开始时间（选填）</label><picker mode="time" value="{{form.timeStart}}" data-field="timeStart" bindchange="input"><view class="picker">{{form.timeStart || '选择时间'}}<text class="picker-arrow">›</text></view></picker><button wx:if="{{form.timeStart}}" class="text-button" data-field="timeStart" bindtap="clearTime">清除开始时间</button></view>
 </view>
-<view class="field"><label>事项 *（30字以内）</label><input value="{{form.title}}" maxlength="60" data-field="title" bindinput="input" placeholder="例如：接孩子放学" /></view>
-<view class="field"><label>地点（详细门牌）</label><input value="{{form.place}}" maxlength="100" data-field="place" bindinput="input" placeholder="填写接送地点"/><view class="chips"><button wx:for="{{places}}" wx:key="*this" data-place="{{item}}" bindtap="place">{{item}}</button></view></view>
+<view class="field"><label>事项 *（30字以内）</label><input value="{{form.title}}" maxlength="60" data-field="title" bindinput="input" placeholder="例如：买牛奶和鸡蛋" /></view>
+<view class="field"><label>地点（选填）</label><input value="{{form.place}}" maxlength="100" data-field="place" bindinput="input" placeholder="填写地点"/><view class="chips"><button wx:for="{{places}}" wx:key="*this" data-place="{{item}}" bindtap="place">{{item}}</button></view></view>
 <view class="field"><label>孩子姓名（选填）</label><input value="{{form.childName}}" maxlength="40" data-field="childName" bindinput="input"/></view>
-<view class="field"><label>负责人</label><view class="people"><button wx:for="{{members}}" wx:key="_id" class="{{form.ownerOpenid === item.openid ? 'selected' : ''}}" data-index="{{index}}" bindtap="selectOwner"><view class="who-dot" style="background:{{item.color}}"></view><text>{{item.name}}</text></button></view></view>
+<view class="field">
+  <label>负责人（选填）</label>
+  <view wx:if="{{ownerLocked}}" class="hint">{{form.ownerName}} · 请在事项详情发起换人</view>
+  <view wx:else class="people">
+    <button class="{{!form.ownerOpenid ? 'selected' : ''}}" data-index="-1" bindtap="selectOwner">暂不指定</button>
+    <button wx:for="{{members}}" wx:key="_id" class="{{form.ownerOpenid === item.openid ? 'selected' : ''}}" data-index="{{index}}" bindtap="selectOwner"><view class="who-dot" style="background:{{item.color}}"></view><text>{{item.name}}</text></button>
+  </view>
+</view>
+<view class="field">
+  <view class="confirmation-setting"><label>需要负责人确认</label><switch checked="{{form.requiresConfirmation}}" disabled="{{!!form.handoff || form.status === 'done' || form.status === 'cancelled'}}" bindchange="toggleConfirmation" color="#46765a" /></view>
+  <view class="hint">开启后由负责人确认，换人需接任人同意。</view>
+</view>
 <button class="text-button" bindtap="more">{{more ? '收起' : '更多信息：结束时间、备注'}}</button>
-<block wx:if="{{more}}"><view class="field"><label>结束时间（选填）</label><picker mode="time" value="{{form.timeEnd}}" data-field="timeEnd" bindchange="input"><view class="picker">{{form.timeEnd || '选择时间'}}</view></picker></view><view class="field"><label>备注（200字以内）</label><textarea value="{{form.note}}" maxlength="400" data-field="note" bindinput="input"/></view></block>
+<block wx:if="{{more}}"><view wx:if="{{form.timeStart}}" class="field"><label>结束时间（选填）</label><picker mode="time" value="{{form.timeEnd}}" data-field="timeEnd" bindchange="input"><view class="picker">{{form.timeEnd || '选择时间'}}</view></picker><button wx:if="{{form.timeEnd}}" class="text-button" data-field="timeEnd" bindtap="clearTime">清除结束时间</button></view><view class="field"><label>备注（200字以内）</label><textarea value="{{form.note}}" maxlength="400" data-field="note" bindinput="input"/></view></block>
 <view class="error">{{fieldError}}</view><button wx:if="{{unknown}}" bindtap="confirmPending" disabled="{{saving}}">确认上次保存结果</button><button wx:if="{{conflict}}" bindtap="latest">查看最新安排并保留草稿</button><view class="form-footer"><button class="primary" bindtap="save" loading="{{saving}}" disabled="{{saving}}">{{saving ? '正在保存' : '保存'}}</button></view></block></view>
